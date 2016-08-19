@@ -18,6 +18,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
@@ -50,8 +51,11 @@ import org.chocosolver.solver.variables.SetVar;
 import org.chocosolver.solver.variables.Variable;
 import org.chocosolver.util.criteria.Criterion;
 
+import com.google.common.base.Stopwatch;
+
 import at.tugraz.ist.configurator.CSHL.SimpleGa.Algorithm;
 import at.tugraz.ist.configurator.CSHL.SimpleGa.FitnessCalc;
+import at.tugraz.ist.configurator.CSHL.SimpleGa.Individual;
 import at.tugraz.ist.configurator.CSHL.SimpleGa.Population;
 
 import org.chocosolver.parser.flatzinc.layout.SolutionPrinter;
@@ -136,8 +140,8 @@ public class Test {
 	 }
 	 
 	 public static void testPopulationOverCluster(Population myPop, int clusterIndex){
-		  
-		  int totalRunningTimeForCluster = 0;
+		  System.out.println("in testPopulationOverCluster: Cluster#"+clusterIndex);
+		  long totalRunningTimeForCluster = 0;
 		  int indivdiaulIndex = 0;
 		  int sizeOfPopulation = myPop.size();
 		  // INDIVIDUAL
@@ -157,53 +161,107 @@ public class Test {
 					 solver = getHeuristics(modelIndex, solver,-1,variableOrder);
 					 
 					 solver.solve();
-					 totalRunningTimeForCluster += solver.getTimeCount();
-				     solver.printStatistics();
+					 totalRunningTimeForCluster += solver.getTimeCountInNanoSeconds();
+				     //solver.printStatistics();
 			  }
 			  
 			  // bu gen icin bu clusterda hesaplanan ortalama running time
-			  if (clusters[clusterIndex].length-1>0)
-				  myPop.getIndividual(i).setRunningTime(totalRunningTimeForCluster/(clusters[clusterIndex].length-1));
-				 
+			  if (clusters[clusterIndex].length-1>0){
+				  myPop.getIndividual(i).setFitness(totalRunningTimeForCluster/(clusters[clusterIndex].length-1));
+				  //System.out.println("GENE #"+indivdiaulIndex+" bu gen icin bu clusterda hesaplanan ortalama running time: "+clusterIndex+" :"+totalRunningTimeForCluster/(clusters[clusterIndex].length-1));
+			  }
 		 }
 	 }
 	 
+	 
+	 public static long testIndividualOverCluster(Individual ind, int clusterIndex){
+		  //System.out.println("in testIndividualOverCluster: Cluster#"+clusterIndex);
+
+		 if (clusters[clusterIndex].length-1<=0)
+			  return 0;
+		  
+		  	long totalRunningTimeForCluster = 0;
+		  	long fitness = 0;
+		  // INDIVIDUAL
+			  int [] variableOrder = ind.getGenes();
+				 
+			  // MODEL
+			  // run CSP over the models except the last one and take avg time
+			  for (int md=0;md<clusters[clusterIndex].length-1;md++){
+				  	 long startTime = System.nanoTime();
+				     int modelIndex = clusters[clusterIndex][md];
+					 Model model = new Model();
+					 model = modelsOfTheSameProblem.get(modelIndex);
+					 Solver solver = model.getSolver();
+			    	 
+					 // getHeuristics
+					 solver = getHeuristics(modelIndex, solver,-1,variableOrder);
+					 
+					 solver.solve();
+					 long endTime = System.nanoTime();
+					 totalRunningTimeForCluster += (endTime - startTime);
+				     //solver.printStatistics();
+			  }
+			  
+			  // bu gen icin bu clusterda hesaplanan ortalama running time
+			  fitness = totalRunningTimeForCluster/(clusters[clusterIndex].length-1);
+				  //System.out.println("GENE #"+ind.getGenes()+" bu gen icin bu clusterda hesaplanan ortalama running time: "+clusterIndex+" :"+totalRunningTimeForCluster/(clusters[clusterIndex].length-1));
+			  String geneStr ="";
+			  for(int i=0;i<numberOfvars;i++){
+				  geneStr += ind.getGenes()[i];
+			  }
+			  System.out.println("GENE: "+geneStr+", Fitness +:"+fitness);
+			  return fitness;
+		
+	 }
+	 
 	 public static void getOrders(){
-		 
+		 System.out.println("in getOrders");
 		 //Find best variable ordering
 		 int sizeOfGene = numberOfvars;
-		 int sizeOfPopulation = 2;
+		 int sizeOfPopulation = 120;
 		 ordersOfVariables = new ArrayList<int[]>(numberOfclusters);
 		 for(int v=0;v<numberOfclusters;v++){
 			 ordersOfVariables.add(new int[numberOfvars]);
 		 }
 		 
 		 // set target time (CSP running time)
+		 // 0.015 ms
 		 FitnessCalc.setTarget(1);
 		 
 		 // FIND VARIABLE AND VALUE ORDERING FOR EACH CLUSTER
 		 // CLUSTER
 		 for (int cl=0;cl<numberOfclusters;cl++){
-			 // create population for each cluster
-			 Population myPop = new Population(sizeOfPopulation,sizeOfGene,true);
 			 
-			 testPopulationOverCluster(myPop,cl);
+			 System.out.println("CLUSTER #"+cl);
+			 
+			 if(clusters[cl].length<2){
+				 continue;
+			 }
+			 // create population for each cluster
+			 
+			 
+			 Population myPop = new Population(sizeOfPopulation,sizeOfGene,true,cl);
+			 
+			 // testPopulationOverCluster(myPop,cl);
 			  
 			 int generationCount = 0; 
 			 
-			 //while(myPop.getFittest().getFitness() < FitnessCalc.getMaxFitness()){ 
-			 while(generationCount<3){
+			 //while(myPop.getFittest().getFitness() > FitnessCalc.getMaxFitness()){ 
+			 while(generationCount<0){
 			   generationCount++; 
 			   System.out.println("Generation: "+generationCount+" Fittest: "+myPop.getFittest().getFitness()); 
 			   
+			   System.out.println("Start evolvePopulation");
 			   // generate new population for better results
-			   myPop = Algorithm.evolvePopulation(myPop); 
-			   
+			   myPop = Algorithm.evolvePopulation(myPop,cl); 
+			   System.out.println("End evolvePopulation");
 			   // apply new test over new population
-			   testPopulationOverCluster(myPop,cl);
+			   // testPopulationOverCluster(myPop,cl);
 			 } 
 			 
 			 // find solution for this cluster
+			 System.out.println("Ordering Found: Cluster#"+cl);
 			 System.out.println("Solution found!"); 
 			 System.out.println("Generation: "+generationCount); 
 			 System.out.println("Genes:"); 
@@ -232,9 +290,11 @@ public class Test {
 		 
 		 // get clusters
 		 getClusters();
+		 System.out.println("Clusters are calculated with sizes"+clusters[0].length+clusters[1].length+clusters[2].length+clusters[3].length);
 		 
 		 // get var and value orders for each cluster
 		 getOrders();
+		 System.out.println("Orders are calculated");
 		 
 		 // test clusters: without heuristic, with fixed heuristic, with learned heuristic	 
 		 for (int k=0;k<numberOfclusters;k++){
@@ -509,23 +569,33 @@ public class Test {
 	 }
 
 	 public static Solver getHeuristics(int modelIndex, Solver solver, int ClusterIndex, int[] varOrder){
-		 int [] variableOrder;
 		 
-		 if(varOrder==null)
-			 variableOrder = ordersOfVariables.get(ClusterIndex);
-		 else
-			 variableOrder = varOrder;
+		 int [] variableOrder = null;
+		 VariableSelector varSelector; 
 		 
-		 solver.setSearch(intVarSearch(
-                 
-				 (VariableSelector<IntVar>) variables -> {
+		 if(varOrder!=null || ClusterIndex!=-1){
+			 if(varOrder==null){
+				 variableOrder = ordersOfVariables.get(ClusterIndex);
+			 }
+			 else 
+				 variableOrder = varOrder;
+			  final int [] ord = variableOrder;
+			  varSelector =(VariableSelector<IntVar>) variables -> {
 					 	int varIndex = 0;
-			            for(int i =0;i<vars[modelIndex].length;i++){
-			                varIndex = variableOrder[i];
+					 	for(int i =0;i<vars[modelIndex].length;i++){
+			                varIndex = ord[i];
 			                return vars[modelIndex][i];
 			            }
 			            return null;
-			     },
+			 };
+		 }
+		 else{
+			 varSelector = new FirstFail(modelsOfTheSameProblem.get(modelIndex));
+		 }
+		 
+		 solver.setSearch(intVarSearch(
+                 
+				 varSelector,
                  
                  // selects the smallest domain value (lower bound)
                  new IntDomainMin(),

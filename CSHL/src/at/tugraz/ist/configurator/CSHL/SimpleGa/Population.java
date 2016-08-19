@@ -3,19 +3,21 @@ package at.tugraz.ist.configurator.CSHL.SimpleGa;
 public class Population {
 
     Individual[] individuals;
+    int clusterIndex=0;
 
     /*
      * Constructors
      */
     // Create a population
-    public Population(int populationSize,int geneSize, boolean initialise) {
+    public Population(int populationSize,int geneSize, boolean initialise, int cl) {
+    	clusterIndex = cl;
         individuals = new Individual[populationSize];
         // Initialise population
         if (initialise) {
             // Loop and create individuals
             for (int i = 0; i < size(); i++) {
-                Individual newIndividual = new Individual();
-                newIndividual.generateIndividual(geneSize);
+                Individual newIndividual = new Individual(geneSize,cl);
+                newIndividual.generateIndividual(geneSize,clusterIndex);
                 saveIndividual(i, newIndividual);
             }
         }
@@ -31,7 +33,7 @@ public class Population {
         
         // Loop through individuals to find fittest
         for (int i = 0; i < size(); i++) {
-            if (fittest.getFitness() <= getIndividual(i).getFitness()) {
+            if (fittest.getFitness() >= getIndividual(i).getFitness()) {
                 fittest = getIndividual(i);
             }
         }

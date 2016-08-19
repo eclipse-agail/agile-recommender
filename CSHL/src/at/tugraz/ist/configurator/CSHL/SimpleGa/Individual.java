@@ -6,21 +6,20 @@ public class Individual {
 
     static int defaultGeneLength = 30;
     private int[] genes ;
+    static int clusterID =0;
     // Cache
-    private int fitness = 0;
-    private int runningTime = 10000000;
+    private long fitness = 0;
     
-    public void setRunningTime(int execTime){
-    	runningTime = execTime;
-    }
-    public int getRunningTime(){
-    	return runningTime;
-    }
-    
- 
-    // Create a random individual
-    public void generateIndividual(int geneSize) {
+    public Individual(int geneSize, int cl){
     	defaultGeneLength = geneSize;
+    	clusterID = cl;
+    	genes = new int[defaultGeneLength];
+    }
+    
+    // Create a random individual
+    public void generateIndividual(int geneSize, int cl) {
+    	defaultGeneLength = geneSize;
+    	clusterID = cl;
     	genes = new int[defaultGeneLength];
     	Random rand = new Random();
     	
@@ -34,6 +33,7 @@ public class Individual {
             genes[i] = gene;
             isUsed[gene]=true;
         }
+        fitness = getFitness();
     }
 
     /* Getters and setters */
@@ -60,11 +60,15 @@ public class Individual {
         return genes.length;
     }
 
-    public int getFitness() {
+    public long getFitness() {
         if (fitness == 0) {
             fitness = FitnessCalc.getFitness(this);
         }
         return fitness;
+    }
+    
+    public void setFitness(long val) {
+        fitness = val;
     }
 
     @Override

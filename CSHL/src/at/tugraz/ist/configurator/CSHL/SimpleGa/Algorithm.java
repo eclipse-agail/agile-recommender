@@ -15,9 +15,10 @@ public class Algorithm {
     /* Public methods */
     
     // Evolve a population
-    public static Population evolvePopulation(Population pop) {
+    public static Population evolvePopulation(Population pop, int clusterIndex) {
+    	System.out.println("evolvePopulation");
     	geneSize = pop.getIndividual(0).size();
-        Population newPopulation = new Population(pop.size(),geneSize ,false);
+        Population newPopulation = new Population(pop.size(),geneSize ,false, clusterIndex);
 
         // Keep our best individual
         if (elitism) {
@@ -31,35 +32,40 @@ public class Algorithm {
         } else {
             elitismOffset = 0;
         }
+        
+        System.out.println("crossover");
         // Loop over the population size and create new individuals with
         // crossover
         for (int i = elitismOffset; i < pop.size(); i++) {
-            Individual indiv1 = tournamentSelection(pop);
-            Individual indiv2 = tournamentSelection(pop);
-            Individual newIndiv = crossover(indiv1, indiv2);
+            Individual indiv1 = tournamentSelection(pop,clusterIndex);
+            Individual indiv2 = tournamentSelection(pop,clusterIndex);
+            Individual newIndiv = crossover(indiv1, indiv2, clusterIndex);
             newPopulation.saveIndividual(i, newIndiv);
         }
-
+        System.out.println("endofcrossover");
+        
+        System.out.println("Mutate population");
         // Mutate population
         for (int i = elitismOffset; i < newPopulation.size(); i++) {
             mutate(newPopulation.getIndividual(i));
         }
+        System.out.println("endof Mutate");
 
         return newPopulation;
     }
 
     // Crossover individuals
-    private static Individual crossover(Individual indiv1, Individual indiv2) {
+    private static Individual crossover(Individual indiv1, Individual indiv2,int clusterIndex) {
         
-    	Individual newSol = new Individual();
-    	newSol.generateIndividual(indiv1.size());
+    	Individual newSol = new Individual(indiv1.size(),clusterIndex);
+    	//newSol.generateIndividual(indiv1.size(),clusterIndex);
         boolean [] isIncluded = new boolean[indiv1.size()];
         // Loop through genes
         for (int i = 0; i < indiv1.size(); i++) {
             // Crossover
             if (Math.random() <= uniformRate) {
-            	newSol.setGene(i, indiv1.getGene(i));
             	int index = i;
+            	newSol.setGene(i, indiv1.getGene(index));
             	while(isIncluded[indiv1.getGene(index)]){
             		newSol.setGene(i, indiv1.getGene(index));
             		index++;
@@ -68,8 +74,8 @@ public class Algorithm {
             	}
             	isIncluded[indiv1.getGene(index)] = true;
             } else {
-                newSol.setGene(i, indiv2.getGene(i));
                 int index = i;
+                newSol.setGene(i, indiv2.getGene(index));
             	while(isIncluded[indiv2.getGene(index)]){
             		newSol.setGene(i, indiv2.getGene(index));
             		index++;
@@ -97,9 +103,9 @@ public class Algorithm {
     }
 
     // Select individuals for crossover
-    private static Individual tournamentSelection(Population pop) {
+    private static Individual tournamentSelection(Population pop,int clusterIndex) {
         // Create a tournament population
-        Population tournament = new Population(tournamentSize,geneSize, false);
+        Population tournament = new Population(tournamentSize, geneSize, true, clusterIndex);
         // For each place in the tournament get a random individual
         for (int i = 0; i < tournamentSize; i++) {
             int randomId = (int) (Math.random() * pop.size());

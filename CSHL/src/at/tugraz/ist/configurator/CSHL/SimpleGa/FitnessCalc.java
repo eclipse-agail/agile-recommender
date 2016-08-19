@@ -1,10 +1,12 @@
 package at.tugraz.ist.configurator.CSHL.SimpleGa;
 
+import at.tugraz.ist.configurator.CSHL.Test;
+
 public class FitnessCalc {
 
-    public static int target;
+    public static long target;
     
-    public static void setTarget(int time){
+    public static void setTarget(long time){
     	target = time;
     } 
 
@@ -31,24 +33,16 @@ public class FitnessCalc {
 //    }
 
     // Calculate inidividuals fittness by comparing it to our candidate solution
-    static int getFitness(Individual individual) {
-        int fitness = 0;
+    static long getFitness(Individual individual) {
         
-        // TODO: apply CSP here and compare running time
-        fitness = individual.getRunningTime();
-        
-        if (fitness<target)
-        	fitness = 100;
-        else{
-        	fitness = ((fitness-target)/target)*100;
-        }
-        	
+    	long fitness = Test.testIndividualOverCluster(individual, individual.clusterID);
+  
         return fitness;
     }
     
     // Get optimum fitness
-    public static int getMaxFitness() {
-        int maxFitness = 100;
-        return maxFitness;
+    public static long getMaxFitness() {
+        //int maxFitness = 1;
+        return target;
     }
 }
