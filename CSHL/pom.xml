@@ -45,5 +45,20 @@
 		    <artifactId>log4j</artifactId>
 		    <version>1.2.17</version>
 		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.oakgp/oakgp -->
+		<dependency>
+		    <groupId>org.oakgp</groupId>
+		    <artifactId>oakgp</artifactId>
+		    <version>0.0.3</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.apache.mahout/mahout-core -->
+		<dependency>
+		    <groupId>org.apache.mahout</groupId>
+		    <artifactId>mahout-core</artifactId>
+		    <version>0.9</version>
+		</dependency>
+	
  </dependencies>
 </project>
