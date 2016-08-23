@@ -25,14 +25,17 @@ public class Individual {
     	
     	boolean [] isUsed = new boolean[geneSize];
     	
+    	String genestr = "";
         for (int i = 0; i < size(); i++) {
             int gene = rand.nextInt(geneSize);
             while(isUsed[gene]==true){
             	gene = rand.nextInt(geneSize);
             }
             genes[i] = gene;
+            genestr += gene;
             isUsed[gene]=true;
         }
+        //System.out.println("Generated gene: "+genestr);
         fitness = getFitness();
     }
 

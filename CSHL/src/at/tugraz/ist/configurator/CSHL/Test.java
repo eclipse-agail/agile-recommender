@@ -46,6 +46,7 @@ import org.chocosolver.parser.flatzinc.ast.Datas;
 import org.chocosolver.solver.Model;
 import org.chocosolver.solver.Solution;
 import org.chocosolver.solver.Solver;
+import org.chocosolver.solver.constraints.Constraint;
 import org.chocosolver.solver.variables.IntVar;
 import org.chocosolver.solver.variables.SetVar;
 import org.chocosolver.solver.variables.Variable;
@@ -81,12 +82,22 @@ import net.sf.javaml.tools.data.FileHandler;
 
 public class Test {
 	
-	 public static IntVar[][] vars;
-	 public static int numberOfmodels = 10; 
-	 public static int numberOfvars = 5;
+	 //public static IntVar[][] vars;
+	 public static int numberOfmodels = 100; 
+	 public static int maxDomainSize = 1000;
+	 public static int numberOfvars = 1000;
 	 public static int numberOfclusters = 4;
 	 public static int [][] clusters;
-	 public static List <Model> modelsOfTheSameProblem;
+	 public static List <UserModel> modelsOfTheSameProblem;
+	 public static List<String> heuristics; 
+	 public static int sizeOfPopulation = 3;
+	 public static int testSize = 100;
+	 public static int currentTest = 0;
+	 
+	 
+	 //public List<Long> statisticsOfModel;
+	 public static List<List<Long>> statisticsOfClusters;
+	 
 	 
 	 // variable order for each cluster
 	 public static List<int[]> ordersOfVariables;
@@ -100,12 +111,16 @@ public class Test {
 	
 	 public static String modelsName = "";
 	 
+	 public static FileWriter writer =null;
+	 
 	 public static void main(String []args){
 		 //testFZNfiles();
 		 //testKMeans();
 		 //testKMeans2();
-		 
-		 testHeuristic();
+		 for(int i=0;i<testSize;i++){
+			 testHeuristic();
+			 currentTest++;
+		 }
 		 //getOrders();
 	 }
 	 
@@ -140,7 +155,7 @@ public class Test {
 	 }
 	 
 	 public static void testPopulationOverCluster(Population myPop, int clusterIndex){
-		  System.out.println("in testPopulationOverCluster: Cluster#"+clusterIndex);
+		  //System.out.println("in testPopulationOverCluster: Cluster#"+clusterIndex);
 		  long totalRunningTimeForCluster = 0;
 		  int indivdiaulIndex = 0;
 		  int sizeOfPopulation = myPop.size();
@@ -154,11 +169,11 @@ public class Test {
 			  // run CSP over the models except the last one and take avg time
 			  for (int md=0;md<clusters[clusterIndex].length-1;md++){
 					 int modelIndex = clusters[clusterIndex][md];
-					 Model model = modelsOfTheSameProblem.get(modelIndex);
-					 Solver solver = model.getSolver();
+					 UserModel model = modelsOfTheSameProblem.get(modelIndex);
+					 Solver solver = model.chocoModel.getSolver();
 			    	 
 					 // getHeuristics
-					 solver = getHeuristics(modelIndex, solver,-1,variableOrder);
+					 solver = getHeuristics(model, solver,-1,variableOrder);
 					 
 					 solver.solve();
 					 totalRunningTimeForCluster += solver.getTimeCountInNanoSeconds();
@@ -172,8 +187,7 @@ public class Test {
 			  }
 		 }
 	 }
-	 
-	 
+
 	 public static long testIndividualOverCluster(Individual ind, int clusterIndex){
 		  //System.out.println("in testIndividualOverCluster: Cluster#"+clusterIndex);
 
@@ -190,12 +204,11 @@ public class Test {
 			  for (int md=0;md<clusters[clusterIndex].length-1;md++){
 				  	 long startTime = System.nanoTime();
 				     int modelIndex = clusters[clusterIndex][md];
-					 Model model = new Model();
-					 model = modelsOfTheSameProblem.get(modelIndex);
-					 Solver solver = model.getSolver();
+					 UserModel userModel = modelsOfTheSameProblem.get(modelIndex);
+					 Solver solver = userModel.chocoModel.getSolver();
 			    	 
 					 // getHeuristics
-					 solver = getHeuristics(modelIndex, solver,-1,variableOrder);
+					 solver = getHeuristics(userModel, solver,-1,variableOrder);
 					 
 					 solver.solve();
 					 long endTime = System.nanoTime();
@@ -210,16 +223,15 @@ public class Test {
 			  for(int i=0;i<numberOfvars;i++){
 				  geneStr += ind.getGenes()[i];
 			  }
-			  System.out.println("GENE: "+geneStr+", Fitness +:"+fitness);
+			  //System.out.println("GENE: "+geneStr+", Fitness +:"+fitness);
 			  return fitness;
 		
 	 }
 	 
 	 public static void getOrders(){
-		 System.out.println("in getOrders");
+		 //System.out.println("in getOrders");
 		 //Find best variable ordering
 		 int sizeOfGene = numberOfvars;
-		 int sizeOfPopulation = 120;
 		 ordersOfVariables = new ArrayList<int[]>(numberOfclusters);
 		 for(int v=0;v<numberOfclusters;v++){
 			 ordersOfVariables.add(new int[numberOfvars]);
@@ -227,13 +239,13 @@ public class Test {
 		 
 		 // set target time (CSP running time)
 		 // 0.015 ms
-		 FitnessCalc.setTarget(1);
+		 FitnessCalc.setTarget(10000);
 		 
 		 // FIND VARIABLE AND VALUE ORDERING FOR EACH CLUSTER
 		 // CLUSTER
 		 for (int cl=0;cl<numberOfclusters;cl++){
 			 
-			 System.out.println("CLUSTER #"+cl);
+			 //System.out.println("CLUSTER #"+cl);
 			 
 			 if(clusters[cl].length<2){
 				 continue;
@@ -246,26 +258,24 @@ public class Test {
 			 // testPopulationOverCluster(myPop,cl);
 			  
 			 int generationCount = 0; 
+			 long startTime = System.nanoTime();
+			 long currentTime = System.nanoTime();
 			 
-			 //while(myPop.getFittest().getFitness() > FitnessCalc.getMaxFitness()){ 
-			 while(generationCount<0){
+			 while(myPop.getFittest().getFitness() > FitnessCalc.getMaxFitness()){ 
+			 //while(generationCount<0){
 			   generationCount++; 
 			   System.out.println("Generation: "+generationCount+" Fittest: "+myPop.getFittest().getFitness()); 
 			   
-			   System.out.println("Start evolvePopulation");
+			   //System.out.println("Start evolvePopulation");
 			   // generate new population for better results
-			   myPop = Algorithm.evolvePopulation(myPop,cl); 
-			   System.out.println("End evolvePopulation");
+			   myPop = Algorithm.evolvePopulation(myPop,cl,maxDomainSize); 
+			   //System.out.println("End evolvePopulation");
 			   // apply new test over new population
 			   // testPopulationOverCluster(myPop,cl);
+			   currentTime = System.nanoTime();
+			   if((currentTime-startTime)>900000000)
+				   break;
 			 } 
-			 
-			 // find solution for this cluster
-			 System.out.println("Ordering Found: Cluster#"+cl);
-			 System.out.println("Solution found!"); 
-			 System.out.println("Generation: "+generationCount); 
-			 System.out.println("Genes:"); 
-			 System.out.println(myPop.getFittest()); 
 			 
 			 int [] varOrder = myPop.getFittest().getGenes();
 			 // SET VARIABLE ORDER FOR THIS CLUSTER
@@ -277,58 +287,80 @@ public class Test {
 	 }
 	 
 	 public static void testHeuristic(){
-		
-		 vars = new IntVar[numberOfmodels][];
-		
-		 int maxDomainSize = 50;
 		 
+		 heuristics = new ArrayList<String>(6);
+		 heuristics.add("No Heuristics");
+		 heuristics.add("FirstFail and IntDomainMin");
+		 heuristics.add("AntiFirstFail and IntDomainMin");
+		 heuristics.add("FirstFail and IntDomainMax");
+		 heuristics.add("AntiFirstFail and IntDomainMax");
+		 heuristics.add("CHSL and IntDomainMin");
+	     
+		
 		 // getModelsforProblem(int numberOfVars,int numberOfModels, int maxDomainSize)
-		 modelsOfTheSameProblem = getModelsforProblem(numberOfvars, numberOfmodels, maxDomainSize);
+		 modelsOfTheSameProblem = new ArrayList<UserModel>(numberOfmodels);
+		 getModelsforProblem(numberOfvars, numberOfmodels, maxDomainSize);
 		 
 		 // apply clustering
 		 testKMeans2();
 		 
 		 // get clusters
 		 getClusters();
-		 System.out.println("Clusters are calculated with sizes"+clusters[0].length+clusters[1].length+clusters[2].length+clusters[3].length);
+		 //System.out.println("Clusters are calculated with sizes"+clusters[0].length+clusters[1].length+clusters[2].length+clusters[3].length);
 		 
 		 // get var and value orders for each cluster
 		 getOrders();
-		 System.out.println("Orders are calculated");
+		 //System.out.println("Orders are calculated");
+		 
+		 long startTime = 0;
+	     long endTime = 0;
+		 long execTime = 0;
+		 
+		 statisticsOfClusters = new ArrayList<List<Long>>(numberOfclusters);
 		 
 		 // test clusters: without heuristic, with fixed heuristic, with learned heuristic	 
 		 for (int k=0;k<numberOfclusters;k++){
 			 
-			 System.out.println("#######################################");
-			 System.out.println("#########    CLUSTER   "+k+"     ########");
-			 System.out.println("#######################################");
-			 
+			
 			 int numberOfModelsInTheCluster = clusters[k].length;
+			 List<Long> statisticsOfModel = new ArrayList<Long>(heuristics.size());
 			 
 			 for (int i=0; i<numberOfModelsInTheCluster;i++){
 				 
 				 int modelIndex = clusters[k][i];
-				 Model model = modelsOfTheSameProblem.get(i);
-				 Model model2 = modelsOfTheSameProblem.get(i);
-				 Model model3 = modelsOfTheSameProblem.get(i);
+				 UserModel model = new UserModel(modelsOfTheSameProblem.get(i).name,modelsOfTheSameProblem.get(i).vars,modelsOfTheSameProblem.get(i).ifcont,modelsOfTheSameProblem.get(i).thencont);
+				 UserModel model2 = new UserModel(modelsOfTheSameProblem.get(i).name,modelsOfTheSameProblem.get(i).vars,modelsOfTheSameProblem.get(i).ifcont,modelsOfTheSameProblem.get(i).thencont);
+				 UserModel model3 = new UserModel(modelsOfTheSameProblem.get(i).name,modelsOfTheSameProblem.get(i).vars,modelsOfTheSameProblem.get(i).ifcont,modelsOfTheSameProblem.get(i).thencont);
+				 UserModel model4 = new UserModel(modelsOfTheSameProblem.get(i).name,modelsOfTheSameProblem.get(i).vars,modelsOfTheSameProblem.get(i).ifcont,modelsOfTheSameProblem.get(i).thencont);
+				 UserModel model5 = new UserModel(modelsOfTheSameProblem.get(i).name,modelsOfTheSameProblem.get(i).vars,modelsOfTheSameProblem.get(i).ifcont,modelsOfTheSameProblem.get(i).thencont);
+				 UserModel model6 = new UserModel(modelsOfTheSameProblem.get(i).name,modelsOfTheSameProblem.get(i).vars,modelsOfTheSameProblem.get(i).ifcont,modelsOfTheSameProblem.get(i).thencont);
 				 
-				 Solver solver = model.getSolver();
-				 //solver.setSearch(minDomLBSearch(vars));
-				 System.out.println("#######################################");
-				 System.out.println("#########    MODEL   "+modelIndex+"     ########");
-				 System.out.println("#######################################");
 				 
-				 for(int j=0;j<numberOfvars;j++){
-					 System.out.println(vars[modelIndex][j]);
+				 statisticsOfModel = new ArrayList<Long>(heuristics.size());
+				 
+				
+				 
+				 // 1- SOLVE WITHOUT HEURISTICS
+				 Solver solver = model.chocoModel.getSolver();
+			   
+			     startTime = System.nanoTime();
+			     solver.solve();
+			     endTime = System.nanoTime();
+				 execTime = endTime - startTime;
+				 // record last user
+				 if (i==numberOfModelsInTheCluster-1 && numberOfModelsInTheCluster>1){
+					 statisticsOfModel.add(execTime);
+					 String measures1 = solver.getMeasures().toOneLineString();
+					 System.out.println("Cluster-"+k+", "+measures1);
 				 }
-				 System.out.println(model.getCstrs()[0].toString());
 				 
-				 System.out.println("#######################################");
-			     System.out.println("SOLVER with Heuristic: <select variable: FirstFail> <select value:IntDomainMin>  ");
-			     solver.setSearch(intVarSearch(
+				 
+				 // 2- SOLVE WITH HEURISTIC
+				 Solver solver2 = model2.chocoModel.getSolver();
+				 solver2.setSearch(intVarSearch(
 		                 
 						 // selects the variable of smallest domain size
-		                 new FirstFail(model2),
+		                 new FirstFail(model2.chocoModel),
 			    		 //new AntiFirstFail(model),
 		                 
 		                 // selects the smallest domain value (lower bound)
@@ -336,56 +368,198 @@ public class Test {
 		                 //new IntDomainMax(),
 		                
 		                 // variables to branch on
-		                 vars[modelIndex][0],vars[modelIndex][1], vars[i][2], vars[modelIndex][3], vars[modelIndex][4]
+		                 model2.vars[0],model2.vars[1], model2.vars[2],model2.vars[3],model2.vars[4]
 				  ));
 				
-			     // System.out.println("Solutions for Model #"+i);
-			     //List<Solution> solns = model.getSolver().findAllSolutions(null);
-	//		     System.out.println("number of solutions: "+solns.size());
-	//		     
-	//		     for(int k=0;k<solns.size();k++){
-	//		    	 System.out.println("Solutions #"+k);
-	//		    	 System.out.println("v0: "+solns.get(k).getIntVal(vars[0])
-	//		    			 + " v1: "+solns.get(k).getIntVal(vars[1])
-	//		    			 + " v2: "+solns.get(k).getIntVal(vars[2])
-	//		    			 + " v3: "+solns.get(k).getIntVal(vars[3])
-	//		    			 + " v4: "+solns.get(k).getIntVal(vars[4])
-	//		    			 );
-	//		    
-	//		     }
 			     
-			     solver.solve();
-			     solver.printStatistics();
-			   
-			     System.out.println("#######################################");
-			     System.out.println("SOLVER without Heuristic");
-			     Solver solver2 = model2.getSolver();
-				 //List<Solution> solns2 = solver2.findAllSolutions(null);
-				 //System.out.println("number of solutions: "+solns2.size());
+			     startTime = System.nanoTime();
 			     solver2.solve();
-			     solver2.printStatistics();
-			     
-			     System.out.println("#######################################");
-			     
-			     
-			     // APPLY GENETIC ALGORITHM FOR LAST USER
-			     if (i==numberOfModelsInTheCluster-1){
-			    	 System.out.println("#######################################");
-				     System.out.println("SOLVER without specific Heuristic based on Cluster");
-				     Solver solver3 = model3.getSolver();
-			    	 // getHeuristics
-					 solver3 = getHeuristics(modelIndex,solver3,k,null);
-					 solver3.solve();
-				     solver3.printStatistics();
-				     System.out.println("#######################################");
-			     }
-			     
+			     endTime = System.nanoTime();
+				 execTime = endTime - startTime;
+				
+				 // record last user
+				 if (i==numberOfModelsInTheCluster-1 && numberOfModelsInTheCluster>1){
+					 statisticsOfModel.add(execTime);
+					 String measures1 = solver2.getMeasures().toOneLineString();
+					 System.out.println("Cluster-"+k+", "+measures1);
+				 }
 				 
+				 
+				 
+				// 3- SOLVE WITH HEURISTIC
+				 Solver solver4 = model4.chocoModel.getSolver();
+				 solver4.setSearch(intVarSearch(
+		                 
+						 // selects the variable of smallest domain size
+		                 new AntiFirstFail(model4.chocoModel),
+			    		 //new AntiFirstFail(model),
+		                 
+		                 // selects the smallest domain value (lower bound)
+		                 new IntDomainMin(),
+		                 //new IntDomainMax(),
+		                
+		                 // variables to branch on
+		                 model4.vars[0],model4.vars[1], model4.vars[2],model4.vars[3],model4.vars[4]
+				  ));
+				
+			     
+			     startTime = System.nanoTime();
+			     solver4.solve();
+			     endTime = System.nanoTime();
+				 execTime = endTime - startTime;
+				
+				 // record last user
+				 if (i==numberOfModelsInTheCluster-1 && numberOfModelsInTheCluster>1){
+					 statisticsOfModel.add(execTime);
+					 String measures1 = solver4.getMeasures().toOneLineString();
+					 System.out.println("Cluster-"+k+", "+measures1);
+				 }
+				 
+				// 4- SOLVE WITH HEURISTIC
+				 Solver solver5 = model5.chocoModel.getSolver();
+				 solver5.setSearch(intVarSearch(
+		                 
+						 // selects the variable of smallest domain size
+		                 new FirstFail(model5.chocoModel),
+			    		 //new AntiFirstFail(model),
+		                 
+		                 // selects the smallest domain value (lower bound)
+		                 //new IntDomainMin(),
+		                 new IntDomainMax(),
+		                
+		                 // variables to branch on
+		                 model5.vars[0],model5.vars[1], model5.vars[2],model5.vars[3],model5.vars[4]
+				  ));
+				
+			     
+			     startTime = System.nanoTime();
+			     solver5.solve();
+			     endTime = System.nanoTime();
+				 execTime = endTime - startTime;
+				
+				 // record last user
+				 if (i==numberOfModelsInTheCluster-1 && numberOfModelsInTheCluster>1){
+					 statisticsOfModel.add(execTime);
+					 String measures1 = solver5.getMeasures().toOneLineString();
+					 System.out.println("Cluster-"+k+", "+measures1);
+				 }
+				 
+				// 5- SOLVE WITH HEURISTIC
+				 Solver solver6 = model6.chocoModel.getSolver();
+				 solver6.setSearch(intVarSearch(
+		                 
+						 // selects the variable of smallest domain size
+		                 new AntiFirstFail(model6.chocoModel),
+			    		 //new AntiFirstFail(model),
+		                 
+		                 // selects the smallest domain value (lower bound)
+		                 //new IntDomainMin(),
+		                 new IntDomainMax(),
+		                
+		                 // variables to branch on
+		                 model6.vars[0],model6.vars[1], model6.vars[2],model6.vars[3],model6.vars[4]
+				  ));
+				
+			     
+			     startTime = System.nanoTime();
+			     solver6.solve();
+			     endTime = System.nanoTime();
+				 execTime = endTime - startTime;
+				
+				 // record last user
+				 if (i==numberOfModelsInTheCluster-1 && numberOfModelsInTheCluster>1){
+					 statisticsOfModel.add(execTime);
+					 String measures1 = solver6.getMeasures().toOneLineString();
+					 System.out.println("Cluster-"+k+", "+measures1);
+				 }
+				 
+				 // LAST- SOLVE WITH GENETIC ALGORITHM FOR LAST USER
+				 if (i==numberOfModelsInTheCluster-1 && numberOfModelsInTheCluster>1){
+			    	 Solver solver3 = model3.chocoModel.getSolver();
+			    	 // getHeuristics
+					 solver3 = getHeuristics(model3,solver3,k,null);
+					 
+					 
+					 startTime = System.nanoTime();
+				     solver3.solve();
+				     endTime = System.nanoTime();
+					 execTime = endTime - startTime;
+					 statisticsOfModel.add(execTime);
+					 
+					 
+					 String measures1 = solver3.getMeasures().toOneLineString();
+					 System.out.println("Cluster-"+k+", "+measures1);
+			     }
+				 
+				
 			 }
-			 
-			 System.out.println("#######################################");
+			 // statistics for cluster
+		     statisticsOfClusters.add(statisticsOfModel);
+			
 		 }
 		 
+		 System.out.println("##############################################################################");
+		 System.out.println("### Number Of Clusters\t\t: "+numberOfclusters);
+		 for(int k =0;k<numberOfclusters;k++){
+			 System.out.println("### Number Of Models in Cl-" +(k+1)+"\t: "+clusters[k].length);
+		 }
+		
+		 System.out.println("### Number Of Models (Users) \t: "+numberOfmodels);
+		 System.out.println("### Number Of Variables \t: "+numberOfvars);
+		 System.out.println("### Max Domain Size \t\t: "+maxDomainSize);
+		 System.out.println("### Number Of Heuristic \t:"+heuristics.size());
+		 for(int h =0;h<heuristics.size();h++){
+			 System.out.println("### Heuristic-" +(h+1)+"  \t\t: "+heuristics.get(h));
+		 }
+		 System.out.println("##############################################################################");
+		 System.out.println("################################### RESULTS ##################################");
+		
+		 String firstLine = "################\t";
+		 for(int h =0;h<heuristics.size();h++){
+			 firstLine += (h+1) +"\t";
+		 }
+		 System.out.println(firstLine);
+		 
+		 for(int k =0;k<numberOfclusters;k++){
+			 String toPrint = "### Cluster-"+(k+1)+"\t:\t";
+			 List <String> linetoCSV = new ArrayList<>();
+			 for(Long element:statisticsOfClusters.get(k)){
+				 toPrint += element+"\t";
+				 linetoCSV.add(element.toString());
+			 }
+			 System.out.println(toPrint);
+			 
+			 boolean lastline = false;
+			 if(currentTest==(testSize-1)&& k==numberOfclusters-1)
+				 lastline=true;
+			 writeCSV(linetoCSV,lastline);
+		 }
+		 System.out.println("##############################################################################");
+		 
+	 }
+	 public static void writeCSV(List<String> line, boolean last){
+		 try {
+			 File file = new File("kmeans2\\seda\\outputs\\TestHeuristics.csv");
+				// if file doesnt exists, then create it
+			 if (!file.exists()) {
+					file.createNewFile();
+					
+			 }
+			 if(writer==null)
+				 writer = new FileWriter(file.getPath());
+			 
+			 CSVUtils.writeLine(writer,line);
+
+			 if(last){
+			     writer.flush();
+			     writer.close();
+			 }
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	 }
 	 
 	 public static void testKMeans2(){
@@ -426,11 +600,14 @@ public class Test {
 			}
 	 }
 
-	 public static List<Model> getModelsforProblem(int numberOfVars,int numberOfModels, int maxDomainSize){
+	 public static List<UserModel> getModelsforProblem(int numberOfVars,int numberOfModels, int maxDomainSize){
 		 
-		 List <Model> models = new ArrayList<Model>();
+		 Model testmodel = new Model();
+		 
+		 
+		 modelsOfTheSameProblem = new ArrayList<UserModel>(numberOfModels);
 		 Random rand = new Random();
-		 
+		 IntVar [] varstest = new IntVar[numberOfVars];
 		 int[] DomainUpperValues = new int[numberOfVars];
 		 
 		 for (int i =0;i<numberOfVars;i++){
@@ -441,10 +618,13 @@ public class Test {
 		 
 		 
 		 for (int i =0;i<numberOfModels;i++){
-			 Model model = new Model("Model#"+ i);
-			// System.out.println("##########");
-			// System.out.println("Model#"+ i);
-			 vars[i] = new IntVar[numberOfVars];
+			 
+			 //usermodel.chocoModel = new Model("Model#"+ i);
+			 // System.out.println("##########");
+			 // System.out.println("Model#"+ i);
+			 //vars[i] = new IntVar[numberOfVars];
+			 
+			 testmodel = new Model("Model#"+ i);
 			 
 			 
 			// System.out.println("SET VARIABLES and VALUES of the Models");
@@ -453,12 +633,12 @@ public class Test {
 				 // if variable is set by user
 				 if(rand.nextBoolean()) {
 					 // set a value for this variable
-					 vars[i][j] =  model.intVar("v"+j, rand.nextInt(DomainUpperValues[j]+1));
+					 varstest[j] =  testmodel.intVar("v"+j, rand.nextInt(DomainUpperValues[j]+1));
 					
 				 } 
 				 else{
 					 // set the domain of this variable
-					 vars[i][j] =  model.intVar("v"+j, 0, DomainUpperValues[j]);
+					 varstest[j] =  testmodel.intVar("v"+j, 0, DomainUpperValues[j]);
 					 
 				 }
 				// System.out.println(vars[i][j]);
@@ -467,39 +647,40 @@ public class Test {
 			
 			//System.out.println("SET constraints of the this Problem");
 			// SET constraints of the this problem
-			if(numberOfVars>3){
-				 model.ifThen(
-						   model.arithm(vars[i][0],"<",vars[i][1]),
-						   model.arithm(vars[i][0],"=",vars[i][2])
-				 );
-				// System.out.println(model.getCstrs()[0].toString());
-			}
+			 
+			Constraint ifcont = testmodel.arithm(varstest[numberOfvars-1],"<",varstest[numberOfvars-2]);
+			Constraint thencont = testmodel.arithm(varstest[numberOfvars-1],"=",varstest[numberOfvars-3]);
 			
-			models.add(model);
+			UserModel usermodel = new UserModel("Model#"+ i,varstest,ifcont,thencont);
+			
+				// System.out.println(model.getCstrs()[0].toString());
+			
+			modelsOfTheSameProblem.add(usermodel);
 			//System.out.println("##########");
 		 }
 		 //System.out.println("#######################################");
 		 java.util.Date date= new java.util.Date();
 		 long time = date.getTime();
 		 modelsName = "SedasTestModels-"+time;
+		 
 		 writeToFile();
-		 return models;
+		 return modelsOfTheSameProblem;
 	 }
 	 
 	 public static void writeToFile(){
 		    List<String> lines = new ArrayList<String>();
 		    String str = "";
-		    int val = -1;
+		    int val = -1000000;
 		    int size = -1;
 		    
 		    for (int i=0;i<numberOfmodels;i++){
 		    	str = "";
 		   		for(int j=0;j<numberOfvars;j++){
-		   			size = vars[i][j].getDomainSize();
+		   			size = modelsOfTheSameProblem.get(i).vars[j].getDomainSize();
 		   			if(size==1)
-		   				val = vars[i][j].getValue();
+		   				val = modelsOfTheSameProblem.get(i).vars[j].getValue();
 		   			else
-		   				val = -1;
+		   				val = -1000000;
 		   			str += val+",";
 		   		}
 		   		str += i+"\n";
@@ -568,7 +749,7 @@ public class Test {
 		 }
 	 }
 
-	 public static Solver getHeuristics(int modelIndex, Solver solver, int ClusterIndex, int[] varOrder){
+	 public static Solver getHeuristics(UserModel userModel, Solver solver, int ClusterIndex, int[] varOrder){
 		 
 		 int [] variableOrder = null;
 		 VariableSelector varSelector; 
@@ -582,15 +763,15 @@ public class Test {
 			  final int [] ord = variableOrder;
 			  varSelector =(VariableSelector<IntVar>) variables -> {
 					 	int varIndex = 0;
-					 	for(int i =0;i<vars[modelIndex].length;i++){
+					 	for(int i =0;i<userModel.vars.length;i++){
 			                varIndex = ord[i];
-			                return vars[modelIndex][i];
+			                return userModel.vars[i];
 			            }
 			            return null;
 			 };
 		 }
 		 else{
-			 varSelector = new FirstFail(modelsOfTheSameProblem.get(modelIndex));
+			 varSelector = new FirstFail(userModel.chocoModel);
 		 }
 		 
 		 solver.setSearch(intVarSearch(
@@ -602,7 +783,7 @@ public class Test {
                  //new IntDomainMax(),
                 
                  // variables to branch on
-                 vars[modelIndex][0],vars[modelIndex][1], vars[modelIndex][2], vars[modelIndex][3], vars[modelIndex][4]
+                 userModel.vars[0],userModel.vars[1], userModel.vars[2], userModel.vars[3], userModel.vars[4]
 		));
 		    
 		return solver;

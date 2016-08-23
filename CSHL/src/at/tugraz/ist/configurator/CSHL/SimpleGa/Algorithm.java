@@ -1,5 +1,7 @@
 package at.tugraz.ist.configurator.CSHL.SimpleGa;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Algorithm {
@@ -15,8 +17,8 @@ public class Algorithm {
     /* Public methods */
     
     // Evolve a population
-    public static Population evolvePopulation(Population pop, int clusterIndex) {
-    	System.out.println("evolvePopulation");
+    public static Population evolvePopulation(Population pop, int clusterIndex, int maxDomain) {
+    	
     	geneSize = pop.getIndividual(0).size();
         Population newPopulation = new Population(pop.size(),geneSize ,false, clusterIndex);
 
@@ -33,23 +35,25 @@ public class Algorithm {
             elitismOffset = 0;
         }
         
-        System.out.println("crossover");
+        //System.out.println("crossover");
         // Loop over the population size and create new individuals with
         // crossover
         for (int i = elitismOffset; i < pop.size(); i++) {
             Individual indiv1 = tournamentSelection(pop,clusterIndex);
+            
             Individual indiv2 = tournamentSelection(pop,clusterIndex);
+           
             Individual newIndiv = crossover(indiv1, indiv2, clusterIndex);
             newPopulation.saveIndividual(i, newIndiv);
         }
-        System.out.println("endofcrossover");
+        //System.out.println("endofcrossover");
         
-        System.out.println("Mutate population");
+        //System.out.println("Mutate population");
         // Mutate population
         for (int i = elitismOffset; i < newPopulation.size(); i++) {
             mutate(newPopulation.getIndividual(i));
         }
-        System.out.println("endof Mutate");
+        //System.out.println("endof Mutate");
 
         return newPopulation;
     }
@@ -59,35 +63,43 @@ public class Algorithm {
         
     	Individual newSol = new Individual(indiv1.size(),clusterIndex);
     	//newSol.generateIndividual(indiv1.size(),clusterIndex);
-        boolean [] isIncluded = new boolean[indiv1.size()];
+        boolean[] usedValues = new boolean[indiv1.size()];
+        int index =0;
+        int next1=0;
+        int next2=0;
+        
         // Loop through genes
-        for (int i = 0; i < indiv1.size(); i++) {
+        while(index<indiv1.size()) {
+        	
+        	if(next1>indiv1.size()-1)
+        		next1=0;
+        	if(next2>indiv1.size()-1)
+            	next2=0;
+        
             // Crossover
             if (Math.random() <= uniformRate) {
-            	int index = i;
-            	newSol.setGene(i, indiv1.getGene(index));
-            	while(isIncluded[indiv1.getGene(index)]){
-            		newSol.setGene(i, indiv1.getGene(index));
-            		index++;
-            		if(index==indiv1.size())
-            			index=0;
+            	if(usedValues[indiv1.getGene(next1)]){
+            		next1++;
             	}
-            	isIncluded[indiv1.getGene(index)] = true;
+            	else{
+	            	newSol.setGene(index, indiv1.getGene(next1));
+	            	usedValues[indiv1.getGene(next1)] = true;
+	            	index++;
+            	}
             } else {
-                int index = i;
-                newSol.setGene(i, indiv2.getGene(index));
-            	while(isIncluded[indiv2.getGene(index)]){
-            		newSol.setGene(i, indiv2.getGene(index));
-            		index++;
-            		if(index==indiv1.size())
-            			index=0;
+                if(usedValues[indiv2.getGene(next2)]){
+            		next2++;
             	}
-            	isIncluded[indiv2.getGene(index)] = true;
+                else{
+	            	newSol.setGene(index, indiv2.getGene(next2));
+	            	usedValues[indiv2.getGene(next2)] = true;
+	            	index++;
+                }
             }
         }
         return newSol;
     }
-
+    
     // Mutate an individual
     private static void mutate(Individual indiv) {
     	Random rand = new Random();
@@ -95,9 +107,18 @@ public class Algorithm {
         for (int i = 0; i < indiv.size(); i++) {
             if (Math.random() <= mutationRate) {
                 // change order among genes
-                int gene = rand.nextInt(indiv.size());
-                indiv.setGene(0, indiv.getGene(i));
-                indiv.setGene(i, gene);
+                //int gene = rand.nextInt(indiv.size());
+            	int nextIndex= i-1;
+            	if(i==0)
+            		nextIndex = i+1;
+            	
+            	int oldI = indiv.getGene(i);
+            	
+            	// nextIndex is copied to i
+                indiv.setGene(i, indiv.getGene(nextIndex));
+                
+                // old i is placed to nextIndex
+                indiv.setGene(nextIndex, oldI);
             }
         }
     }
@@ -106,6 +127,7 @@ public class Algorithm {
     private static Individual tournamentSelection(Population pop,int clusterIndex) {
         // Create a tournament population
         Population tournament = new Population(tournamentSize, geneSize, true, clusterIndex);
+        
         // For each place in the tournament get a random individual
         for (int i = 0; i < tournamentSize; i++) {
             int randomId = (int) (Math.random() * pop.size());
