@@ -16,11 +16,11 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/spolater/Desktop/javaml-0.1.7/javaml-0.1.7.jar"/>
-	<classpathentry kind="lib" path="C:/Users/spolater/Desktop/javaml-0.1.7/lib/ajt-2.9.jar"/>
-	<classpathentry kind="lib" path="C:/Users/spolater/Desktop/javaml-0.1.7/lib/commons-math-1.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/spolater/Desktop/javaml-0.1.7/lib/Jama-1.0.2.jar"/>
-	<classpathentry kind="lib" path="C:/Users/spolater/Desktop/javaml-0.1.7/lib/libsvm.jar"/>
-	<classpathentry kind="lib" path="C:/Users/spolater/Desktop/javaml-0.1.7/lib/weka.jar"/>
+	<classpathentry kind="lib" path="lib/ajt-1.20.jar"/>
+	<classpathentry kind="lib" path="lib/commons-math-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/Jama-1.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/libsvm.jar"/>
+	<classpathentry kind="lib" path="lib/weka.jar"/>
+	<classpathentry kind="lib" path="javaml-0.1.5.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
