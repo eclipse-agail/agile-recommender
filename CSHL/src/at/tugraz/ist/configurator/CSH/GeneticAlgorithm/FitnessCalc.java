@@ -1,5 +1,6 @@
 package at.tugraz.ist.configurator.CSH.GeneticAlgorithm;
 
+import at.tugraz.ist.configurator.CSH.LearningHeuristics;
 import at.tugraz.ist.configurator.CSH.Test;
 
 public class FitnessCalc {
@@ -35,7 +36,7 @@ public class FitnessCalc {
     // Calculate inidividuals fittness by comparing it to our candidate solution
     static long getFitness(Individual individual) {
         
-    	long fitness = Test.testIndividualOverCluster(individual, individual.clusterID);
+    	long fitness = LearningHeuristics.testIndividualOverCluster(individual, individual.clusterID);
   
         return fitness;
     }
