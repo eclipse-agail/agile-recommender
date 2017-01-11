@@ -2,13 +2,26 @@ package at.tugraz.ist.agileconfigurator.resourceoptimizer.models;
 
 public class App {
 	
+	
+	public App(boolean Test) {
+		this.setName("deneme");
+		this.setXorConnectivitiyProtocols(new int[]{1,2});
+		this.setXorDataEncodingProtocols(new int[]{1,2});
+	
+	}
+	
+	public App() {
+		super();
+	}
+	
 	private String name;
 	
-	private Enum_DataEncodingProtocols [] xorDataEncodingProtocols;
-	//private DataEncodingProtocols [] mandatoryDataEncodingProtocols;
+	//private Enum_DataEncodingProtocols [] xorDataEncodingProtocols;
+	private int [] xorDataEncodingProtocols;
 	
-	private Enum_ConnectivityProtocols [] xorConnectivitiyProtocols;
-	//private DataEncodingProtocols [] mandatoryConnectivitiyProtocols;
+	//private Enum_ConnectivityProtocols [] xorConnectivitiyProtocols;
+	private int [] xorConnectivitiyProtocols;
+	
 	private String url;
 	
 	private Enum_DataEncodingProtocols inUse_DataEncodingProtocol;
@@ -20,16 +33,16 @@ public class App {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Enum_DataEncodingProtocols[] getXorDataEncodingProtocols() {
+	public int[] getXorDataEncodingProtocols() {
 		return xorDataEncodingProtocols;
 	}
-	public void setXorDataEncodingProtocols(Enum_DataEncodingProtocols[] xorDataEncodingProtocols) {
+	public void setXorDataEncodingProtocols(int[] xorDataEncodingProtocols) {
 		this.xorDataEncodingProtocols = xorDataEncodingProtocols;
 	}
-	public Enum_ConnectivityProtocols[] getXorConnectivitiyProtocols() {
+	public int[] getXorConnectivitiyProtocols() {
 		return xorConnectivitiyProtocols;
 	}
-	public void setXorConnectivitiyProtocols(Enum_ConnectivityProtocols[] xorConnectivitiyProtocols) {
+	public void setXorConnectivitiyProtocols(int[] xorConnectivitiyProtocols) {
 		this.xorConnectivitiyProtocols = xorConnectivitiyProtocols;
 	}
 	public String getUrl() {

@@ -3,19 +3,25 @@ package at.tugraz.ist.agileconfigurator.resourceoptimizer.models;
 public class ProtocolsKnowledgeBase {
 	
 	// DATA ENCODING
-	int numberOfDataEncodingProtocols = 4;
+	public static int  numberOfDataEncodingProtocols = 4;
 	
-	public Protocol [] dataProtocolKnowledgeBase= new Protocol [numberOfDataEncodingProtocols];
+	public static Protocol [] dataProtocolKnowledgeBase= new Protocol [numberOfDataEncodingProtocols];
 	
 	// CONNECTIVITY
-	int numberOfConnectivityProtocols = 4;
+	public static int  numberOfConnectivityProtocols = 4;
 		
-	public Protocol [] connetivityProtocolKnowledgeBase= new Protocol [numberOfConnectivityProtocols];
+	public static Protocol [] connetivityProtocolKnowledgeBase= new Protocol [numberOfConnectivityProtocols];
 	
 	public ProtocolsKnowledgeBase() {
 		super();
 		
-		// DATA ENCODING PROTOCOLS
+		for (int i=0;i<numberOfDataEncodingProtocols;i++)
+			this.dataProtocolKnowledgeBase[i] = new Protocol();
+		
+		for (int i=0;i<numberOfConnectivityProtocols;i++)
+			this.connetivityProtocolKnowledgeBase[i] = new Protocol();
+		
+	    // DATA ENCODING PROTOCOLS
 		//0		CBOR  				+++
 		//1		XML					++
 		//2		JSON				+

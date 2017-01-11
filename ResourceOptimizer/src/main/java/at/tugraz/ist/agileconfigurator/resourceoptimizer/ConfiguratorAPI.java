@@ -29,9 +29,8 @@ public class ConfiguratorAPI {
     public GatewayProfile getResourceOptimization(@RequestBody GatewayProfile profile) {
     	
     	Optimizer optimizer = new Optimizer(profile);
-    	
     	return optimizer.getconfiguredProfile();
-        
+      
     }
 
    
