@@ -46,7 +46,7 @@ public class ProtocolsKnowledgeBase {
 		// CONNECTIVITIY PROTOCOLS
 		connetivityProtocolKnowledgeBase[0].setCost(2);
 		connetivityProtocolKnowledgeBase[1].setCost(5);
-		connetivityProtocolKnowledgeBase[2].setCost(6);
+		connetivityProtocolKnowledgeBase[2].setCost(1);
 		connetivityProtocolKnowledgeBase[3].setCost(8);
 		
 		connetivityProtocolKnowledgeBase[0].setPerformance(2);
