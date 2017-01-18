@@ -45,113 +45,139 @@ public class Optimizer {
 	}
 	public void optimizeProtocols(){
 		
-		// add constraint: more conn protocols are activated, more energy is consumed
-        Model model = new Model("OptimizeProtocols");
-        App [] appArray = profile.getInstalledApps();
-        
-        //App [] appArray = new App[2]; 
-        //appArray[0]= new App(true);
-        //appArray[1]= new App(true);
-        
-        int dimensionsOfProtocol = ProtocolsKnowledgeBase.dimensionsOfProtocol;
-        
+		App [] appArray = profile.getInstalledApps();
+		int dimensionsOfProtocol = ProtocolsKnowledgeBase.dimensionsOfProtocol;
+		 
         int [] userweights = new int[dimensionsOfProtocol];
-        // TODO Seda: update user weights by taking from profile
-        Arrays.fill(userweights, 0, dimensionsOfProtocol, 1);
-        userweights[2] = -1;
+        userweights[0] = profile.getUserRequirementWeight_Performance();
+        userweights[1] = profile.getUserRequirementWeight_Reliability();
+        userweights[2] = profile.getUserRequirementWeight_Cost();
      
-        // VARIABLES
         
-        // Selected protocols of Apps
-        IntVar [] dataEncodingProtocolOfApp = new IntVar[appArray.length]; 	
-        IntVar [] connectivitiyProtocolOfApp = new IntVar[appArray.length]; 
-        
-        IntVar  [][] data_utilities = new IntVar[appArray.length][];
-        IntVar  [][] conn_utilities = new IntVar[appArray.length][];
-        
-        
-        // Utilities of Apps
-        IntVar [] totalDataUtilitiesOfApps = model.intVarArray("totalDataUtilitiesOfApps",appArray.length,0,100);
-        IntVar [] totalConnUtilitiesOfApps = model.intVarArray("totalConnUtilitiesOfApps",appArray.length,0,100);
-        IntVar [] totalUtilitiesOfApps = model.intVarArray("totalUtilitiesOfApps",appArray.length,0,100);
-        
-      
-        // SUM OF totalUtilityofApps 
-        IntVar totalUtility= model.intVar("totalUtility",0,100) ;
-        
-        
-        // CONSTRAINTS
-        
-        // calculate for each app
+		
+		// calculate max utility for each app
         for (int i=0;i<appArray.length;i++){
-        	
+			// add constraint: more conn protocols are activated, more energy is consumed
+	        Model model = new Model("OptimizeProtocols");
+	        
+	        // VARIABLES
+	        
+	        // Selected protocols of Gateway
+	        IntVar dataEncodingProtocolOfGateway = model.intVar("dataEncodingProtocolOfGateway",profile.getSupportedDataEncodingProtocolsOfGateway());
+	        IntVar connectivitiyProtocolOfGateway = model.intVar("connectivitiyProtocolOfGateway",profile.getSupportedConnectivityProtocolsOfGateway()) ;
+	        
+	        
+	        // Selected protocols of Apps
+	        IntVar dataEncodingProtocolOfApp;	
+	        IntVar connectivitiyProtocolOfApp; 
+	//        
+	//        // Utilities of Apps for each supported protocols
+	//        IntVar  [][] data_utilities = new IntVar[appArray.length][3];
+	//        IntVar  [][] conn_utilities = new IntVar[appArray.length][3];
+	//        
+	        // Utilities of Apps
+	        IntVar totalDataUtilitiesOfApps = model.intVar("totalDataUtilitiesOfApps",0,100);
+	        IntVar totalConnUtilitiesOfApps = model.intVar("totalConnUtilitiesOfApps",0,100);
+	        IntVar totalUtilitiesOfApps = model.intVar("totalUtilitiesOfApps",0,100);
+	        
+	        // SUM OF totalUtilityofApps 
+	        IntVar totalUtility= model.intVar("totalUtility",0,100) ;
+	        
+	        // CONSTRAINTS
         	// initialize CHOCO IntVar domain values
-        	int dPdomainSize = appArray[i].getXorDataEncodingProtocols().length;
-        	dataEncodingProtocolOfApp[i] = model.intVar("dataEncodingProtocolsOfApp-"+i,appArray[i].getXorDataEncodingProtocols());
-        	int cPdomainSize = appArray[i].getXorConnectivitiyProtocols().length;
-        	connectivitiyProtocolOfApp[i]=  model.intVar("connectivitiyProtocolsOfApps-"+i,appArray[i].getXorConnectivitiyProtocols());
+        	int dPdomainSize = appArray[i].getSupportedDataEncodingProtocolsOfApp().length;
+        	dataEncodingProtocolOfApp = model.intVar("dataEncodingProtocolsOfApp",appArray[i].getSupportedDataEncodingProtocolsOfApp());
+        	int cPdomainSize = appArray[i].getSupportedConnectivitiyProtocolsOfApp().length;
+        	connectivitiyProtocolOfApp=  model.intVar("connectivitiyProtocolsOfApp",appArray[i].getSupportedConnectivitiyProtocolsOfApp());
         	// end 
         	
-        	
         	// Create temp_totalDataUtil
-        	data_utilities[i] =  new IntVar[dPdomainSize];
+        	IntVar[] data_utilities=  new IntVar[dPdomainSize];
         	for(int p1=0;p1<dPdomainSize;p1++){
         		
-        		int dpID = appArray[i].getXorDataEncodingProtocols()[p1];
+        		int dpID = appArray[i].getSupportedDataEncodingProtocolsOfApp()[p1];
         		int perf_dpID = ProtocolsKnowledgeBase.dataProtocolKnowledgeBase[dpID].getPerformance();
         		int rel_dpID = ProtocolsKnowledgeBase.dataProtocolKnowledgeBase[dpID].getReliability();
         		int cost_dpID = ProtocolsKnowledgeBase.dataProtocolKnowledgeBase[dpID].getCost();;
         		int tempDataUtil = perf_dpID*userweights[0] + rel_dpID*userweights[1] + cost_dpID*userweights[2];
-        		data_utilities[i][p1] = model.intVar("data_utilities-"+p1,tempDataUtil);
+        		data_utilities[p1] = model.intVar("data_utilities-"+p1,tempDataUtil);
         				
         		model.ifThen(
-          			   model.arithm(dataEncodingProtocolOfApp[i],"=",dpID),
+          			   model.arithm(dataEncodingProtocolOfApp,"=",dpID),
           			   // update the domain values of total_utility
-          			   model.sum(ArrayUtils.toArray(data_utilities[i][p1]),"=",totalDataUtilitiesOfApps[i])
+          			   model.sum(ArrayUtils.toArray(data_utilities[p1]),"=",totalDataUtilitiesOfApps)
              			);
-             	
+        	
+        		model.ifThen(
+           			   model.arithm(dataEncodingProtocolOfApp,"=",dpID),
+           			   // update the domain values of total_utility
+           			   model.arithm(dataEncodingProtocolOfGateway,"=",dpID)
+              			);
+        		
         	}
+        	
         	// end of Create temp_totalDataUtil
         	
         	// Create temp_totalDataUtil
-        	conn_utilities[i] = new IntVar[cPdomainSize];
+        	IntVar[] conn_utilities = new IntVar[cPdomainSize];
         	for(int p1=0;p1<cPdomainSize;p1++){
         		
-        		int cpID = appArray[i].getXorConnectivitiyProtocols()[p1];
+        		int cpID = appArray[i].getSupportedConnectivitiyProtocolsOfApp()[p1];
         		int perf_cpID = ProtocolsKnowledgeBase.connetivityProtocolKnowledgeBase[cpID].getPerformance();
         		int rel_cpID = ProtocolsKnowledgeBase.connetivityProtocolKnowledgeBase[cpID].getReliability();
         		int cost_cpID = ProtocolsKnowledgeBase.connetivityProtocolKnowledgeBase[cpID].getCost();;
         		int tempConnUtil = perf_cpID*userweights[0] + rel_cpID*userweights[1] + cost_cpID*userweights[2];
-        		conn_utilities[i][p1] = model.intVar("conn_utilities-"+p1,tempConnUtil);
+        		conn_utilities[p1] = model.intVar("conn_utilities-"+p1,tempConnUtil);
         				
         		model.ifThen(
-          			   model.arithm(connectivitiyProtocolOfApp[i],"=",cpID),
+          			   model.arithm(connectivitiyProtocolOfApp,"=",cpID),
           			   // update the domain values of total_utility
-          			   model.sum(ArrayUtils.toArray(conn_utilities[i][p1]),"=",totalConnUtilitiesOfApps[i])
+          			   model.sum(ArrayUtils.toArray(conn_utilities[p1]),"=",totalConnUtilitiesOfApps)
              			);
+        		
+
+        		model.ifThen(
+           			   model.arithm(connectivitiyProtocolOfApp,"=",cpID),
+           			   // update the domain values of total_utility
+           			   model.arithm(connectivitiyProtocolOfGateway,"=",cpID)
+              			);
              	
         	}
         	// end of Create temp_totalDataUtil
         	
         	// sum APP and CONN utilities of the app
-        	model.sum(ArrayUtils.toArray(totalDataUtilitiesOfApps[i],totalConnUtilitiesOfApps[i]),"=",totalUtilitiesOfApps[i]).post();
+        	model.sum(ArrayUtils.toArray(totalDataUtilitiesOfApps,totalConnUtilitiesOfApps),"=",totalUtilitiesOfApps).post();
+        	
+        	Solution sol = model.getSolver().findOptimalSolution(totalUtilitiesOfApps, true);
+        	
+        	if(sol!=null){
+	    		System.out.println(sol);
+	    		this.configuredProfile.getInstalledApps()[i].setInUse_ConnectivitiyProtocol(sol.getIntVal(connectivitiyProtocolOfApp));
+	    		this.configuredProfile.getInstalledApps()[i].setInUse_DataEncodingProtocol(sol.getIntVal(dataEncodingProtocolOfApp));
+        	}
+        	else{
+	    		this.configuredProfile.getInstalledApps()[i].setInUse_ConnectivitiyProtocol(-1);
+	    		this.configuredProfile.getInstalledApps()[i].setInUse_DataEncodingProtocol(-1);
+        	}
+    		
         	
         } // end of calculate for each app
         
         
         // sum up utility values of  all apps into utilityValue
-        model.sum(totalUtilitiesOfApps,"=",totalUtility).post();	
+        //model.sum(totalUtilitiesOfApps,"=",totalUtility).post();	
         
 		/////////////////////////////////////////////////
 		// SOLVER ///////////////////////////////////////
 		/////////////////////////////////////////////////
-		Solution sol = model.getSolver().findOptimalSolution(totalUtility, true);
-		System.out.println(sol);
-        
-		for (int i=0;i<appArray.length;i++){
-			this.configuredProfile.getInstalledApps()[i].setInUse_ConnectivitiyProtocol(sol.getIntVal(connectivitiyProtocolOfApp[i]));
-			this.configuredProfile.getInstalledApps()[i].setInUse_DataEncodingProtocol(sol.getIntVal(dataEncodingProtocolOfApp[i]));
-		}
+		
+//        Solution sol = model.getSolver().findOptimalSolution(totalUtility, true);
+//		System.out.println(sol);
+//        
+//		for (int i=0;i<appArray.length;i++){
+//			this.configuredProfile.getInstalledApps()[i].setInUse_ConnectivitiyProtocol(sol.getIntVal(connectivitiyProtocolOfApp[i]));
+//			this.configuredProfile.getInstalledApps()[i].setInUse_DataEncodingProtocol(sol.getIntVal(dataEncodingProtocolOfApp[i]));
+//		}
 	}
 	
 }
