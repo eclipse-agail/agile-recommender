@@ -26,20 +26,20 @@ public class ProtocolsKnowledgeBase {
 	    // DATA ENCODING PROTOCOLS
 		// CBOR, XML, JSON, ProtocolBufers
 	
-		this.dataProtocolKnowledgeBase[0].setCost(3);
+		this.dataProtocolKnowledgeBase[0].setCost(1);
 		this.dataProtocolKnowledgeBase[1].setCost(2);
-		this.dataProtocolKnowledgeBase[2].setCost(1);
-		this.dataProtocolKnowledgeBase[3].setCost(2);
+		this.dataProtocolKnowledgeBase[2].setCost(9);
+		this.dataProtocolKnowledgeBase[3].setCost(1);
 		
 		
-		this.dataProtocolKnowledgeBase[0].setPerformance(4);
+		this.dataProtocolKnowledgeBase[0].setPerformance(9);
 		this.dataProtocolKnowledgeBase[1].setPerformance(6);
-		this.dataProtocolKnowledgeBase[2].setPerformance(7);
-		this.dataProtocolKnowledgeBase[3].setPerformance(9);
+		this.dataProtocolKnowledgeBase[2].setPerformance(1);
+		this.dataProtocolKnowledgeBase[3].setPerformance(8);
 		
-		this.dataProtocolKnowledgeBase[0].setReliability(4);
+		this.dataProtocolKnowledgeBase[0].setReliability(9);
 		this.dataProtocolKnowledgeBase[1].setReliability(2);
-		this.dataProtocolKnowledgeBase[2].setReliability(4);
+		this.dataProtocolKnowledgeBase[2].setReliability(2);
 		this.dataProtocolKnowledgeBase[3].setReliability(8);
 		
 		
@@ -48,17 +48,17 @@ public class ProtocolsKnowledgeBase {
 		
 		connetivityProtocolKnowledgeBase[0].setCost(2);
 		connetivityProtocolKnowledgeBase[1].setCost(5);
-		connetivityProtocolKnowledgeBase[2].setCost(1);
-		connetivityProtocolKnowledgeBase[3].setCost(8);
+		connetivityProtocolKnowledgeBase[2].setCost(7);
+		connetivityProtocolKnowledgeBase[3].setCost(2);
 		
-		connetivityProtocolKnowledgeBase[0].setPerformance(2);
+		connetivityProtocolKnowledgeBase[0].setPerformance(9);
 		connetivityProtocolKnowledgeBase[1].setPerformance(5);
-		connetivityProtocolKnowledgeBase[2].setPerformance(6);
+		connetivityProtocolKnowledgeBase[2].setPerformance(3);
 		connetivityProtocolKnowledgeBase[3].setPerformance(8);
 		
-		connetivityProtocolKnowledgeBase[0].setReliability(2);
+		connetivityProtocolKnowledgeBase[0].setReliability(9);
 		connetivityProtocolKnowledgeBase[1].setReliability(5);
-		connetivityProtocolKnowledgeBase[2].setReliability(6);
+		connetivityProtocolKnowledgeBase[2].setReliability(3);
 		connetivityProtocolKnowledgeBase[3].setReliability(8);
 		
 	}
