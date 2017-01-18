@@ -16,7 +16,6 @@ Example Input and Output:
 ```
 INPUT: 
 {
- 	"pluggedDevices": null,	
   	"supportedDataEncodingProtocolsOfGateway":[0,1,2,3],
   	"supportedConnectivityProtocolsOfGateway":[0,1,2,3],
     "userRequirementWeight_Performance": 1,
@@ -44,7 +43,6 @@ INPUT:
 OUTPUT:
 
 {
-    "pluggedDevices": null,
     "supportedDataEncodingProtocolsOfGateway": [
         0,
         1,

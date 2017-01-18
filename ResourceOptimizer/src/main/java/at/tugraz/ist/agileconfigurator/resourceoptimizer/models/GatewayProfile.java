@@ -2,21 +2,12 @@ package at.tugraz.ist.agileconfigurator.resourceoptimizer.models;
 
 public class GatewayProfile {
 	
-	private int[] pluggedDevices;
 	private int[] supportedDataEncodingProtocolsOfGateway;
 	private int[] supportedConnectivityProtocolsOfGateway;
 	int userRequirementWeight_Performance;
 	int userRequirementWeight_Reliability;
 	int userRequirementWeight_Cost;
 	private App[] installedApps;
-	
-	
-	public int[] getPluggedDevices() {
-		return pluggedDevices;
-	}
-	public void setPluggedDevices(int[] pluggedDevices) {
-		this.pluggedDevices = pluggedDevices;
-	}
 	
 	public int[] getSupportedDataEncodingProtocolsOfGateway() {
 		return supportedDataEncodingProtocolsOfGateway;
