@@ -23,14 +23,14 @@ INPUT:
     "userRequirementWeight_Cost": -1,
   	"installedApps":[ {
                         "name": "App-1",	
-                        "url":false,
+                        "url": null,
                         "supportedDataEncodingProtocolsOfApp":[0,2],
                         "supportedConnectivitiyProtocolsOfApp":[2,3],
                         "inUse_DataEncodingProtocol": null,
                    		"inUse_ConnectivitiyProtocol": null},
                      {
                         "name": "App-2",
-                       	"url":false,
+                       	"url": null,
                         "supportedDataEncodingProtocolsOfApp":[3,2],
                         "supportedConnectivitiyProtocolsOfApp":[1,3],
                         "inUse_DataEncodingProtocol": null,
@@ -61,7 +61,7 @@ OUTPUT:
     "installedApps": [
         {
             "name": "App-1",
-            "url": "false",
+            "url": null,
             "inUse_DataEncodingProtocol": 0,
             "inUse_ConnectivitiyProtocol": 3,
             "supportedDataEncodingProtocolsOfApp": [
@@ -75,7 +75,7 @@ OUTPUT:
         },
         {
             "name": "App-2",
-            "url": "false",
+            "url": null,
             "inUse_DataEncodingProtocol": 3,
             "inUse_ConnectivitiyProtocol": 3,
             "supportedDataEncodingProtocolsOfApp": [
