@@ -5,8 +5,8 @@ public class App {
 	
 	public App(boolean Test) {
 		this.setName("deneme");
-		this.setXorConnectivitiyProtocols(new int[]{1,2});
-		this.setXorDataEncodingProtocols(new int[]{1,2});
+		this.setXorConnectivitiyProtocols(new int[]{1,2,3,4});
+		this.setXorDataEncodingProtocols(new int[]{1,2,3,4});
 	
 	}
 	
@@ -24,8 +24,8 @@ public class App {
 	
 	private String url;
 	
-	private Enum_DataEncodingProtocols inUse_DataEncodingProtocol;
-	private Enum_ConnectivityProtocols inUse_ConnectivitiyProtocol;
+	private int inUse_DataEncodingProtocol;
+	private int inUse_ConnectivitiyProtocol;
 	
 	public String getName() {
 		return name;
@@ -51,16 +51,16 @@ public class App {
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	public Enum_DataEncodingProtocols getInUse_DataEncodingProtocol() {
+	public int getInUse_DataEncodingProtocol() {
 		return inUse_DataEncodingProtocol;
 	}
-	public void setInUse_DataEncodingProtocol(Enum_DataEncodingProtocols inUse_DataEncodingProtocol) {
+	public void setInUse_DataEncodingProtocol(int inUse_DataEncodingProtocol) {
 		this.inUse_DataEncodingProtocol = inUse_DataEncodingProtocol;
 	}
-	public Enum_ConnectivityProtocols getInUse_ConnectivitiyProtocol() {
+	public int getInUse_ConnectivitiyProtocol() {
 		return inUse_ConnectivitiyProtocol;
 	}
-	public void setInUse_ConnectivitiyProtocol(Enum_ConnectivityProtocols inUse_ConnectivitiyProtocol) {
+	public void setInUse_ConnectivitiyProtocol(int inUse_ConnectivitiyProtocol) {
 		this.inUse_ConnectivitiyProtocol = inUse_ConnectivitiyProtocol;
 	}
 

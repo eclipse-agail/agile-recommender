@@ -2,6 +2,8 @@ package at.tugraz.ist.agileconfigurator.resourceoptimizer.models;
 
 public class ProtocolsKnowledgeBase {
 	
+	public static int  dimensionsOfProtocol = 3;
+	
 	// DATA ENCODING
 	public static int  numberOfDataEncodingProtocols = 4;
 	
@@ -22,10 +24,8 @@ public class ProtocolsKnowledgeBase {
 			this.connetivityProtocolKnowledgeBase[i] = new Protocol();
 		
 	    // DATA ENCODING PROTOCOLS
-		//0		CBOR  				+++
-		//1		XML					++
-		//2		JSON				+
-		//3		ProtocolBuffers		++
+		// CBOR, XML, JSON, ProtocolBufers
+	
 		this.dataProtocolKnowledgeBase[0].setCost(3);
 		this.dataProtocolKnowledgeBase[1].setCost(2);
 		this.dataProtocolKnowledgeBase[2].setCost(1);
@@ -44,6 +44,8 @@ public class ProtocolsKnowledgeBase {
 		
 		
 		// CONNECTIVITIY PROTOCOLS
+		// NFC, Zigbee, BLE, WiFi
+		
 		connetivityProtocolKnowledgeBase[0].setCost(2);
 		connetivityProtocolKnowledgeBase[1].setCost(5);
 		connetivityProtocolKnowledgeBase[2].setCost(1);
