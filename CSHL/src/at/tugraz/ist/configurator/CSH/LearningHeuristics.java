@@ -23,15 +23,15 @@ public class LearningHeuristics {
 	 public static int[] geneToOrder(byte[]gene){
 		 // input : 010 01 1 -> v0:2, v1:1, v2:3
 		 // output: 102 -> order or variables
-		 int [] result = new int[Test.numberOfvars];
+		 int [] result = new int[TestCSH.numberOfvars];
 		 int index=0;
 		 int order=0;
-		 boolean [] orders = new boolean[Test.numberOfvars];
+		 boolean [] orders = new boolean[TestCSH.numberOfvars];
 		 Arrays.fill(orders, Boolean.FALSE);
 		 
-		 for(int i=0;i<Test.numberOfvars;i++){
+		 for(int i=0;i<TestCSH.numberOfvars;i++){
 			 // 5, 4 ,3, 2, 1
-			 int readNumberOfBytes = Test.numberOfvars-i;
+			 int readNumberOfBytes = TestCSH.numberOfvars-i;
 			
 			 for(int j=0;j<readNumberOfBytes;j++){
 				 if(gene[index+j]==1){
@@ -63,9 +63,9 @@ public class LearningHeuristics {
 				 
 			  // MODEL
 			  // run CSP over the models except the last one and take avg time
-			  for (int md=0;md<Test.clusters[clusterIndex].length-1;md++){
-					 int modelIndex = Test.clusters[clusterIndex][md];
-					 UserModel model = Test.modelsOfTheSameProblem.get(modelIndex);
+			  for (int md=0;md<TestCSH.clusters[clusterIndex].length-1;md++){
+					 int modelIndex = TestCSH.clusters[clusterIndex][md];
+					 UserModel model = TestCSH.modelsOfTheSameProblem.get(modelIndex);
 					 Solver solver = model.chocoModel.getSolver();
 			    	 
 					 // getHeuristics
@@ -77,8 +77,8 @@ public class LearningHeuristics {
 			  }
 			  
 			  // bu gen icin bu clusterda hesaplanan ortalama running time
-			  if (Test.clusters[clusterIndex].length-1>0){
-				  myPop.getIndividual(i).setFitness(totalRunningTimeForCluster/(Test.clusters[clusterIndex].length-1));
+			  if (TestCSH.clusters[clusterIndex].length-1>0){
+				  myPop.getIndividual(i).setFitness(totalRunningTimeForCluster/(TestCSH.clusters[clusterIndex].length-1));
 				  //System.out.println("GENE #"+indivdiaulIndex+" bu gen icin bu clusterda hesaplanan ortalama running time: "+clusterIndex+" :"+totalRunningTimeForCluster/(clusters[clusterIndex].length-1));
 			  }
 		 }
@@ -87,7 +87,7 @@ public class LearningHeuristics {
 	 public static long testIndividualOverCluster(Individual ind, int clusterIndex){
 		  //System.out.println("in testIndividualOverCluster: Cluster#"+clusterIndex);
 
-		 if (Test.clusters[clusterIndex].length-1<=0)
+		 if (TestCSH.clusters[clusterIndex].length-1<=0)
 			  return 0;
 		  
 		  	long totalRunningTimeForCluster = 0;
@@ -97,10 +97,10 @@ public class LearningHeuristics {
 				 
 			  // MODEL
 			  // run CSP over the models except the last one and take avg time
-			  for (int md=0;md<Test.clusters[clusterIndex].length-1;md++){
+			  for (int md=0;md<TestCSH.clusters[clusterIndex].length-1;md++){
 				  	 long startTime = System.nanoTime();
-				     int modelIndex = Test.clusters[clusterIndex][md];
-					 UserModel userModel = Test.modelsOfTheSameProblem.get(modelIndex);
+				     int modelIndex = TestCSH.clusters[clusterIndex][md];
+					 UserModel userModel = TestCSH.modelsOfTheSameProblem.get(modelIndex);
 					 Solver solver = userModel.chocoModel.getSolver();
 			    	 
 					 // getHeuristics
@@ -113,10 +113,10 @@ public class LearningHeuristics {
 			  }
 			  
 			  // bu gen icin bu clusterda hesaplanan ortalama running time
-			  fitness = totalRunningTimeForCluster/(Test.clusters[clusterIndex].length-1);
+			  fitness = totalRunningTimeForCluster/(TestCSH.clusters[clusterIndex].length-1);
 				  //System.out.println("GENE #"+ind.getGenes()+" bu gen icin bu clusterda hesaplanan ortalama running time: "+clusterIndex+" :"+totalRunningTimeForCluster/(clusters[clusterIndex].length-1));
 			  String geneStr ="";
-			  for(int i=0;i<Test.numberOfvars;i++){
+			  for(int i=0;i<TestCSH.numberOfvars;i++){
 				  geneStr += ind.getGenes()[i];
 			  }
 			  //System.out.println("GENE: "+geneStr+", Fitness +:"+fitness);
@@ -127,10 +127,10 @@ public class LearningHeuristics {
 	 public static void learnHeuristicsForClusters(){
 		 //System.out.println("in getOrders");
 		 //Find best variable ordering
-		 int sizeOfGene = Test.numberOfvars;
-		 Test.ordersOfVariables = new ArrayList<int[]>(Test.numberOfclusters);
-		 for(int v=0;v<Test.numberOfclusters;v++){
-			 Test.ordersOfVariables.add(new int[Test.numberOfvars]);
+		 int sizeOfGene = TestCSH.numberOfvars;
+		 TestCSH.ordersOfVariables = new ArrayList<int[]>(TestCSH.numberOfclusters);
+		 for(int v=0;v<TestCSH.numberOfclusters;v++){
+			 TestCSH.ordersOfVariables.add(new int[TestCSH.numberOfvars]);
 		 }
 		 
 		 // set target time (CSP running time)
@@ -139,17 +139,17 @@ public class LearningHeuristics {
 		 
 		 // FIND VARIABLE AND VALUE ORDERING FOR EACH CLUSTER
 		 // CLUSTER
-		 for (int cl=0;cl<Test.numberOfclusters;cl++){
+		 for (int cl=0;cl<TestCSH.numberOfclusters;cl++){
 			 
 			 //System.out.println("CLUSTER #"+cl);
 			 
-			 if(Test.clusters[cl].length<2){
+			 if(TestCSH.clusters[cl].length<2){
 				 continue;
 			 }
 			 // create population for each cluster
 			 
 			 
-			 Population myPop = new Population(Test.sizeOfPopulation,sizeOfGene,true,cl);
+			 Population myPop = new Population(TestCSH.sizeOfPopulation,sizeOfGene,true,cl);
 			 
 			 // testPopulationOverCluster(myPop,cl);
 			  
@@ -164,7 +164,7 @@ public class LearningHeuristics {
 			   
 			   //System.out.println("Start evolvePopulation");
 			   // generate new population for better results
-			   myPop = Algorithm.evolvePopulation(myPop,cl,Test.maxDomainSize); 
+			   myPop = Algorithm.evolvePopulation(myPop,cl,TestCSH.maxDomainSize); 
 			   //System.out.println("End evolvePopulation");
 			   // apply new test over new population
 			   // testPopulationOverCluster(myPop,cl);
@@ -177,7 +177,7 @@ public class LearningHeuristics {
 			 // SET VARIABLE ORDER FOR THIS CLUSTER
 			 //ordersOfVariables.set(cl, new int[numberOfvars]);
 			 //ordersOfVariables.add(new int[numberOfvars]);
-			 Test.ordersOfVariables.set(cl, varOrder);
+			 TestCSH.ordersOfVariables.set(cl, varOrder);
 		 }
 		 
 	 }
@@ -189,7 +189,7 @@ public class LearningHeuristics {
 		 
 		 if(varOrder!=null || ClusterIndex!=-1){
 			 if(varOrder==null){
-				 variableOrder = Test.ordersOfVariables.get(ClusterIndex);
+				 variableOrder = TestCSH.ordersOfVariables.get(ClusterIndex);
 			 }
 			 else 
 				 variableOrder = varOrder;

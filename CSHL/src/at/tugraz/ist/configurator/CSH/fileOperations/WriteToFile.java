@@ -6,8 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import at.tugraz.ist.configurator.CSH.Test;
+import at.tugraz.ist.configurator.CSH.TestCSH;
 
 public class WriteToFile {
 
@@ -19,12 +18,12 @@ public class WriteToFile {
 		    int val = -1000000;
 		    int size = -1;
 		    
-		    for (int i=0;i<Test.numberOfmodels;i++){
+		    for (int i=0;i<TestCSH.numberOfmodels;i++){
 		    	str = "";
-		   		for(int j=0;j<Test.numberOfvars;j++){
-		   			size = Test.modelsOfTheSameProblem.get(i).vars[j].getDomainSize();
+		   		for(int j=0;j<TestCSH.numberOfvars;j++){
+		   			size = TestCSH.modelsOfTheSameProblem.get(i).vars[j].getDomainSize();
 		   			if(size==1)
-		   				val = Test.modelsOfTheSameProblem.get(i).vars[j].getValue();
+		   				val = TestCSH.modelsOfTheSameProblem.get(i).vars[j].getValue();
 		   			else
 		   				val = -1000000;
 		   			str += val+",";
@@ -36,7 +35,7 @@ public class WriteToFile {
 				String basePath = new File("").getAbsolutePath();
 				System.out.println(basePath);
 				
-				File file = new File("kmeans2\\seda\\inputs\\"+Test.modelsName+".data");
+				File file = new File("kmeans2\\seda\\inputs\\"+TestCSH.modelsName+".data");
 
 				// if file doesnt exists, then create it
 				if (!file.exists()) {
@@ -67,14 +66,14 @@ public class WriteToFile {
 					file.createNewFile();
 					
 			 }
-			 if(Test.writer==null)
-				 Test.writer = new FileWriter(file.getPath());
+			 if(TestCSH.writer==null)
+				 TestCSH.writer = new FileWriter(file.getPath());
 			 
-			 CSVUtils.writeLine(Test.writer,line);
+			 CSVUtils.writeLine(TestCSH.writer,line);
 
 			 if(last){
-				 Test.writer.flush();
-				 Test.writer.close();
+				 TestCSH.writer.flush();
+				 TestCSH.writer.close();
 			 }
 
 		} catch (IOException e) {

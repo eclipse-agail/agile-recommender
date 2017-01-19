@@ -1,7 +1,7 @@
 package at.tugraz.ist.configurator.CSH.GeneticAlgorithm;
 
 import at.tugraz.ist.configurator.CSH.LearningHeuristics;
-import at.tugraz.ist.configurator.CSH.Test;
+import at.tugraz.ist.configurator.CSH.TestCSH;
 
 public class FitnessCalc {
 

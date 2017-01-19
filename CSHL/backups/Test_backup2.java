@@ -82,7 +82,7 @@ import net.sf.javaml.clustering.KMeans;
 import net.sf.javaml.core.Dataset;
 import net.sf.javaml.tools.data.FileHandler;
 
-public class Test {
+public class Test_backup2 {
 	
 	 /////////////////////////////////////////////////////////////////////
 	 ////////////// ALL VARIABLES OF THE TEST ARE HERE ///////////////////
@@ -132,7 +132,7 @@ public class Test {
 		 heuristics.add("AntiFirstFail and IntDomainMin");
 		 heuristics.add("FirstFail and IntDomainMax");
 		 heuristics.add("AntiFirstFail and IntDomainMax");
-		 heuristics.add("CHSL and IntDomainMin");
+		 heuristics.add("CHS and IntDomainMin");
 	     
 		 // getModelsforProblem(int numberOfVars,int numberOfModels, int maxDomainSize)
 		 modelsOfTheSameProblem = new ArrayList<UserModel>(numberOfmodels);

@@ -19,7 +19,7 @@ public class SampleCSPs {
 		 Model testmodel = new Model();
 		 
 		 
-		 Test.modelsOfTheSameProblem = new ArrayList<UserModel>(numberOfModels);
+		 TestCSH.modelsOfTheSameProblem = new ArrayList<UserModel>(numberOfModels);
 		 Random rand = new Random();
 		 IntVar [] varstest = new IntVar[numberOfVars];
 		 int[] DomainUpperValues = new int[numberOfVars];
@@ -62,23 +62,23 @@ public class SampleCSPs {
 			//System.out.println("SET constraints of the this Problem");
 			// SET constraints of the this problem
 			 
-			Constraint ifcont = testmodel.arithm(varstest[Test.numberOfvars-1],"<",varstest[Test.numberOfvars-2]);
-			Constraint thencont = testmodel.arithm(varstest[Test.numberOfvars-1],"=",varstest[Test.numberOfvars-3]);
+			Constraint ifcont = testmodel.arithm(varstest[TestCSH.numberOfvars-1],"<",varstest[TestCSH.numberOfvars-2]);
+			Constraint thencont = testmodel.arithm(varstest[TestCSH.numberOfvars-1],"=",varstest[TestCSH.numberOfvars-3]);
 			
 			UserModel usermodel = new UserModel("Model#"+ i,varstest,ifcont,thencont);
 			
 				// System.out.println(model.getCstrs()[0].toString());
 			
-			Test.modelsOfTheSameProblem.add(usermodel);
+			TestCSH.modelsOfTheSameProblem.add(usermodel);
 			//System.out.println("##########");
 		 }
 		 //System.out.println("#######################################");
 		 java.util.Date date= new java.util.Date();
 		 long time = date.getTime();
-		 Test.modelsName = "SedasTestModels-"+time;
+		 TestCSH.modelsName = "SedasTestModels-"+time;
 		 
 		 WriteToFile.writeToFile();
-		 return Test.modelsOfTheSameProblem;
+		 return TestCSH.modelsOfTheSameProblem;
 	 }
 
 }

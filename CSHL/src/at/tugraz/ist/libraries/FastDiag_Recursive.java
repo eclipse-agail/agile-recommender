@@ -22,7 +22,7 @@ public class FastDiag_Recursive {
      */
     public static List<Constraint> computeDiagnose(List<Constraint> C, List<Constraint> AC, Solver solver) {
                 
-        masterSolver = solver.duplicateModel();
+        masterSolver = solver.getModel().getSolver();
         
         /*
          * if isEmpty(C) return 0;
@@ -35,14 +35,14 @@ public class FastDiag_Recursive {
          * remove C from the solver
          */    
         for (Constraint c : C) {
-            solver.unpost(c);
+            solver.getModel().unpost(c);
         }
         
         /*
          * if inconsistent(AC - C) return 0;
          */
-        solver.getSearchLoop().reset();
-        Boolean foundSolution = solver.findSolution();
+        solver.reset();
+        Boolean foundSolution = solver.solve();
         if (!foundSolution) {
             return new ArrayList<Constraint>(); // empty list is equal to zero;
         } else {
@@ -70,8 +70,9 @@ public class FastDiag_Recursive {
          * if D != 0 and consistent(AC) return 0;
          */
         if (!D.isEmpty()) {
-            Solver solver = masterSolver.duplicateModel();
-            for (Constraint cSolver : solver.getCstrs()) {
+            //Solver solver = masterSolver.duplicateModel();
+        	Solver solver = masterSolver.getModel().getSolver();
+            for (Constraint cSolver : solver.getModel().getCstrs()) {
                 if (cSolver.getName().startsWith("c")) {
                     boolean foundConstraint = false;
                     for (Constraint cAC : AC) {
@@ -81,13 +82,13 @@ public class FastDiag_Recursive {
                         }
                     }
                     if (!foundConstraint) {
-                        solver.unpost(cSolver);
+                        solver.getModel().unpost(cSolver);
                     }
                 }
             }
-            FastDiag_Debug.debug(solver.getCstrs());
+            FastDiag_Debug.debug(solver.getModel().getCstrs());
             
-            solver.getSearchLoop().reset();
+            solver.reset();
             FastDiag_Debug.debug(String.valueOf("starttime: " + System.currentTimeMillis()));
             
             long startTime = System.currentTimeMillis();
@@ -97,7 +98,7 @@ public class FastDiag_Recursive {
                 }
             }
             
-            Boolean foundSolution = solver.findSolution();
+            Boolean foundSolution = solver.solve();
             FastDiag_Debug.debug(String.valueOf("endtime:   " + System.currentTimeMillis()));
             FastDiag_Debug.debug(" foundSolution: " + foundSolution);
             if (foundSolution) {

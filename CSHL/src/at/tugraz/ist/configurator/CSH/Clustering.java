@@ -20,7 +20,7 @@ public static void applyKMeans(){
 		        /* Load a dataset */
 		        Dataset data;
 				
-				data = FileHandler.loadDataset(new File("kmeans2/seda/inputs/"+Test.modelsName+".data"), Test.numberOfvars, ",");
+				data = FileHandler.loadDataset(new File("kmeans2/seda/inputs/"+TestCSH.modelsName+".data"), TestCSH.numberOfvars, ",");
 				
 		        /*
 		         * Create a new instance of the KMeans algorithm, with no options
@@ -35,8 +35,8 @@ public static void applyKMeans(){
 		        System.out.println("Cluster count: " + clusters.length);
 		        for(int i=0;i<clusters.length;i++){
 		        	
-		        	boolean dir = new File("kmeans2/seda/outputs/"+Test.modelsName).mkdir();
-		        	File file = new File("kmeans2/seda/outputs/"+Test.modelsName+"/Cluster"+i+".txt");
+		        	boolean dir = new File("kmeans2/seda/outputs/"+TestCSH.modelsName).mkdir();
+		        	File file = new File("kmeans2/seda/outputs/"+TestCSH.modelsName+"/Cluster"+i+".txt");
 
 					// if file doesnt exists, then create it
 					if (!file.exists()) {
@@ -57,13 +57,13 @@ public static void applyKMeans(){
  public static void getClusters(){
 		 
 		 // "kmeans2/seda/outputs/"+modelsName+"/Cluster"+i+".txt"
-	 	Test.clusters = new int [Test.numberOfclusters][];
+	 	TestCSH.clusters = new int [TestCSH.numberOfclusters][];
 		 
-		 for (int i=0;i<Test.numberOfclusters;i++){
+		 for (int i=0;i<TestCSH.numberOfclusters;i++){
 			 List<Integer> indexes = new ArrayList<Integer>();
 			 
 			 try {
-				 BufferedReader br = new BufferedReader(new FileReader("kmeans2/seda/outputs/"+Test.modelsName+"/Cluster"+i+".txt"));
+				 BufferedReader br = new BufferedReader(new FileReader("kmeans2/seda/outputs/"+TestCSH.modelsName+"/Cluster"+i+".txt"));
 			     StringBuilder sb = new StringBuilder();
 			     
 			     String line = br.readLine();
@@ -77,9 +77,9 @@ public static void applyKMeans(){
 			         // read next string
 			         line = br.readLine();
 			     }
-			     Test.clusters[i]= new int[indexes.size()];
+			     TestCSH.clusters[i]= new int[indexes.size()];
 			     for(int m=0;m<indexes.size();m++){
-			    	 Test.clusters[i][m]=indexes.get(m);
+			    	 TestCSH.clusters[i][m]=indexes.get(m);
 			     }
 			     String everything = sb.toString();
 			     br.close();
