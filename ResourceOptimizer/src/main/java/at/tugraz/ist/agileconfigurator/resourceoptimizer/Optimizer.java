@@ -34,6 +34,7 @@ public class Optimizer {
 	public Optimizer(GatewayProfile p) {
 		this.profile = p;
 		this.configuredProfile = p;
+		this.configuredProfile.setErrorMessage("");
 		optimizeProtocols();
 	}
 	
@@ -158,6 +159,7 @@ public class Optimizer {
         	else{
 	    		this.configuredProfile.getInstalledApps()[i].setInUse_ConnectivitiyProtocol(-1);
 	    		this.configuredProfile.getInstalledApps()[i].setInUse_DataEncodingProtocol(-1);
+	    		this.configuredProfile.setErrorMessage(this.configuredProfile.getErrorMessage()+"Warning: App-"+i+" could not be configured. It requires a Connectivity or Data Encoding Protocol which is not supported by the Gateway. ");
         	}
     		
         	

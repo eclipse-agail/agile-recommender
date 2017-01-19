@@ -9,6 +9,8 @@ public class GatewayProfile {
 	int userRequirementWeight_Cost;
 	private App[] installedApps;
 	
+	private String errorMessage;
+	
 	public int[] getSupportedDataEncodingProtocolsOfGateway() {
 		return supportedDataEncodingProtocolsOfGateway;
 	}
@@ -45,6 +47,12 @@ public class GatewayProfile {
 	}
 	public void setInstalledApps(App[] installedApps) {
 		this.installedApps = installedApps;
+	}
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
 	}
 	
 	

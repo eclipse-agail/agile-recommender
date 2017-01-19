@@ -16,7 +16,7 @@ Example Input and Output:
 ```
 INPUT: 
 {
-  	"supportedDataEncodingProtocolsOfGateway":[0,1,2,3],
+ 	"supportedDataEncodingProtocolsOfGateway":[1,3],
   	"supportedConnectivityProtocolsOfGateway":[0,1,2,3],
     "userRequirementWeight_Performance": 1,
     "userRequirementWeight_Reliability": 1,
@@ -35,7 +35,8 @@ INPUT:
                         "supportedConnectivitiyProtocolsOfApp":[1,3],
                         "inUse_DataEncodingProtocol": null,
                    		"inUse_ConnectivitiyProtocol": null}
-                    ]
+                    ],
+   "errorMessage": null
 }
 ```
 
@@ -44,9 +45,7 @@ OUTPUT:
 
 {
     "supportedDataEncodingProtocolsOfGateway": [
-        0,
         1,
-        2,
         3
     ],
     "supportedConnectivityProtocolsOfGateway": [
@@ -62,8 +61,8 @@ OUTPUT:
         {
             "name": "App-1",
             "url": null,
-            "inUse_DataEncodingProtocol": 0,
-            "inUse_ConnectivitiyProtocol": 3,
+            "inUse_DataEncodingProtocol": -1,
+            "inUse_ConnectivitiyProtocol": -1,
             "supportedDataEncodingProtocolsOfApp": [
                 0,
                 2
@@ -87,7 +86,8 @@ OUTPUT:
                 3
             ]
         }
-    ]
+    ],
+    "errorMessage": "Warning: App-0 could not be configured. It requires a Connectivity or Data Encoding Protocol which is not supported by the Gateway. "
 }
 ```
 
