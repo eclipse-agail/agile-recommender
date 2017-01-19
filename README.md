@@ -93,7 +93,7 @@ OUTPUT:
 
 ## Implemented Cases in the Resource Optimizer:
 
-* Case-1
+### Case-1: Optimize Apps
 - Goal: Update the configuration of each app on the gateway based on utility maximization for each
 - Apps support different Data encoding and Connectivity protocols,
 - Gateway support different Data encoding and Connectivity protocols,
