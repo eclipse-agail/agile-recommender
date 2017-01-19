@@ -87,7 +87,7 @@ OUTPUT:
             ]
         }
     ],
-    "errorMessage": "Warning: App-0 could not be configured. It requires a Connectivity or Data Encoding Protocol which is not supported by the Gateway. "
+    "errorMessage": "Warning: App-1 could not be configured. It requires a Connectivity or Data Encoding Protocol which is not supported by the Gateway. "
 }
 ```
 
