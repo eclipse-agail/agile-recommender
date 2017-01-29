@@ -111,3 +111,10 @@ It will be modified for AGILE specific domains to be able to integrate with Reso
 
 CSH is developed as a java-maven application. 
 Later it will be integrated into Resource Optimizer as a library.
+
+## CSD
+Cluster-Specific Heuristic Learning algorithm is applied to Diagnosis algorithms to increase the precision of the Diagnosis.
+
+
+CSD is developed as a java-maven application. It also uses Java-ML libraries which have to be used locally in the project. 
+Later it will be integrated into Resource Optimizer as a library.
