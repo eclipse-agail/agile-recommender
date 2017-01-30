@@ -156,7 +156,7 @@ public class LearningHeuristics {
 	 }
 	 
 	 // returns execution time
-	 public static long solveCSPwithChoco(CSP model, int [] variableOrder){
+	 public static float solveCSPwithChoco(CSP model, int [] variableOrder){
 		 
 		 long startTime = System.nanoTime();
 		 
@@ -174,12 +174,15 @@ public class LearningHeuristics {
 	 }
 	 
 	 // returns precision btw 0..1
-	 public static long diagnoseCSPwithFastDiag(CSP model, int [] variableOrder){
+	 public static float diagnoseCSPwithFastDiag(CSP model, int [] variableOrder){
+		 
+		 	 
 			 //System.out.println("Diagnose with fastdiag for variable order"+variableOrder[0]+variableOrder[1]); 
-			 long precision = (long) 0.0;
+		 	 float precision = (float) 0.0;
 			 List<Constraint> orderedUserConstraints = new ArrayList<Constraint>();
 			 List<Integer> userDiagnosis = new ArrayList<Integer>();
-			 
+			 userDiagnosis = model.getDiagnoseOfUser();
+
 			 List<Constraint> fastDiagDiagnosis  = new ArrayList<Constraint>();
 			 
 			 //System.out.println("Before FastDiag"); 
@@ -204,39 +207,69 @@ public class LearningHeuristics {
 				 }
 			 }
 			 
+
+//			 // TEST
+//		 		boolean res = model.chocoModel.getSolver().solve();
+//		 		model.chocoModel.unpost(orderedUserConstraints.get(0));
+//		 		model.chocoModel.getSolver().reset();
+//		 		res = model.chocoModel.getSolver().solve();
+//		 		model.chocoModel.unpost(orderedUserConstraints.get(1));
+//		 		model.chocoModel.getSolver().reset();
+//		 		res = model.chocoModel.getSolver().solve();
+//		 		model.chocoModel.unpost(orderedUserConstraints.get(2));
+//		 		model.chocoModel.getSolver().reset();
+//		 		res = model.chocoModel.getSolver().solve();
+//		 	 //
+//			 
+			 
 			 // ADD FASTDIAG HERE
 			 fastDiagDiagnosis = FastDiag_Recursive.computeDiagnose(orderedUserConstraints, AC, model);
 			 
-			 //System.out.println("After FastDiag"); 
-			 if (fastDiagDiagnosis!=null)
-				 
-				// changed variables
-				 userDiagnosis = model.getDiagnoseOfUser();
+			 
+			 
+			 int [] varID_ofDiagnoseAlgorithmArray = new int[fastDiagDiagnosis.size()];
+			 
+			 if (fastDiagDiagnosis!=null){
+				 System.out.println("####################################");
+				 System.out.println("FAST DIAG ALGORITHM DIAGNOSIS EVALUATION");
+				 System.out.println("User Model ID: "+model.originalIndex);
+				 System.out.println("FastDiag Diagnosis Size: "+fastDiagDiagnosis.size());
+				 System.out.println("Users Diagnosis Size: "+userDiagnosis.size());
 			 	
 			  	 if(userDiagnosis!=null)
 					 for (int m=0;m<userDiagnosis.size();m++)
 					 {
+						 int varID_userDiagnosis =  userDiagnosis.get(m);
 						 // SEARCH M in ALL DIAGNOSIS
 						 if(fastDiagDiagnosis!=null)
 							 for (int k=0;k<fastDiagDiagnosis.size();k++)
 							 {
-								 int varID_userDiagnosis =  userDiagnosis.get(m);
-								 int varID_ofDiagnoseAlgorithm = -1;
 								 int constrID_ofDiagnoseAlgorithm = -1;
+								 
 								 try{
 									 constrID_ofDiagnoseAlgorithm = Integer.valueOf(fastDiagDiagnosis.get(k).getName());
-									 varID_ofDiagnoseAlgorithm = Constraints_Singleton.getInstance().getConstraintList_extension__UserRequirements().get(constrID_ofDiagnoseAlgorithm).getVar_1_ID();
+									 varID_ofDiagnoseAlgorithmArray[k] = Constraints_Singleton.getInstance().getConstraintList_extension__UserRequirements().get(constrID_ofDiagnoseAlgorithm).getVar_1_ID();
 									 
-									 if (varID_userDiagnosis == varID_ofDiagnoseAlgorithm){
-										 precision += 1/userDiagnosis.size();
-										 if(precision==2)
-											 precision =2;
-										 break; // SEARCH FOR OTHER VARIABLE IN USER DIAG
+									 if (varID_userDiagnosis == varID_ofDiagnoseAlgorithmArray[k]){
+										 precision += (float)((float)1/(float)fastDiagDiagnosis.size());
+										 break; // SEARCH FOR OTHER VARIABLES IN USER DIAG
 									 }
-									 
 								 }catch(Exception ex){}
 							 }
 					 }
+			 	}
+			 
+			    
+			 	System.out.println("User Diagnosis: ");
+			 	for(int u=0;u<userDiagnosis.size();u++){System.out.print(" var-"+userDiagnosis.get(u));}
+			 	System.out.println();
+			 	
+			 	System.out.println("FastDiag Diagnosis: ");
+			 	for(int f=0;f<varID_ofDiagnoseAlgorithmArray.length;f++){System.out.print(" var-"+varID_ofDiagnoseAlgorithmArray[f]);}
+			 	System.out.println();
+			     
+				System.out.println("Precision: "+precision);
+				System.out.println("####################################");
 			
 			 return precision;
 		 }

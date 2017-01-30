@@ -73,6 +73,7 @@ public class CSP {
 	
 	private void createOriginalCSP (int[][] variables){
 		//vars = new IntVar[variables.length];
+		
 		chocoModel = new Model("OriginalCSP");
 		numberOfProducts = variables.length;
 		createNewVar(); // FIRST VAR is PRODUCT ID , varID = 0
@@ -111,7 +112,15 @@ public class CSP {
 			var.setID(index);
 			var.setType(0);
 			var.setLowerBound(0);
-			var.setUpperBound(1000);
+			
+			if(index==0){
+				// THIS IS SELECTED PRODUCT ID
+				// if numberofpoducts=5 then domain will be: 0..4
+				var.setUpperBound(numberOfProducts-1);
+			}
+			else{
+				var.setUpperBound(1000000);
+			}
 			setOfConstraintsAndVariables.addVar(var);
 			this.chocoModel = ChocoDuplications.addVariableToModel(this, index);
 		}
