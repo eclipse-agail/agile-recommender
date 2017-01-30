@@ -15,14 +15,14 @@ import org.chocosolver.solver.search.strategy.selectors.variables.FirstFail;
 import org.chocosolver.solver.search.strategy.selectors.variables.VariableSelector;
 import org.chocosolver.solver.variables.IntVar;
 
-import at.tugraz.ist.configurator.CSH.GeneticAlgorithm.Algorithm;
-import at.tugraz.ist.configurator.CSH.GeneticAlgorithm.FitnessCalc;
-import at.tugraz.ist.configurator.CSH.GeneticAlgorithm.Individual;
-import at.tugraz.ist.configurator.CSH.GeneticAlgorithm.Population;
-import at.tugraz.ist.libraries.ChocoExtensions.CSP;
-import at.tugraz.ist.libraries.ChocoExtensions.ChocoDuplications;
-import at.tugraz.ist.libraries.ChocoExtensions.Constraints_Singleton;
-import at.tugraz.ist.libraries.FastDiag.FastDiag_Recursive;
+import at.tugraz.ist.configurator.ChocoExtensions.CSP;
+import at.tugraz.ist.configurator.ChocoExtensions.ChocoDuplications;
+import at.tugraz.ist.configurator.ChocoExtensions.Constraints_Singleton;
+import at.tugraz.ist.configurator.FastDiag.FastDiag_Recursive;
+import at.tugraz.ist.configurator.GeneticAlgorithm.Algorithm;
+import at.tugraz.ist.configurator.GeneticAlgorithm.FitnessCalc;
+import at.tugraz.ist.configurator.GeneticAlgorithm.Individual;
+import at.tugraz.ist.configurator.GeneticAlgorithm.Population;
 
 public class LearningHeuristics {
 	
@@ -44,10 +44,13 @@ public class LearningHeuristics {
 	
 	 public static List<int []> learnHeuristicsForClusters(int vars, int [][]clus, List<CSP> csps){
 		 
+		 System.out.println("####################################");
+		 System.out.println("GENETIC ALGORITHM - USED PARAMETERS:");
 		 System.out.println("targetValueOfFitness: "+targetValueOfFitness);
 		 System.out.println("sizeOfPopulation: "+sizeOfPopulation);
 		 System.out.println("maxNumberOfGeneration: "+maxNumberOfGeneration);
 		 System.out.println("generationTimeOut: "+generationTimeOut);
+		 System.out.println("####################################");
 		 
 		 numberOfVariables = vars;
 		 clusters = clus;
@@ -72,7 +75,7 @@ public class LearningHeuristics {
 			 
 			 //System.out.println("CLUSTER #"+cl);
 			 
-			 if(clusters[cl].length<2){
+			 if(clusters[cl].length<0){
 				 continue;
 			 }
 			 // create population for each cluster
@@ -105,6 +108,7 @@ public class LearningHeuristics {
 			 // SET VARIABLE ORDER FOR THIS CLUSTER
 			 //ordersOfVariables.set(cl, new int[numberOfvars]);
 			 //ordersOfVariables.add(new int[numberOfvars]);
+			 System.out.println("Heuristic precision of Cluster-"+cl+" is "+myPop.getFittest().getFitness());
 			 ordersOfVariables.set(cl, varOrder);
 		 }
 		 return ordersOfVariables;
@@ -169,7 +173,7 @@ public class LearningHeuristics {
 		 return endTime-startTime;
 	 }
 	 
-	 // returns precision 0 or 1
+	 // returns precision btw 0..1
 	 public static long diagnoseCSPwithFastDiag(CSP model, int [] variableOrder){
 			 //System.out.println("Diagnose with fastdiag for variable order"+variableOrder[0]+variableOrder[1]); 
 			 long precision = (long) 0.0;
@@ -223,12 +227,14 @@ public class LearningHeuristics {
 									 constrID_ofDiagnoseAlgorithm = Integer.valueOf(fastDiagDiagnosis.get(k).getName());
 									 varID_ofDiagnoseAlgorithm = Constraints_Singleton.getInstance().getConstraintList_extension__UserRequirements().get(constrID_ofDiagnoseAlgorithm).getVar_1_ID();
 									 
-									 if (varID_userDiagnosis == varID_ofDiagnoseAlgorithm)
+									 if (varID_userDiagnosis == varID_ofDiagnoseAlgorithm){
 										 precision += 1/userDiagnosis.size();
+										 if(precision==2)
+											 precision =2;
+										 break; // SEARCH FOR OTHER VARIABLE IN USER DIAG
+									 }
 									 
 								 }catch(Exception ex){}
-								 
-								
 							 }
 					 }
 			
@@ -265,14 +271,14 @@ public class LearningHeuristics {
 		 return result;
 	 }
 
-	 public static long evaluateFitnessValueOfCluster(Individual ind, int clusterIndex){
+	 public static float evaluateFitnessValueOfCluster(Individual ind, int clusterIndex){
 		 //System.out.println("evaluateFitnessValueOfCluster: Cluster#"+clusterIndex);
 
 		 	if (clusters[clusterIndex].length<=0)
 			  return 0;
 		  
-		  	long totalFitnessValueForCluster = 0;
-		  	long fitness = 0;
+		  	float totalFitnessValueForCluster = 0;
+		  	float fitness = 0;
 		  	  // INDIVIDUAL
 			  int [] variableOrder = ind.getGenes();
 				 
@@ -290,7 +296,7 @@ public class LearningHeuristics {
 					 
 					 userModel = ChocoDuplications.duplicateModel(userModel, newName);
 					 //System.out.println("evaluateFitnessValueOfCluster: Model#"+modelIndex);
-					 long fitnessValueOfOrder = 0;
+					 float fitnessValueOfOrder = 0;
 					 
 					 switch(type){
 					 	// RETURNS PERFORMANCE OF CHOCO (in milliseconds)
@@ -320,9 +326,8 @@ public class LearningHeuristics {
 			  }
 			  
 			  // bu gen icin bu clusterda hesaplanan ortalama running time
-			  fitness = totalFitnessValueForCluster/(clusters[clusterIndex].length-1);
-			  //System.out.println("total fitness of cluster: "+fitness);
-				  //System.out.println("GENE #"+ind.getGenes()+" bu gen icin bu clusterda hesaplanan ortalama running time: "+clusterIndex+" :"+totalRunningTimeForCluster/(clusters[clusterIndex].length-1));
+			  fitness = totalFitnessValueForCluster/(clusters[clusterIndex].length);
+			  //System.out.println("GENE #"+ind.getGenes()+" bu gen icin bu clusterda-"+clusterIndex+" hesaplanan fitness:"+fitness);
 			  String geneStr ="";
 			  for(int i=0;i<numberOfVariables;i++){
 				  geneStr += ind.getGenes()[i];

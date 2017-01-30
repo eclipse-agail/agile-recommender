@@ -4,11 +4,12 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import at.tugraz.ist.configurator.Clustering.Clustering;
+import at.tugraz.ist.configurator.ChocoExtensions.Constraint_Extension;
+import at.tugraz.ist.configurator.ChocoExtensions.Constraints_Singleton;
+import at.tugraz.ist.configurator.ChocoExtensions.FileToChocoModel;
+import at.tugraz.ist.configurator.Clustering.KMeansClustering;
 import at.tugraz.ist.configurator.Learning.LearningHeuristics;
-import at.tugraz.ist.libraries.ChocoExtensions.CSP;
-import at.tugraz.ist.libraries.ChocoExtensions.Constraints_Singleton;
-import at.tugraz.ist.libraries.ChocoExtensions.FileToChocoModel;
+
 
 public class TestCSD {
 	
@@ -36,26 +37,68 @@ public class TestCSD {
 		
 		 // STEP-1 : generate the original problem with products table
 		 Constraints_Singleton.getInstance().setOriginalCSP(FileToChocoModel.createOriginalCSP(productTableFile));
-		  numberOfVariables = Constraints_Singleton.getInstance().getIntVarList_extension__UserRequirements().size()-1;
+		 numberOfVariables = Constraints_Singleton.getInstance().getIntVarList_extension__UserRequirements().size()-1;
+		 
+		 // print clustered user models
+		 int numberOfProductConstraints = Constraints_Singleton.getInstance().getOriginalCSP().numberOfProducts;
+		 int constrIndex = 0;
+		 
+		 System.out.println("####################################");
+		 System.out.println("PRODUCT TABLE");
+		 System.out.println("Number of Products: "+numberOfProductConstraints);
+		 System.out.println("Number of Variables: "+numberOfVariables);
+		 
+		 for(int i=0;i<numberOfProductConstraints;i++){
+			 System.out.print("PRODUCT ID-: "+i+" => ");
+			 for(int m=0;m<numberOfVariables;m++){
+				 int constID = Integer.valueOf(Constraints_Singleton.getInstance().getOriginalCSP().constraints_products.get(constrIndex).getName());
+				 Constraint_Extension c = Constraints_Singleton.getInstance().getConstraintList_extension__UserRequirements().get(constID);
+				 System.out.print(" ("+c.getVar_1_ID()+" = "+c.getValue_1()+" )");
+				 constrIndex++;
+			 }
+			 System.out.println();
+		 }
+		 System.out.println("####################################");
+		
 		 // STEP-1 is DONE
 		 
 		 
 		 
 		 // STEP-2 : get user_constraints as models based on the original problem
-		  Constraints_Singleton.getInstance().setCSPs_tobe_Clustered(FileToChocoModel.createUserModels(Constraints_Singleton.getInstance().getOriginalCSP(),userConstraintsFile));
+		 Constraints_Singleton.getInstance().setCSPs_tobe_Clustered(FileToChocoModel.createUserModels(Constraints_Singleton.getInstance().getOriginalCSP(),userConstraintsFile));
 		 // STEP-2 is DONE
 		 
 		 
 		 // STEP-3 : apply clustering
-		 Clustering.applyKMeans(userConstraintsFile,numberOfVariables,outputFolder);
-		 clusters = Clustering.getClusters(numberOfClusters,outputFolder);
+		 KMeansClustering.applyKMeans(userConstraintsFile,numberOfVariables+1,outputFolder);
+		 clusters = KMeansClustering.getClusters(numberOfClusters,outputFolder);
+		 
+		 // print clustered user models
+		 System.out.println("####################################");
+		 System.out.println("USER MODELS");
+		 System.out.println("Number of Users: 20");
+		 System.out.println("Number of Clusters: 4");
+		 
+		 for(int i=0;i<clusters.length;i++){
+			 
+			 System.out.println("Cluster"+i+" size= "+clusters[i].length+" :");
+			 // get Model
+			 for(int v=0;v<clusters[i].length;v++){
+				 int modelIndex = clusters[i][v];
+				 System.out.print("ID of User Model: "+modelIndex+" => ");
+				 for(int m=0;m<numberOfVariables;m++){
+					 System.out.print(" "+Constraints_Singleton.getInstance().getCSPs_tobe_Clustered().get(modelIndex).constraints_user.get(m));
+				 }
+				 System.out.println();
+			 }
+			 System.out.println();
+		 }
+		 System.out.println("####################################");
 		 // STEP-3 is DONE
 		 
 		 
 		 // STEP-4 : learn heuristics
 		 variableOrders = LearningHeuristics.learnHeuristicsForClusters(numberOfVariables,clusters,Constraints_Singleton.getInstance().getCSPs_tobe_Clustered());
-		// STEP-4 is DONE without FASTDIAG
-		 
 		 for(int i=0;i<variableOrders.size();i++){
 			 System.out.println("VARIABLE ORDER FOR CLUSTER-"+i+":");
 			 for(int v=0;v<numberOfVariables;v++){
@@ -63,10 +106,11 @@ public class TestCSD {
 			 }
 			 System.out.println();
 		 }
+		 // STEP-4 is DONE
+		
 		 
-		 System.out.println("completed");
+		 System.out.println("CSD test is completed");
 		 
 	 }
-	 
 	 
 }

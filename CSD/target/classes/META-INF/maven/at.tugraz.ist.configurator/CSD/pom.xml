@@ -15,12 +15,7 @@
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
+    
     <!-- https://mvnrepository.com/artifact/org.choco-solver/choco-solver -->
 	<dependency>
 	    <groupId>org.choco-solver</groupId>
