@@ -42,30 +42,7 @@ public class FastDiag_Recursive {
          * remove C from the solver
          */    
         for (Constraint c : C) {
-        	try{
-        		solver_csp.chocoModel.unpost(c);
-        	}catch(Exception ex){
-        		System.out.println("UN-Successful unpost");
-        		System.out.println(solver_csp.originalIndex);
-        		System.out.println("CONSTRAINT");
-        		System.out.println(c);
-        		System.out.println(c.getName());
-        		System.out.println(c.getCidxInModel());
-//        		int cID = Integer.valueOf(c.getName()).intValue();
-//        		System.out.println("ID: "+Constraints_Singleton.getInstance().getConstraintList_extension__UserRequirements().get(cID).getID());
-//        		System.out.println("VarID: "+Constraints_Singleton.getInstance().getConstraintList_extension__UserRequirements().get(cID).getVar_1_ID());
-//        		System.out.println("VAL: "+Constraints_Singleton.getInstance().getConstraintList_extension__UserRequirements().get(cID).getValue_1());
-        		System.out.println("MODEL");
-        		for(int i=0;i<solver_csp.chocoModel.getNbCstrs();i++){
-        			Constraint c2 = solver_csp.chocoModel.getCstrs()[i];
-        			System.out.println("ALL CONSTRAINTS IN THE MODEL");
-                	System.out.println(c2);
-                	System.out.println(c2.getName());
-                	System.out.println(c2.getCidxInModel());
-        			
-        		}
-
-        	}
+        	solver_csp.chocoModel.unpost(c);
         }
         
         /*

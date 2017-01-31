@@ -106,7 +106,13 @@ public class TestCSD {
 			 }
 			 System.out.println();
 		 }
-		 // STEP-4 is DONE
+		// STEP-4 is DONE
+		 
+		// STEP-5 : run only with FastDiag
+		// STEP-5 is not DONE
+		 
+		// STEP-6 : run only with Genetic Algorithm
+		// STEP-6 is not DONE
 		
 		 
 		 System.out.println("CSD test is completed");

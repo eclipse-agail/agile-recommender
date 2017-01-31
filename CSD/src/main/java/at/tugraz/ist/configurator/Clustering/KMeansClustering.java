@@ -91,5 +91,4 @@ public static int[][] getClusters(int numberOfCluster, String outputFolder){
 		 return clusters;
 	 }
 
-
 }

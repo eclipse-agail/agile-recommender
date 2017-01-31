@@ -228,14 +228,16 @@ public class LearningHeuristics {
 			 
 			 
 			 int [] varID_ofDiagnoseAlgorithmArray = new int[fastDiagDiagnosis.size()];
+			 int non_user_constraints_in_fastdiag = 0;
+			 int matchings = 0;
 			 
 			 if (fastDiagDiagnosis!=null){
-				 System.out.println("####################################");
-				 System.out.println("FAST DIAG ALGORITHM DIAGNOSIS EVALUATION");
-				 System.out.println("User Model ID: "+model.originalIndex);
-				 System.out.println("FastDiag Diagnosis Size: "+fastDiagDiagnosis.size());
-				 System.out.println("Users Diagnosis Size: "+userDiagnosis.size());
-			 	
+//				 System.out.println("####################################");
+//				 System.out.println("FAST DIAG ALGORITHM DIAGNOSIS EVALUATION");
+//				 System.out.println("User Model ID: "+model.originalIndex);
+//				 System.out.println("FastDiag Diagnosis Size: "+fastDiagDiagnosis.size());
+//				 System.out.println("Users Diagnosis Size: "+userDiagnosis.size());
+//			 	
 			  	 if(userDiagnosis!=null)
 					 for (int m=0;m<userDiagnosis.size();m++)
 					 {
@@ -245,31 +247,41 @@ public class LearningHeuristics {
 							 for (int k=0;k<fastDiagDiagnosis.size();k++)
 							 {
 								 int constrID_ofDiagnoseAlgorithm = -1;
-								 
 								 try{
 									 constrID_ofDiagnoseAlgorithm = Integer.valueOf(fastDiagDiagnosis.get(k).getName());
 									 varID_ofDiagnoseAlgorithmArray[k] = Constraints_Singleton.getInstance().getConstraintList_extension__UserRequirements().get(constrID_ofDiagnoseAlgorithm).getVar_1_ID();
-									 
+									
 									 if (varID_userDiagnosis == varID_ofDiagnoseAlgorithmArray[k]){
-										 precision += (float)((float)1/(float)fastDiagDiagnosis.size());
+										 matchings++;
 										 break; // SEARCH FOR OTHER VARIABLES IN USER DIAG
 									 }
+									 
 								 }catch(Exception ex){}
+								
 							 }
 					 }
 			 	}
+			 	for (int k=0;k<fastDiagDiagnosis.size();k++)
+			 	{
+			 		 if (varID_ofDiagnoseAlgorithmArray[k]==0){
+			 			non_user_constraints_in_fastdiag++;
+					 }
+			 	}
 			 
-			    
-			 	System.out.println("User Diagnosis: ");
-			 	for(int u=0;u<userDiagnosis.size();u++){System.out.print(" var-"+userDiagnosis.get(u));}
-			 	System.out.println();
+			 	non_user_constraints_in_fastdiag = non_user_constraints_in_fastdiag/userDiagnosis.size();
+			 	matchings += non_user_constraints_in_fastdiag;
+			 	precision += (float)((float)matchings/(float)fastDiagDiagnosis.size());
 			 	
-			 	System.out.println("FastDiag Diagnosis: ");
-			 	for(int f=0;f<varID_ofDiagnoseAlgorithmArray.length;f++){System.out.print(" var-"+varID_ofDiagnoseAlgorithmArray[f]);}
-			 	System.out.println();
-			     
-				System.out.println("Precision: "+precision);
-				System.out.println("####################################");
+//			 	System.out.println("User Diagnosis: ");
+//			 	for(int u=0;u<userDiagnosis.size();u++){System.out.print(" var-"+userDiagnosis.get(u));}
+//			 	System.out.println();
+//			 	
+//			 	System.out.println("FastDiag Diagnosis: ");
+//			 	for(int f=0;f<varID_ofDiagnoseAlgorithmArray.length;f++){System.out.print(" var-"+varID_ofDiagnoseAlgorithmArray[f]);}
+//			 	System.out.println();
+//			     
+//				System.out.println("Precision: "+precision);
+//				System.out.println("####################################");
 			
 			 return precision;
 		 }
