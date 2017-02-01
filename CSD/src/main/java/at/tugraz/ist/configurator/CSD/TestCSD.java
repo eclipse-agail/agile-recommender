@@ -20,16 +20,22 @@ public class TestCSD {
 	 static String outputFolder= "files\\outputs\\CSD_Model\\";
 	 
 	 static int numberOfVariables;
-	 static int numberOfClusters = 4 ;
+	 static int numberOfClusters ;
+	 static int numberOfUsers ;
 	 static int [][] clusters ;
 	 
 	 static List<int[]> variableOrders ;
 	
 	
 	 public static void main(String []args){
+		 
+		numberOfClusters = 4;
+		System.out.println("####################################");
+		System.out.println("TEST for NumberOfClusters: "+ numberOfClusters);
+		System.out.println("####################################");
 		
-		 evaluateVarOderForDiagnosis();
-		
+		evaluateVarOderForDiagnosis();
+		System.out.println("####################################");
 	 }
 	
 	 public static void evaluateVarOderForDiagnosis(){
@@ -63,21 +69,22 @@ public class TestCSD {
 		 // STEP-1 is DONE
 		 
 		 
-		 
 		 // STEP-2 : get user_constraints as models based on the original problem
 		 Constraints_Singleton.getInstance().setCSPs_tobe_Clustered(FileToChocoModel.createUserModels(Constraints_Singleton.getInstance().getOriginalCSP(),userConstraintsFile));
+		 numberOfUsers = Constraints_Singleton.getInstance().getCSPs_tobe_Clustered().size();
 		 // STEP-2 is DONE
 		 
 		 
 		 // STEP-3 : apply clustering
-		 KMeansClustering.applyKMeans(userConstraintsFile,numberOfVariables+1,outputFolder);
+		 KMeansClustering.applyKMeans(userConstraintsFile,numberOfVariables+1,numberOfClusters,outputFolder);
 		 clusters = KMeansClustering.getClusters(numberOfClusters,outputFolder);
+		 
 		 
 		 // print clustered user models
 		 System.out.println("####################################");
 		 System.out.println("USER MODELS");
-		 System.out.println("Number of Users: 20");
-		 System.out.println("Number of Clusters: 4");
+		 System.out.println("Number of Users: "+numberOfUsers);
+		 System.out.println("Number of Clusters: "+numberOfClusters);
 		 
 		 for(int i=0;i<clusters.length;i++){
 			 

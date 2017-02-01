@@ -12,8 +12,10 @@ public class CSP {
 	public CSP originalCSPOfTheUserCSP = null;
 	public int selectedProductID = 0;
 	boolean isOriginalCSP;	
+	boolean isTestCSP = false;	
 	public int originalIndex;
 	public int numberOfProducts;
+	public int numberOfVariables;
 	
 	public List<Integer> constraint_IDs_user = new ArrayList<Integer>(); 
 	public List<int[]> constraint_IDs_products = new ArrayList<int[]>(); 
@@ -29,17 +31,57 @@ public class CSP {
 	boolean allVarsAreCreated = false;
 	
 	
-	public CSP (boolean type, int[][]productTable, CSP originalCSP, int[] variables, int userID, int prodID){
-		isOriginalCSP = type;
+	public CSP (int type, int[][]productTable, CSP originalCSP, int[] variables, int userID, int prodID){
 		
-		if(isOriginalCSP)
+		if(type==0)
 			createOriginalCSP(productTable);
+		else if (type==1)
+			createTestCSP(originalCSP,variables,userID, prodID);
 		else
 			createUserCSP(originalCSP,variables,userID, prodID);
 	}
 	
-	private void createUserCSP (CSP originalCSP, int[] variables, int userID, int prodID){
+
+	private void createTestCSP (CSP originalCSP, int[] variables, int userID, int prodID){
+		isTestCSP = true;
+		numberOfVariables = originalCSP.numberOfVariables;
+		numberOfProducts = originalCSP.numberOfProducts;
+		originalIndex = userID;
+		originalCSPOfTheUserCSP = originalCSP;
+		selectedProductID = prodID;
+		constraint_IDs_products = originalCSP.constraint_IDs_products;
+		//constraint_IDs_user = originalCSP.constraint_IDs_user;
 		
+		// constraints_products = originalCSP.constraints_products;
+		String newName;
+		// COPY ORIGINAL CSP
+		// INCLUDES ALL VARIABLES
+		// INCLUDES PRODUCT TABLE (PRODUCT CONSTRAINTS)
+		if(variables==null)
+			newName = String.valueOf(Math.random());
+		else
+			newName = "TestCSP for UserID:"+userID;
+		
+		ChocoDuplications.duplicateModel(this,newName);
+		
+		if(variables!=null)
+			// ADD ADDITIONAL USER CONSTRAINTS
+			for(int i=0;i<variables.length;i++){
+				if(variables[i]!=-1){
+					int varID = i+1;
+					int cID = createNewConstr(varID,variables[i]);
+					constraint_IDs_user.add(cID);
+					Constraint c = ChocoDuplications.addUserConstraintToModel(chocoModel, cID);
+					c.post(); // ADD CONSTRAINTS
+					constraints_user.add(c);
+				}
+		}
+		
+	}
+	
+	private void createUserCSP (CSP originalCSP, int[] variables, int userID, int prodID){
+		numberOfVariables = originalCSP.numberOfVariables;
+		numberOfProducts = originalCSP.numberOfProducts;
 		originalIndex = userID;
 		originalCSPOfTheUserCSP = originalCSP;
 		selectedProductID = prodID;
@@ -59,7 +101,7 @@ public class CSP {
 		ChocoDuplications.duplicateModel(this,newName);
 		
 		if(variables!=null)
-			// ADD ADDITIONAL USER CONSTRAINTS
+			// ADD USER CONSTRAINTS
 			for(int i=0;i<variables.length;i++){
 				int varID = i+1;
 				int cID = createNewConstr(varID,variables[i]);
@@ -74,6 +116,7 @@ public class CSP {
 	private void createOriginalCSP (int[][] variables){
 		//vars = new IntVar[variables.length];
 		
+		numberOfVariables = variables[0].length;
 		chocoModel = new Model("OriginalCSP");
 		numberOfProducts = variables.length;
 		createNewVar(); // FIRST VAR is PRODUCT ID , varID = 0

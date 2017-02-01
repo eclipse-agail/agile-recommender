@@ -18,8 +18,15 @@ public class ChocoDuplications {
 		CSP originalCSP = null;
 		boolean isRoot = inputCSP.isOriginalCSP;
 		int userID = inputCSP.originalIndex;
+		
 		if(isRoot)
 			originalCSP = Constraints_Singleton.getOriginalCSP();
+		
+		else if (inputCSP.isTestCSP){
+			originalCSP = Constraints_Singleton.getOriginalCSP();
+			copyCSP.isTestCSP = true;
+		}
+		
 		else
 			if(Constraints_Singleton.getCSPs_tobe_Clustered()!=null){
 				originalCSP = Constraints_Singleton.getCSPs_tobe_Clustered().get(userID);
@@ -34,10 +41,9 @@ public class ChocoDuplications {
 		
 		//Model copyModel = new Model(name);
 		copyCSP.chocoModel = new Model(name);
-		//System.out.println(name);
-		//ifconstraints = new ArrayList<Constraint>(); 
 		
-		
+	
+		// ADD 
 		int numberOfVars = seteOfVarsandCons.getIntVarList_extension__UserRequirements().size();
 		// SET VARS
 		for(int i=0;i<numberOfVars;i++){
@@ -49,7 +55,6 @@ public class ChocoDuplications {
 		// int numberOfProductConstraints = inputCSP.constraint_IDs_products.size();
 		// SET PRODUCT CONSTR, should executed number of product vars
 		numberOfVars = originalCSP.constraint_IDs_products.get(0).length;
-		
 		
 		
 		// int numberOfConstraints = inputCSP.constraint_IDs_products.size() * inputCSP.constraint_IDs_products.get(0).length;
@@ -159,4 +164,5 @@ public class ChocoDuplications {
 	}
 
 		
+	
 }

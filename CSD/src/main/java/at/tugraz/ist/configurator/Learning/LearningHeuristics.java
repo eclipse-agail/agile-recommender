@@ -18,7 +18,7 @@ import org.chocosolver.solver.variables.IntVar;
 import at.tugraz.ist.configurator.ChocoExtensions.CSP;
 import at.tugraz.ist.configurator.ChocoExtensions.ChocoDuplications;
 import at.tugraz.ist.configurator.ChocoExtensions.Constraints_Singleton;
-import at.tugraz.ist.configurator.FastDiag.FastDiag_Recursive;
+import at.tugraz.ist.configurator.FastDiag.FastDiag;
 import at.tugraz.ist.configurator.GeneticAlgorithm.Algorithm;
 import at.tugraz.ist.configurator.GeneticAlgorithm.FitnessCalc;
 import at.tugraz.ist.configurator.GeneticAlgorithm.Individual;
@@ -223,55 +223,42 @@ public class LearningHeuristics {
 //			 
 			 
 			 // ADD FASTDIAG HERE
-			 fastDiagDiagnosis = FastDiag_Recursive.computeDiagnose(orderedUserConstraints, AC, model);
+			 // fastDiagDiagnosis = FastDiag_Recursive.computeDiagnose(orderedUserConstraints, AC, model);
+			 model.constraints_user = orderedUserConstraints;
+			 fastDiagDiagnosis = FastDiag.computeDiagnose(model,Constraints_Singleton.getInstance().getOriginalCSP());
 			 
 			 
 			 
 			 int [] varID_ofDiagnoseAlgorithmArray = new int[fastDiagDiagnosis.size()];
-			 int non_user_constraints_in_fastdiag = 0;
-			 int matchings = 0;
-			 
-			 if (fastDiagDiagnosis!=null){
+	
+			 	if (fastDiagDiagnosis!=null && userDiagnosis!=null && fastDiagDiagnosis.size()==userDiagnosis.size()){	
 //				 System.out.println("####################################");
 //				 System.out.println("FAST DIAG ALGORITHM DIAGNOSIS EVALUATION");
 //				 System.out.println("User Model ID: "+model.originalIndex);
 //				 System.out.println("FastDiag Diagnosis Size: "+fastDiagDiagnosis.size());
 //				 System.out.println("Users Diagnosis Size: "+userDiagnosis.size());
-//			 	
-			  	 if(userDiagnosis!=null)
-					 for (int m=0;m<userDiagnosis.size();m++)
-					 {
-						 int varID_userDiagnosis =  userDiagnosis.get(m);
-						 // SEARCH M in ALL DIAGNOSIS
-						 if(fastDiagDiagnosis!=null)
-							 for (int k=0;k<fastDiagDiagnosis.size();k++)
-							 {
-								 int constrID_ofDiagnoseAlgorithm = -1;
-								 try{
-									 constrID_ofDiagnoseAlgorithm = Integer.valueOf(fastDiagDiagnosis.get(k).getName());
-									 varID_ofDiagnoseAlgorithmArray[k] = Constraints_Singleton.getInstance().getConstraintList_extension__UserRequirements().get(constrID_ofDiagnoseAlgorithm).getVar_1_ID();
+//			 		 
+					 
+			 		
+					for (int k=0;k<fastDiagDiagnosis.size();k++)
+					{
+						int varID_userDiagnosis =  userDiagnosis.get(k);
+					    int constrID_ofDiagnoseAlgorithm = -1;
+						try{
+							constrID_ofDiagnoseAlgorithm = Integer.valueOf(fastDiagDiagnosis.get(k).getName());
+							varID_ofDiagnoseAlgorithmArray[k] = Constraints_Singleton.getInstance().getConstraintList_extension__UserRequirements().get(constrID_ofDiagnoseAlgorithm).getVar_1_ID();
 									
-									 if (varID_userDiagnosis == varID_ofDiagnoseAlgorithmArray[k]){
-										 matchings++;
-										 break; // SEARCH FOR OTHER VARIABLES IN USER DIAG
-									 }
+							if (varID_userDiagnosis == varID_ofDiagnoseAlgorithmArray[k]){
+								precision = 1;
+								break; // SEARCH FOR OTHER VARIABLES IN USER DIAG
+							}
 									 
-								 }catch(Exception ex){}
+						}catch(Exception ex){}
 								
-							 }
-					 }
+					}
+					
 			 	}
-			 	for (int k=0;k<fastDiagDiagnosis.size();k++)
-			 	{
-			 		 if (varID_ofDiagnoseAlgorithmArray[k]==0){
-			 			non_user_constraints_in_fastdiag++;
-					 }
-			 	}
-			 
-			 	non_user_constraints_in_fastdiag = non_user_constraints_in_fastdiag/userDiagnosis.size();
-			 	matchings += non_user_constraints_in_fastdiag;
-			 	precision += (float)((float)matchings/(float)fastDiagDiagnosis.size());
-			 	
+			
 //			 	System.out.println("User Diagnosis: ");
 //			 	for(int u=0;u<userDiagnosis.size();u++){System.out.print(" var-"+userDiagnosis.get(u));}
 //			 	System.out.println();

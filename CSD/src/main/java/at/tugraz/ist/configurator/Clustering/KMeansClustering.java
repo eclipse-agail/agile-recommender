@@ -15,7 +15,7 @@ import net.sf.javaml.tools.data.FileHandler;
 public class KMeansClustering {
 	
 	
-public static void applyKMeans(String inputFile, int numberofVars, String outputFolder){
+public static void applyKMeans(String inputFile, int numberofVars, int numberOfClusters, String outputFolder){
 		 	try {
 		        /* Load a dataset */
 		        Dataset data;
@@ -26,13 +26,13 @@ public static void applyKMeans(String inputFile, int numberofVars, String output
 		         * Create a new instance of the KMeans algorithm, with no options
 		         * specified. By default this will generate 4 clusters.
 		         */
-		        Clusterer km = new KMeans();
+		        Clusterer km = new KMeans(numberOfClusters);
 		        /*
 		         * Cluster the data, it will be returned as an array of data sets, with
 		         * each dataset representing a cluster
 		         */
 		        Dataset[] clusters = km.cluster(data);
-		        System.out.println("Cluster count: " + clusters.length);
+		        //System.out.println("Cluster count: " + clusters.length);
 		        for(int i=0;i<clusters.length;i++){
 		        	
 		        	boolean dir = new File(outputFolder).mkdir();
@@ -56,8 +56,7 @@ public static void applyKMeans(String inputFile, int numberofVars, String output
 	
 public static int[][] getClusters(int numberOfCluster, String outputFolder){
 		 
-		 // "kmeans2/seda/outputs/"+modelsName+"/Cluster"+i+".txt"
-	 	 int [][] clusters = new int [numberOfCluster][];
+		int [][] clusters = new int [numberOfCluster][];
 		 
 		 for (int i=0;i<numberOfCluster;i++){
 			 List<Integer> indexes = new ArrayList<Integer>();

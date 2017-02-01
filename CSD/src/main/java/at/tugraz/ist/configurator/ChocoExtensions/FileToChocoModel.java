@@ -38,7 +38,7 @@ public class FileToChocoModel {
 					variables[j] = Integer.valueOf(values[j]);
  				}
 				// public CSP (boolean type, int[][]productTable, CSP originalCSP, int[] variables, int userID, int prodID)
-				CSP userConstraints = new CSP(false,null,orginalCSP,variables,i,Integer.valueOf(values[numberOfVars]));
+				CSP userConstraints = new CSP(2,null,orginalCSP,variables,i,Integer.valueOf(values[numberOfVars]));
 				users.add(userConstraints);
 			}
 		}
@@ -78,7 +78,7 @@ public class FileToChocoModel {
 		}
 
 		// public CSP (boolean isOriginalCSP, int[][]productTable, CSP originalCSP, int[] variables, int userID, int productID)
-		model = new CSP(true,productTable, null, null, 0, -1);
+		model = new CSP(0,productTable, null, null, 0, -1);
 		
 		return model;
 	}
