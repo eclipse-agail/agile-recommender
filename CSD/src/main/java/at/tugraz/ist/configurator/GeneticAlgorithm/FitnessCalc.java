@@ -12,10 +12,8 @@ public class FitnessCalc {
 
     // Calculate inidividuals fittness by comparing it to our candidate solution
     static float getFitness(Individual individual) {
-        
-    	float fitness = LearningHeuristics.evaluateFitnessValueOfCluster(individual, individual.clusterID);
-  
-        return fitness;
+    	float fitness =  LearningHeuristics.evaluateFitnessValueOfCluster(individual, individual.clusterID);
+    	return fitness;
     }
     
     // Get optimum fitness

@@ -45,8 +45,6 @@ public static void applyKMeans(String inputFile, int numberofVars, int numberOfC
 
 		        	FileHandler.exportDataset(clusters[i],file);
 		        }
-		        
-		        
 		 	} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

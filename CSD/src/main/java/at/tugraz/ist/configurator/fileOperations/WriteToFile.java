@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WriteToFile {
+	
+	 static FileWriter writer = null;
 
-	 public static FileWriter writeCSV(FileWriter writer, String fileDir,List<String> line, boolean last){
+	 public static FileWriter writeCSV(String fileDir, List<String> line, boolean first,boolean last){
 		 try {
 			 File file = new File(fileDir);
 				// if file doesnt exists, then create it
@@ -17,7 +19,7 @@ public class WriteToFile {
 					file.createNewFile();
 					
 			 }
-			 if(writer==null)
+			 if(writer==null || first)
 				 writer = new FileWriter(file.getPath());
 			 
 			 CSVUtils.writeLine(writer,line);

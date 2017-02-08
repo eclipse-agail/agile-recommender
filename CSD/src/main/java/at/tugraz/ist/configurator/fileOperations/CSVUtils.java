@@ -34,9 +34,10 @@ public class CSVUtils {
 
         //default customQuote is empty
 
-        if (separators == ' ') {
-            separators = DEFAULT_SEPARATOR;
-        }
+//        if (separators == ' ') {
+//            separators = DEFAULT_SEPARATOR;
+//        }
+        separators = '\n';
 
         StringBuilder sb = new StringBuilder();
         for (String value : values) {

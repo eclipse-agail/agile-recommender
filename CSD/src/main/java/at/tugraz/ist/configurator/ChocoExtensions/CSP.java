@@ -43,6 +43,7 @@ public class CSP {
 	
 
 	private void createTestCSP (CSP originalCSP, int[] variables, int userID, int prodID){
+		
 		isTestCSP = true;
 		numberOfVariables = originalCSP.numberOfVariables;
 		numberOfProducts = originalCSP.numberOfProducts;
@@ -62,7 +63,7 @@ public class CSP {
 		else
 			newName = "TestCSP for UserID:"+userID;
 		
-		ChocoDuplications.duplicateModel(this,newName);
+		this.chocoModel = ChocoDuplications.getChocoModelOfOriginalCSP(newName);
 		
 		if(variables!=null)
 			// ADD ADDITIONAL USER CONSTRAINTS
@@ -80,27 +81,25 @@ public class CSP {
 	}
 	
 	private void createUserCSP (CSP originalCSP, int[] variables, int userID, int prodID){
-		numberOfVariables = originalCSP.numberOfVariables;
-		numberOfProducts = originalCSP.numberOfProducts;
-		originalIndex = userID;
-		originalCSPOfTheUserCSP = originalCSP;
-		selectedProductID = prodID;
-		constraint_IDs_products = originalCSP.constraint_IDs_products;
-		//constraint_IDs_user = originalCSP.constraint_IDs_user;
 		
-		// constraints_products = originalCSP.constraints_products;
 		String newName;
-		// COPY ORIGINAL CSP
-		// INCLUDES ALL VARIABLES
-		// INCLUDES PRODUCT TABLE (PRODUCT CONSTRAINTS)
-		if(variables==null)
+		
+		// COPY OF AN USER
+		if(variables==null){
 			newName = String.valueOf(Math.random());
-		else
+			originalIndex = originalCSP.originalIndex;
+			selectedProductID = originalCSP.selectedProductID;
+			this.chocoModel = ChocoDuplications.getChocoModelOfCreatedUser(originalIndex,newName);
+			constraints_user = originalCSP.constraints_user;
+			constraint_IDs_user = originalCSP.constraint_IDs_user;
+		}
+		
+		else{
 			newName = "UserID:"+userID;
-		
-		ChocoDuplications.duplicateModel(this,newName);
-		
-		if(variables!=null)
+			originalIndex = userID;
+			selectedProductID = prodID;
+			this.chocoModel = ChocoDuplications.getChocoModelOfOriginalCSP(newName);
+			
 			// ADD USER CONSTRAINTS
 			for(int i=0;i<variables.length;i++){
 				int varID = i+1;
@@ -110,7 +109,13 @@ public class CSP {
 				c.post(); // ADD CONSTRAINTS
 				constraints_user.add(c);
 			}
+		}
 		
+		numberOfVariables = originalCSP.numberOfVariables;
+		numberOfProducts = originalCSP.numberOfProducts;
+		originalCSPOfTheUserCSP = originalCSP;
+		constraint_IDs_products = originalCSP.constraint_IDs_products;
+	
 	}
 	
 	private void createOriginalCSP (int[][] variables){
@@ -165,7 +170,7 @@ public class CSP {
 				var.setUpperBound(1000000);
 			}
 			setOfConstraintsAndVariables.addVar(var);
-			this.chocoModel = ChocoDuplications.addVariableToModel(this, index);
+			this.chocoModel = ChocoDuplications.addVariableToModel(this.chocoModel, index);
 		}
 		
 	}

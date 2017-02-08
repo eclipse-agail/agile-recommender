@@ -81,7 +81,7 @@ public class FastDiag {
 		C2.addAll(userModel.constraints_user.subList(k, userModel.constraints_user.size()));
 		
 		List<Constraint> D1 = fd(C1, subtractConstraints(userModel,UC,C1)); // user constraints are C2 = UC - C1
-		List<Constraint> D2 = fd(D1, subtractConstraints(userModel,UC,C2)); // user constraints are C1 = UC - C2
+		List<Constraint> D2 = fd(C2, subtractConstraints(userModel,UC,C2)); // user constraints are C1 = UC - C2
 	
 		
 		// ADD D1

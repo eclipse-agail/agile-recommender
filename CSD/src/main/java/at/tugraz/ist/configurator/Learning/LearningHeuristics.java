@@ -32,12 +32,15 @@ public class LearningHeuristics {
 	 static List<CSP> cspList;
 	 static List<int []>ordersOfVariables;
 	 static int numberOfClusters=4;
-	 static int type = 1; // FASTDIAG
+	 public static int type = 0; 
+	 // 0: diagnoseByFastDiag_BestPrecision_withCSH,  
+	 // 1: diagnoseByFastDiag_Fastest_withCSH
+	 // 3: diagnoseByGeneticAlgorithm_BestPrecision
+	 // 4: diagnoseByGeneticAlgorithm_Fastest
 	 
 	 /// UPDATE 
-	 static int sizeOfPopulation = 2;
+	 static int sizeOfPopulation = 6;
 	 static int maxNumberOfGeneration = 2;
-	 static int maxDomainSize = 10;
 	 static int generationTimeOut = 100000000;
 	 ///
 	 
@@ -53,6 +56,7 @@ public class LearningHeuristics {
 		 System.out.println("####################################");
 		 
 		 numberOfVariables = vars;
+		 sizeOfPopulation = vars*(vars-1);
 		 clusters = clus;
 		 cspList = csps;
 		 numberOfClusters = clusters.length;
@@ -95,7 +99,7 @@ public class LearningHeuristics {
 			   
 			   //System.out.println("Start evolvePopulation");
 			   // generate new population for better results
-			   myPop = Algorithm.evolvePopulation(myPop,cl,maxDomainSize); 
+			   myPop = Algorithm.evolvePopulation(myPop,cl); 
 			   //System.out.println("End evolvePopulation");
 			   // apply new test over new population
 			   // testPopulationOverCluster(myPop,cl);
@@ -108,7 +112,7 @@ public class LearningHeuristics {
 			 // SET VARIABLE ORDER FOR THIS CLUSTER
 			 //ordersOfVariables.set(cl, new int[numberOfvars]);
 			 //ordersOfVariables.add(new int[numberOfvars]);
-			 System.out.println("Heuristic precision of Cluster-"+cl+" is "+myPop.getFittest().getFitness());
+			 System.out.println("Best Fitness value of Cluster-"+cl+" is "+myPop.getFittest().getFitness());
 			 ordersOfVariables.set(cl, varOrder);
 		 }
 		 return ordersOfVariables;
@@ -173,12 +177,13 @@ public class LearningHeuristics {
 		 return endTime-startTime;
 	 }
 	 
-	 // returns precision btw 0..1
-	 public static float diagnoseCSPwithFastDiag(CSP model, int [] variableOrder){
-		 
+	 // returns precision btw 0..1 and time in negative value
+	 public static float[] diagnoseCSPwithFastDiag(CSP model, int [] variableOrder){
 		 	 
 			 //System.out.println("Diagnose with fastdiag for variable order"+variableOrder[0]+variableOrder[1]); 
 		 	 float precision = (float) 0.0;
+		 	 float time = (float)0;
+		 	 
 			 List<Constraint> orderedUserConstraints = new ArrayList<Constraint>();
 			 List<Integer> userDiagnosis = new ArrayList<Integer>();
 			 userDiagnosis = model.getDiagnoseOfUser();
@@ -191,23 +196,26 @@ public class LearningHeuristics {
 			 List<Constraint> AC = Arrays.asList(model.chocoModel.getCstrs());
 			 //List<Constraint> C = Arrays.asList(model.chocoModel.getCstrs()).subList(prodConstSize,AC.size()-1);
 			 
-			// SET THE ORDER OF USER CONSTRAINTS
-			 for (int i=0;i<variableOrder.length;i++){
-				 Constraint usercon = model.constraints_user.get(variableOrder[i]);
-				 //System.out.println(usercon);
-				 for(int j=0;j<AC.size();j++){ 
-					 Constraint c1 = AC.get(j);
-					 //System.out.println(c1);
-					 if(c1.getName().equals(usercon.getName())){
-						 if(c1.getCidxInModel()==usercon.getCidxInModel()){
-							 orderedUserConstraints.add(c1);
-							 //System.out.println("User Constraint: "+usercon+"Model Constraint: "+c1);
-						 }
-					 }
+			 if(variableOrder!=null){
+				 // SET THE ORDER OF USER CONSTRAINTS
+				 for (int i=0;i<variableOrder.length;i++){
+					 Constraint usercon = model.constraints_user.get(variableOrder[i]);
+					 orderedUserConstraints.add(usercon);
+//					 //System.out.println(usercon);
+//					 for(int j=0;j<AC.size();j++){ 
+//						 Constraint c1 = AC.get(j);
+//						 //System.out.println(c1);
+//						 if(c1.getName().equals(usercon.getName())){
+//							 if(c1.getCidxInModel()==usercon.getCidxInModel()){
+//								 orderedUserConstraints.add(c1);
+//								 //System.out.println("User Constraint: "+usercon+"Model Constraint: "+c1);
+//							 }
+//						 }
+//					 }
 				 }
+				 model.constraints_user = orderedUserConstraints;
 			 }
-			 
-
+				 
 //			 // TEST
 //		 		boolean res = model.chocoModel.getSolver().solve();
 //		 		model.chocoModel.unpost(orderedUserConstraints.get(0));
@@ -224,14 +232,15 @@ public class LearningHeuristics {
 			 
 			 // ADD FASTDIAG HERE
 			 // fastDiagDiagnosis = FastDiag_Recursive.computeDiagnose(orderedUserConstraints, AC, model);
-			 model.constraints_user = orderedUserConstraints;
+			 
+			 //fastDiagDiagnosis = FastDiag.computeDiagnose(model,Constraints_Singleton.getInstance().getOriginalCSP());
+			 long startTime = System.currentTimeMillis();
 			 fastDiagDiagnosis = FastDiag.computeDiagnose(model,Constraints_Singleton.getInstance().getOriginalCSP());
+			 long endTime = System.currentTimeMillis();
+			 time =  startTime - endTime;
 			 
-			 
-			 
-			 int [] varID_ofDiagnoseAlgorithmArray = new int[fastDiagDiagnosis.size()];
-	
-			 	if (fastDiagDiagnosis!=null && userDiagnosis!=null && fastDiagDiagnosis.size()==userDiagnosis.size()){	
+			
+			 if (fastDiagDiagnosis!=null && userDiagnosis!=null && fastDiagDiagnosis.size()==userDiagnosis.size()){	
 //				 System.out.println("####################################");
 //				 System.out.println("FAST DIAG ALGORITHM DIAGNOSIS EVALUATION");
 //				 System.out.println("User Model ID: "+model.originalIndex);
@@ -240,22 +249,30 @@ public class LearningHeuristics {
 //			 		 
 					 
 			 		
-					for (int k=0;k<fastDiagDiagnosis.size();k++)
+				 	for (int k=0;k<fastDiagDiagnosis.size();k++)
 					{
-						int varID_userDiagnosis =  userDiagnosis.get(k);
-					    int constrID_ofDiagnoseAlgorithm = -1;
-						try{
-							constrID_ofDiagnoseAlgorithm = Integer.valueOf(fastDiagDiagnosis.get(k).getName());
-							varID_ofDiagnoseAlgorithmArray[k] = Constraints_Singleton.getInstance().getConstraintList_extension__UserRequirements().get(constrID_ofDiagnoseAlgorithm).getVar_1_ID();
+						for (int u=0;u<fastDiagDiagnosis.size();u++){
+							int varID_userDiagnosis =  userDiagnosis.get(u);
+							int varID_ofDiagnoseAlgorithmArray =  -1;
+						    int constrID_ofDiagnoseAlgorithm = -1;
+							try{
+								constrID_ofDiagnoseAlgorithm = Integer.valueOf(fastDiagDiagnosis.get(k).getName());
+								varID_ofDiagnoseAlgorithmArray = Constraints_Singleton.getInstance().getConstraintList_extension__UserRequirements().get(constrID_ofDiagnoseAlgorithm).getVar_1_ID();
+										
+								if (varID_userDiagnosis == varID_ofDiagnoseAlgorithmArray){
+									precision ++;
+									break; // SEARCH FOR OTHER VARIABLES IN USER DIAG
+								}
+										 
+							}catch(Exception ex){}
 									
-							if (varID_userDiagnosis == varID_ofDiagnoseAlgorithmArray[k]){
-								precision = 1;
-								break; // SEARCH FOR OTHER VARIABLES IN USER DIAG
-							}
-									 
-						}catch(Exception ex){}
-								
-					}
+						}
+					} 
+				 	
+					if(precision==fastDiagDiagnosis.size())
+						precision = 1;
+					else
+						precision = 0;
 					
 			 	}
 			
@@ -270,9 +287,61 @@ public class LearningHeuristics {
 //				System.out.println("Precision: "+precision);
 //				System.out.println("####################################");
 			
-			 return precision;
+			 float[] resp = {precision,time};
+			 return resp;
 		 }
 	 
+//	 
+//	 // returns time in negative value
+//	 public static float diagnoseCSPwithFastDiag_Time(CSP model, int [] variableOrder){
+//			 
+//			 	 
+//				 //System.out.println("Diagnose with fastdiag for variable order"+variableOrder[0]+variableOrder[1]); 
+//			 	 float time = (float)0;
+//				 List<Constraint> orderedUserConstraints = new ArrayList<Constraint>();
+//				 List<Integer> userDiagnosis = new ArrayList<Integer>();
+//				 userDiagnosis = model.getDiagnoseOfUser();
+//
+//				 List<Constraint> fastDiagDiagnosis  = new ArrayList<Constraint>();
+//				 
+//				 //System.out.println("Before FastDiag"); 
+//				 int prodConstSize = model.constraints_products.size();
+//				 
+//				 List<Constraint> AC = Arrays.asList(model.chocoModel.getCstrs());
+//				 
+//
+//				 if(variableOrder!=null){
+//					 // SET THE ORDER OF USER CONSTRAINTS
+//					 for (int i=0;i<variableOrder.length;i++){
+//						 Constraint usercon = model.constraints_user.get(variableOrder[i]);
+//						 orderedUserConstraints.add(usercon);
+////						 //System.out.println(usercon);
+////						 for(int j=0;j<AC.size();j++){ 
+////							 Constraint c1 = AC.get(j);
+////							 //System.out.println(c1);
+////							 if(c1.getName().equals(usercon.getName())){
+////								 if(c1.getCidxInModel()==usercon.getCidxInModel()){
+////									 orderedUserConstraints.add(c1);
+////									 //System.out.println("User Constraint: "+usercon+"Model Constraint: "+c1);
+////								 }
+////							 }
+////						 }
+//					 }
+//					
+//					 // ADD FASTDIAG HERE
+//					 // fastDiagDiagnosis = FastDiag_Recursive.computeDiagnose(orderedUserConstraints, AC, model);
+//					 model.constraints_user = orderedUserConstraints;
+//				 }
+//				 
+//				 long startTime = System.currentTimeMillis();
+//				 fastDiagDiagnosis = FastDiag.computeDiagnose(model,Constraints_Singleton.getInstance().getOriginalCSP());
+//				 long endTime = System.currentTimeMillis();
+//				 time =  startTime - endTime;
+//				
+//				 
+//				 return (float)time;
+//			 }
+//		 
 	 public static int[] geneToOrder(byte[]gene){
 		 // input : 010 01 1 -> v0:2, v1:1, v2:3
 		 // output: 102 -> order or variables
@@ -323,22 +392,23 @@ public class LearningHeuristics {
 				     int modelIndex = clusters[clusterIndex][md];
 				     if(modelIndex==0)
 				    	 modelIndex=0;
-					 CSP userModel = cspList.get(modelIndex);
-					 String newName = String.valueOf(Math.random());
-					 
-					 userModel = ChocoDuplications.duplicateModel(userModel, newName);
+					 //CSP userModel = cspList.get(modelIndex);
+				     CSP userModel = new CSP(2, null,Constraints_Singleton.getInstance().getCSPs_tobe_Clustered().get(modelIndex),null,0,0);
 					 //System.out.println("evaluateFitnessValueOfCluster: Model#"+modelIndex);
 					 float fitnessValueOfOrder = 0;
 					 
 					 switch(type){
-					 	// RETURNS PERFORMANCE OF CHOCO (in milliseconds)
-					 	case 0:
-					 		fitnessValueOfOrder = solveCSPwithChoco(userModel,variableOrder);
-					 		break;
+					 	
 					 	// RETURNS DIAGNOSIS PRECISION OF FASTDIAG WITH VAR ORDER (0..1)
-					 	case 1:
-					 		fitnessValueOfOrder = diagnoseCSPwithFastDiag(userModel,variableOrder);
+					 	case 0:
+					 		fitnessValueOfOrder = diagnoseCSPwithFastDiag(userModel,variableOrder)[0];
 					 		break;
+					 		
+					 	// RETURNS DIAGNOSIS PERFORMANCE OF FASTDIAG WITH VAR ORDER (negative value of the executiontime)
+					 	case 1:
+					 		fitnessValueOfOrder = diagnoseCSPwithFastDiag(userModel,variableOrder)[1];
+					 		break;
+					 		
 					 	default:
 					 		fitnessValueOfOrder = solveCSPwithChoco(userModel,variableOrder);
 					 		break;
@@ -360,10 +430,10 @@ public class LearningHeuristics {
 			  // bu gen icin bu clusterda hesaplanan ortalama running time
 			  fitness = totalFitnessValueForCluster/(clusters[clusterIndex].length);
 			  //System.out.println("GENE #"+ind.getGenes()+" bu gen icin bu clusterda-"+clusterIndex+" hesaplanan fitness:"+fitness);
-			  String geneStr ="";
-			  for(int i=0;i<numberOfVariables;i++){
-				  geneStr += ind.getGenes()[i];
-			  }
+//			  String geneStr ="";
+//			  for(int i=0;i<numberOfVariables;i++){
+//				  geneStr += ind.getGenes()[i];
+//			  }
 			  //System.out.println("GENE: "+geneStr+", Fitness +:"+fitness);
 			  return fitness;
 		

@@ -17,7 +17,7 @@ public class Algorithm {
     /* Public methods */
     
     // Evolve a population
-    public static Population evolvePopulation(Population pop, int clusterIndex, int maxDomain) {
+    public static Population evolvePopulation(Population pop, int clusterIndex) {
     	
     	geneSize = pop.getIndividual(0).size();
         Population newPopulation = new Population(pop.size(),geneSize ,false, clusterIndex);
