@@ -183,8 +183,9 @@ public class LearningHeuristics {
 			 	 float time = (float)0;
 			 	 int [] valuesOfVariables = new int[variableOrder.length];
 			 	 for(int v=0;v<variableOrder.length;v++){
-			 		int constrID = model.constraint_IDs_user.get(v);
-			 		valuesOfVariables[v] = Constraints_Singleton.getInstance().getConstraintList_extension__UserRequirements().get(constrID).getValue_1();
+			 		int varIndex = variableOrder[v];
+			 		int constrID = model.constraint_IDs_user.get(varIndex);
+			 		valuesOfVariables[varIndex] = Constraints_Singleton.getInstance().getConstraintList_extension__UserRequirements().get(constrID).getValue_1();
 			 	 }
 			 	 
 				 List<Integer> userDiagnosis = new ArrayList<Integer>();
@@ -201,10 +202,13 @@ public class LearningHeuristics {
 				 
 				 while(!isConsistent && valuesOfVariables.length>count){
 					 
-					 GADiagnosis.add(variableOrder[count]);
+					 int varIndex = variableOrder[count];
+					 
+					 // when varIndex =0, this represents v1 not the v0, v0 is the selectedproduct
+					 GADiagnosis.add(varIndex+1);
 					 
 					 // -1 means do not add this var as a user constraint
-					 valuesOfVariables[count] = -1;
+					 valuesOfVariables[varIndex] = -1;
 					 // public CSP (int type, int[][]productTable, CSP originalCSP, int[] variables, int userID, int prodID){
 					 testModel = new CSP(1, null,Constraints_Singleton.getInstance().getOriginalCSP(),valuesOfVariables,-1, model.selectedProductID);
 					 

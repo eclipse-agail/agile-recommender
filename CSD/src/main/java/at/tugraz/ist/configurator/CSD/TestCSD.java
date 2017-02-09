@@ -33,7 +33,7 @@ public class TestCSD {
 	
 	
 	 public static void main(String []args){
-		numberOfClusters = 3;
+		numberOfClusters = 8;
 		numberOfVariables = 3;
 		//numberOfVariables = 10;
 		diagnosisType = 3;
@@ -49,35 +49,35 @@ public class TestCSD {
 		System.out.println("####################################");
 		
 		switch(diagnosisType){
-		case 0:
-			LearningHeuristics.targetValueOfFitness = 1;
-			LearningHeuristics.type = 0; // DONE 
-			diagnoseByFastDiag_BestPrecision_withCSH();
-			break;
-		case 1:
-			LearningHeuristics.targetValueOfFitness = 0;
-			LearningHeuristics.type = 1; // DONE 
-			diagnoseByFastDiag_Fastest_withCSH();
-			break;
-		case 2:
-			diagnoseByFastDiag(); // DONE 
-			break;
-		case 3:
-			LearningHeuristics.type = 3; 
-			diagnoseByGeneticAlgorithm_BestPrecision();
-			break;
-		case 4:
-			LearningHeuristics.type = 4;
-			diagnoseByGeneticAlgorithm_Fastest();
-			break;
-		default:
-			LearningHeuristics.type = 2; // DONE 
-			diagnoseByFastDiag();
-			break;
-		}
-		
-		System.out.println("####################################");
-	 }
+			case 0:
+				LearningHeuristics.targetValueOfFitness = 1;
+				LearningHeuristics.type = 0; // DONE 
+				diagnoseByFastDiag_BestPrecision_withCSH();
+				break;
+			case 1:
+				LearningHeuristics.targetValueOfFitness = 0;
+				LearningHeuristics.type = 1; // DONE 
+				diagnoseByFastDiag_Fastest_withCSH();
+				break;
+			case 2:
+				diagnoseByFastDiag(); // DONE 
+				break;
+			case 3:
+				LearningHeuristics.type = 3; 
+				diagnoseByGeneticAlgorithm_BestPrecision();
+				break;
+			case 4:
+				LearningHeuristics.type = 4;
+				diagnoseByGeneticAlgorithm_Fastest();
+				break;
+			default:
+				LearningHeuristics.type = 2; // DONE 
+				diagnoseByFastDiag();
+				break;
+			}
+			
+			System.out.println("####################################");
+	  }
 	
 	 // LearningHeuristics.type = 0;
 	 public static void diagnoseByFastDiag_BestPrecision_withCSH(){
@@ -411,7 +411,6 @@ public class TestCSD {
 		WriteToFile.writeCSV(outputFile,lines, true, true);
 		// STEP-5 is DONE
 				
-		 
 		System.out.println("CSD test is completed");
 		 
 	 }
