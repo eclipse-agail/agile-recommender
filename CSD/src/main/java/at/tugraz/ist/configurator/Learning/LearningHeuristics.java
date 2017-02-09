@@ -4,6 +4,7 @@ import static org.chocosolver.solver.search.strategy.Search.intVarSearch;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -170,15 +171,84 @@ public class LearningHeuristics {
 		 if(variableOrder!=null)
 			 solver = getCorrespondingHeuristicForCSP(model, solver,-1, variableOrder);
 		 
-		 
 		 long endTime = System.nanoTime();
-		 
 		 
 		 return endTime-startTime;
 	 }
 	 
-	 // returns precision btw 0..1 and time in negative value
-	 public static float[] diagnoseCSPwithFastDiag(CSP model, int [] variableOrder){
+	// returns precision btw 0..1 and time in negative value
+	public static float[] diagnoseCSP_GeneticAlgorithm(CSP model, int [] variableOrder){
+			 	 
+				 float precision = (float) 0.0;
+			 	 float time = (float)0;
+			 	 int [] valuesOfVariables = new int[variableOrder.length];
+			 	 for(int v=0;v<variableOrder.length;v++){
+			 		int constrID = model.constraint_IDs_user.get(v);
+			 		valuesOfVariables[v] = Constraints_Singleton.getInstance().getConstraintList_extension__UserRequirements().get(constrID).getValue_1();
+			 	 }
+			 	 
+				 List<Integer> userDiagnosis = new ArrayList<Integer>();
+				 userDiagnosis = model.getDiagnoseOfUser();
+
+				 List<Integer> GADiagnosis  = new ArrayList<Integer>();
+				 
+				 CSP testModel = null;
+				 
+				 boolean isConsistent = false;
+				 long startTime = 0;
+				 long endTime = 0;
+				 int count = 0;
+				 
+				 while(!isConsistent && valuesOfVariables.length>count){
+					 
+					 GADiagnosis.add(variableOrder[count]);
+					 
+					 // -1 means do not add this var as a user constraint
+					 valuesOfVariables[count] = -1;
+					 // public CSP (int type, int[][]productTable, CSP originalCSP, int[] variables, int userID, int prodID){
+					 testModel = new CSP(1, null,Constraints_Singleton.getInstance().getOriginalCSP(),valuesOfVariables,-1, model.selectedProductID);
+					 
+					 Solver solver = testModel.chocoModel.getSolver();
+					 
+					 
+					 startTime = System.nanoTime();
+					 isConsistent = solver.solve();
+					 endTime = System.nanoTime();
+					 time +=  (float)(startTime - endTime);
+					 
+					 count++;
+				 }
+				
+				 
+				 // IS DIAGNOSIS EQUAL TO USER DIAGNOSIS
+				 if (GADiagnosis!=null && userDiagnosis!=null && GADiagnosis.size()==userDiagnosis.size()){	
+	 		
+					 	for (int k=0;k<GADiagnosis.size();k++)
+						{
+							for (int u=0;u<GADiagnosis.size();u++){
+								int varID_userDiagnosis =  userDiagnosis.get(u);
+								int varID_ofDiagnoseAlgorithmArray =  GADiagnosis.get(k);
+							  	
+								if (varID_userDiagnosis == varID_ofDiagnoseAlgorithmArray){
+									precision ++;
+									break; // SEARCH FOR OTHER VARIABLES IN USER DIAG
+								}
+							
+							}
+						} 
+					 	
+						if(precision==GADiagnosis.size())
+							precision = 1;
+						else
+							precision = 0;
+				 	}
+				
+				 float[] resp = {precision,time};
+				 return resp;
+			 }
+
+	// returns precision btw 0..1 and time in negative value
+	public static float[] diagnoseCSP_FastDiag(CSP model, int [] variableOrder){
 		 	 
 			 //System.out.println("Diagnose with fastdiag for variable order"+variableOrder[0]+variableOrder[1]); 
 		 	 float precision = (float) 0.0;
@@ -237,7 +307,7 @@ public class LearningHeuristics {
 			 long startTime = System.currentTimeMillis();
 			 fastDiagDiagnosis = FastDiag.computeDiagnose(model,Constraints_Singleton.getInstance().getOriginalCSP());
 			 long endTime = System.currentTimeMillis();
-			 time =  startTime - endTime;
+			 time =  (float)(startTime - endTime);
 			 
 			
 			 if (fastDiagDiagnosis!=null && userDiagnosis!=null && fastDiagDiagnosis.size()==userDiagnosis.size()){	
@@ -290,58 +360,7 @@ public class LearningHeuristics {
 			 float[] resp = {precision,time};
 			 return resp;
 		 }
-	 
-//	 
-//	 // returns time in negative value
-//	 public static float diagnoseCSPwithFastDiag_Time(CSP model, int [] variableOrder){
-//			 
-//			 	 
-//				 //System.out.println("Diagnose with fastdiag for variable order"+variableOrder[0]+variableOrder[1]); 
-//			 	 float time = (float)0;
-//				 List<Constraint> orderedUserConstraints = new ArrayList<Constraint>();
-//				 List<Integer> userDiagnosis = new ArrayList<Integer>();
-//				 userDiagnosis = model.getDiagnoseOfUser();
-//
-//				 List<Constraint> fastDiagDiagnosis  = new ArrayList<Constraint>();
-//				 
-//				 //System.out.println("Before FastDiag"); 
-//				 int prodConstSize = model.constraints_products.size();
-//				 
-//				 List<Constraint> AC = Arrays.asList(model.chocoModel.getCstrs());
-//				 
-//
-//				 if(variableOrder!=null){
-//					 // SET THE ORDER OF USER CONSTRAINTS
-//					 for (int i=0;i<variableOrder.length;i++){
-//						 Constraint usercon = model.constraints_user.get(variableOrder[i]);
-//						 orderedUserConstraints.add(usercon);
-////						 //System.out.println(usercon);
-////						 for(int j=0;j<AC.size();j++){ 
-////							 Constraint c1 = AC.get(j);
-////							 //System.out.println(c1);
-////							 if(c1.getName().equals(usercon.getName())){
-////								 if(c1.getCidxInModel()==usercon.getCidxInModel()){
-////									 orderedUserConstraints.add(c1);
-////									 //System.out.println("User Constraint: "+usercon+"Model Constraint: "+c1);
-////								 }
-////							 }
-////						 }
-//					 }
-//					
-//					 // ADD FASTDIAG HERE
-//					 // fastDiagDiagnosis = FastDiag_Recursive.computeDiagnose(orderedUserConstraints, AC, model);
-//					 model.constraints_user = orderedUserConstraints;
-//				 }
-//				 
-//				 long startTime = System.currentTimeMillis();
-//				 fastDiagDiagnosis = FastDiag.computeDiagnose(model,Constraints_Singleton.getInstance().getOriginalCSP());
-//				 long endTime = System.currentTimeMillis();
-//				 time =  startTime - endTime;
-//				
-//				 
-//				 return (float)time;
-//			 }
-//		 
+
 	 public static int[] geneToOrder(byte[]gene){
 		 // input : 010 01 1 -> v0:2, v1:1, v2:3
 		 // output: 102 -> order or variables
@@ -401,42 +420,89 @@ public class LearningHeuristics {
 					 	
 					 	// RETURNS DIAGNOSIS PRECISION OF FASTDIAG WITH VAR ORDER (0..1)
 					 	case 0:
-					 		fitnessValueOfOrder = diagnoseCSPwithFastDiag(userModel,variableOrder)[0];
+					 		fitnessValueOfOrder = diagnoseCSP_FastDiag(userModel,variableOrder)[0];
 					 		break;
 					 		
 					 	// RETURNS DIAGNOSIS PERFORMANCE OF FASTDIAG WITH VAR ORDER (negative value of the executiontime)
 					 	case 1:
-					 		fitnessValueOfOrder = diagnoseCSPwithFastDiag(userModel,variableOrder)[1];
+					 		fitnessValueOfOrder = diagnoseCSP_FastDiag(userModel,variableOrder)[1];
+					 		break;
+					 		
+					 	// RETURNS DIAGNOSIS PRECISION OF GENETIC ALGORITHM WITH VAR ORDER (0..1)
+					 	case 3:
+					 		fitnessValueOfOrder = diagnoseCSP_GeneticAlgorithm(userModel,variableOrder)[0];
+					 		break;
+					 		
+					 	// RETURNS DIAGNOSIS PERFORMANCE OF GENETIC ALGORITHM WITH VAR ORDER (negative value of the executiontime)
+					 	case 4:
+					 		fitnessValueOfOrder = diagnoseCSP_GeneticAlgorithm(userModel,variableOrder)[1];
 					 		break;
 					 		
 					 	default:
 					 		fitnessValueOfOrder = solveCSPwithChoco(userModel,variableOrder);
 					 		break;
 					 }
-					 
-					 
-					 //System.out.println("fitness: "+fitnessValueOfOrder);
-					 //Solver solver = userModel.chocoModel.getSolver();
-			    	 
-					 // getHeuristics
-					 //solver = getCorrespondingHeuristicForCSP(userModel, solver,-1,variableOrder);
-					 
-					 // solver.solve();
-					 // long endTime = System.nanoTime();
+					
 					 totalFitnessValueForCluster += (fitnessValueOfOrder);
-				     //solver.printStatistics();
 			  }
 			  
-			  // bu gen icin bu clusterda hesaplanan ortalama running time
 			  fitness = totalFitnessValueForCluster/(clusters[clusterIndex].length);
-			  //System.out.println("GENE #"+ind.getGenes()+" bu gen icin bu clusterda-"+clusterIndex+" hesaplanan fitness:"+fitness);
-//			  String geneStr ="";
-//			  for(int i=0;i<numberOfVariables;i++){
-//				  geneStr += ind.getGenes()[i];
-//			  }
-			  //System.out.println("GENE: "+geneStr+", Fitness +:"+fitness);
+			
 			  return fitness;
 		
 	 }
 	 	
+
+	 
+//	 
+//	 // returns time in negative value
+//	 public static float diagnoseCSPwithFastDiag_Time(CSP model, int [] variableOrder){
+//			 
+//			 	 
+//				 //System.out.println("Diagnose with fastdiag for variable order"+variableOrder[0]+variableOrder[1]); 
+//			 	 float time = (float)0;
+//				 List<Constraint> orderedUserConstraints = new ArrayList<Constraint>();
+//				 List<Integer> userDiagnosis = new ArrayList<Integer>();
+//				 userDiagnosis = model.getDiagnoseOfUser();
+//
+//				 List<Constraint> fastDiagDiagnosis  = new ArrayList<Constraint>();
+//				 
+//				 //System.out.println("Before FastDiag"); 
+//				 int prodConstSize = model.constraints_products.size();
+//				 
+//				 List<Constraint> AC = Arrays.asList(model.chocoModel.getCstrs());
+//				 
+//
+//				 if(variableOrder!=null){
+//					 // SET THE ORDER OF USER CONSTRAINTS
+//					 for (int i=0;i<variableOrder.length;i++){
+//						 Constraint usercon = model.constraints_user.get(variableOrder[i]);
+//						 orderedUserConstraints.add(usercon);
+////						 //System.out.println(usercon);
+////						 for(int j=0;j<AC.size();j++){ 
+////							 Constraint c1 = AC.get(j);
+////							 //System.out.println(c1);
+////							 if(c1.getName().equals(usercon.getName())){
+////								 if(c1.getCidxInModel()==usercon.getCidxInModel()){
+////									 orderedUserConstraints.add(c1);
+////									 //System.out.println("User Constraint: "+usercon+"Model Constraint: "+c1);
+////								 }
+////							 }
+////						 }
+//					 }
+//					
+//					 // ADD FASTDIAG HERE
+//					 // fastDiagDiagnosis = FastDiag_Recursive.computeDiagnose(orderedUserConstraints, AC, model);
+//					 model.constraints_user = orderedUserConstraints;
+//				 }
+//				 
+//				 long startTime = System.currentTimeMillis();
+//				 fastDiagDiagnosis = FastDiag.computeDiagnose(model,Constraints_Singleton.getInstance().getOriginalCSP());
+//				 long endTime = System.currentTimeMillis();
+//				 time =  startTime - endTime;
+//				
+//				 
+//				 return (float)time;
+//			 }
+//		 
 }

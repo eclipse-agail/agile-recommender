@@ -51,17 +51,8 @@ public class CSP {
 		originalCSPOfTheUserCSP = originalCSP;
 		selectedProductID = prodID;
 		constraint_IDs_products = originalCSP.constraint_IDs_products;
-		//constraint_IDs_user = originalCSP.constraint_IDs_user;
 		
-		// constraints_products = originalCSP.constraints_products;
-		String newName;
-		// COPY ORIGINAL CSP
-		// INCLUDES ALL VARIABLES
-		// INCLUDES PRODUCT TABLE (PRODUCT CONSTRAINTS)
-		if(variables==null)
-			newName = String.valueOf(Math.random());
-		else
-			newName = "TestCSP for UserID:"+userID;
+		String newName = String.valueOf(Math.random());
 		
 		this.chocoModel = ChocoDuplications.getChocoModelOfOriginalCSP(newName);
 		

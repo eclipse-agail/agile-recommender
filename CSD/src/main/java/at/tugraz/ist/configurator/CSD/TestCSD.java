@@ -33,9 +33,10 @@ public class TestCSD {
 	
 	
 	 public static void main(String []args){
-		numberOfClusters = 16;
+		numberOfClusters = 3;
 		numberOfVariables = 3;
-		diagnosisType = 0;
+		//numberOfVariables = 10;
+		diagnosisType = 3;
 		
 		outputFile=  outputFolder + "\\Type="+diagnosisType+" Clusters="+numberOfClusters+".data";
 		
@@ -161,7 +162,7 @@ public class TestCSD {
 		 for(int i=0;i<numberOfUsers;i++){
 			 	CSP model = new CSP(2, null,Constraints_Singleton.getInstance().getCSPs_tobe_Clustered().get(i),null,0,0);
 			 	//CSP model = ChocoDuplications.duplicateModel(Constraints_Singleton.getInstance().getCSPs_tobe_Clustered().get(i), String.valueOf(Math.random()));
-				float [] resp = LearningHeuristics.diagnoseCSPwithFastDiag(model, variableOrders.get(getClusterID(i)));
+				float [] resp = LearningHeuristics.diagnoseCSP_FastDiag(model, variableOrders.get(getClusterID(i)));
 				lines.add(i+"\t\t"+(0-resp[1])+"\t\t"+resp[0]);
 		 }
 		 WriteToFile.writeCSV(outputFile,lines, true, true);
@@ -254,7 +255,7 @@ public class TestCSD {
 		for(int i=0;i<numberOfUsers;i++){
 			CSP model = new CSP(2, null,Constraints_Singleton.getInstance().getCSPs_tobe_Clustered().get(i),null,0,0);
 			//CSP model = ChocoDuplications.duplicateModel(Constraints_Singleton.getInstance().getCSPs_tobe_Clustered().get(i), String.valueOf(Math.random()));
-			float [] resp = LearningHeuristics.diagnoseCSPwithFastDiag(model, variableOrders.get(getClusterID(i)));
+			float [] resp = LearningHeuristics.diagnoseCSP_FastDiag(model, variableOrders.get(getClusterID(i)));
 			lines.add(i+"\t\t"+(0-resp[1])+"\t\t"+resp[0]);
 		}
 		WriteToFile.writeCSV(outputFile,lines, true, true);
@@ -309,7 +310,7 @@ public class TestCSD {
 		 for(int i=0;i<numberOfUsers;i++){
 			 	// CSP (int type, int[][]productTable, CSP originalCSP, int[] variables, int userID, int prodID)
 			 	CSP model = new CSP(2, null,Constraints_Singleton.getInstance().getCSPs_tobe_Clustered().get(i),null,0,0);
-			 	float [] resp = LearningHeuristics.diagnoseCSPwithFastDiag(model, null);
+			 	float [] resp = LearningHeuristics.diagnoseCSP_FastDiag(model, null);
 				lines.add(i+"\t\t"+(0-resp[1])+"\t\t"+resp[0]);
 		 }
 		 WriteToFile.writeCSV(outputFile,lines, true, true);
@@ -399,16 +400,19 @@ public class TestCSD {
 		// STEP-4 is DONE
 		 
 		 
+		// STEP-5 : apply CHOCO
+		List<String> lines =  new ArrayList<String>();
+		for(int i=0;i<numberOfUsers;i++){
+			CSP model = new CSP(2, null,Constraints_Singleton.getInstance().getCSPs_tobe_Clustered().get(i),null,0,0);
+			//CSP model = ChocoDuplications.duplicateModel(Constraints_Singleton.getInstance().getCSPs_tobe_Clustered().get(i), String.valueOf(Math.random()));
+			float [] resp = LearningHeuristics.diagnoseCSP_GeneticAlgorithm(model, variableOrders.get(getClusterID(i)));
+			lines.add(i+"\t\t"+(0-resp[1])+"\t\t"+resp[0]);
+		}
+		WriteToFile.writeCSV(outputFile,lines, true, true);
+		// STEP-5 is DONE
+				
 		 
-		 
-		// STEP-5 : run only with FastDiag
-		// STEP-5 is not DONE
-		 
-		// STEP-6 : run only with Genetic Algorithm
-		// STEP-6 is not DONE
-		
-		 
-		 System.out.println("CSD test is completed");
+		System.out.println("CSD test is completed");
 		 
 	 }
 	 
@@ -490,11 +494,17 @@ public class TestCSD {
 		 }
 		// STEP-4 is DONE
 		 
-		// STEP-5 : run only with FastDiag
-		// STEP-5 is not DONE
 		 
-		// STEP-6 : run only with Genetic Algorithm
-		// STEP-6 is not DONE
+		// STEP-5 : apply CHOCO
+		List<String> lines =  new ArrayList<String>();
+		for(int i=0;i<numberOfUsers;i++){
+			CSP model = new CSP(2, null,Constraints_Singleton.getInstance().getCSPs_tobe_Clustered().get(i),null,0,0);
+			//CSP model = ChocoDuplications.duplicateModel(Constraints_Singleton.getInstance().getCSPs_tobe_Clustered().get(i), String.valueOf(Math.random()));
+			float [] resp = LearningHeuristics.diagnoseCSP_GeneticAlgorithm(model, variableOrders.get(getClusterID(i)));
+			lines.add(i+"\t\t"+(0-resp[1])+"\t\t"+resp[0]);
+		}
+		WriteToFile.writeCSV(outputFile,lines, true, true);
+		// STEP-5 is DONE
 		
 		 
 		 System.out.println("CSD test is completed");
