@@ -17,6 +17,8 @@ public class CSP {
 	public int numberOfProducts;
 	public int numberOfVariables;
 	
+	public int[] weightedProducts_of_User;
+	
 	public List<Integer> constraint_IDs_user = new ArrayList<Integer>(); 
 	public List<int[]> constraint_IDs_products = new ArrayList<int[]>(); 
 	
@@ -31,14 +33,14 @@ public class CSP {
 	boolean allVarsAreCreated = false;
 	
 	
-	public CSP (int type, int[][]productTable, CSP originalCSP, int[] variables, int userID, int prodID){
+	public CSP (int type, int[][]productTable, CSP originalCSP, int[] variables, int userID, int prodID,int[]weightedProducts){
 		
 		if(type==0)
 			createOriginalCSP(productTable);
 		else if (type==1)
 			createTestCSP(originalCSP,variables,userID, prodID);
 		else
-			createUserCSP(originalCSP,variables,userID, prodID);
+			createUserCSP(originalCSP,variables,userID, prodID,weightedProducts);
 	}
 	
 
@@ -71,7 +73,7 @@ public class CSP {
 		
 	}
 	
-	private void createUserCSP (CSP originalCSP, int[] variables, int userID, int prodID){
+	private void createUserCSP (CSP originalCSP, int[] variables, int userID, int prodID,int[]weightedProducts){
 		
 		String newName;
 		
@@ -83,10 +85,12 @@ public class CSP {
 			this.chocoModel = ChocoDuplications.getChocoModelOfCreatedUser(originalIndex,newName);
 			constraints_user = originalCSP.constraints_user;
 			constraint_IDs_user = originalCSP.constraint_IDs_user;
+			weightedProducts_of_User = originalCSP.weightedProducts_of_User;
 		}
 		
 		else{
 			newName = "UserID:"+userID;
+			weightedProducts_of_User = weightedProducts;
 			originalIndex = userID;
 			selectedProductID = prodID;
 			this.chocoModel = ChocoDuplications.getChocoModelOfOriginalCSP(newName);

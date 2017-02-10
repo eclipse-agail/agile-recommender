@@ -40,10 +40,12 @@ public class LearningHeuristics {
 	 // 4: diagnoseByGeneticAlgorithm_Fastest
 	 
 	 /// UPDATE 
-	 static int sizeOfPopulation = 6;
+	 static int sizeOfPopulation = 9;
 	 static int maxNumberOfGeneration = 2;
 	 static int generationTimeOut = 100000000;
 	 ///
+	 
+	 public static float averageFitness=0;
 	 
 	
 	 public static List<int []> learnHeuristicsForClusters(int vars, int [][]clus, List<CSP> csps){
@@ -57,7 +59,7 @@ public class LearningHeuristics {
 		 System.out.println("####################################");
 		 
 		 numberOfVariables = vars;
-		 sizeOfPopulation = vars*(vars-1);
+		 sizeOfPopulation = vars*vars;
 		 clusters = clus;
 		 cspList = csps;
 		 numberOfClusters = clusters.length;
@@ -73,6 +75,8 @@ public class LearningHeuristics {
 		 // set target time (CSP running time)
 		 // 0.015 ms
 		 FitnessCalc.setTarget(targetValueOfFitness);
+		 float fit =0;
+		 float totalmodels=0;
 		 
 		 // FIND VARIABLE AND VALUE ORDERING FOR EACH CLUSTER
 		 // CLUSTER
@@ -115,7 +119,15 @@ public class LearningHeuristics {
 			 //ordersOfVariables.add(new int[numberOfvars]);
 			 System.out.println("Best Fitness value of Cluster-"+cl+" is "+myPop.getFittest().getFitness());
 			 ordersOfVariables.set(cl, varOrder);
+			 
+			 
+			 fit += myPop.getFittest().getFitness()*clusters[cl].length;
+			 totalmodels += clusters[cl].length;
 		 }
+		 averageFitness = (float)(fit/totalmodels);
+		 
+		 System.out.println("Avg Fitness value: "+(float)(fit/totalmodels));
+		 
 		 return ordersOfVariables;
 		 
 	 }
@@ -176,8 +188,8 @@ public class LearningHeuristics {
 		 return endTime-startTime;
 	 }
 	 
-	// returns precision btw 0..1 and time in negative value
-	public static float[] diagnoseCSP_GeneticAlgorithm(CSP model, int [] variableOrder){
+	 // returns precision btw 0..1 and time in negative value
+	 public static float[] diagnoseCSP_GeneticAlgorithm(CSP model, int [] variableOrder){
 			 	 
 				 float precision = (float) 0.0;
 			 	 float time = (float)0;
@@ -210,10 +222,9 @@ public class LearningHeuristics {
 					 // -1 means do not add this var as a user constraint
 					 valuesOfVariables[varIndex] = -1;
 					 // public CSP (int type, int[][]productTable, CSP originalCSP, int[] variables, int userID, int prodID){
-					 testModel = new CSP(1, null,Constraints_Singleton.getInstance().getOriginalCSP(),valuesOfVariables,-1, model.selectedProductID);
+					 testModel = new CSP(1, null,Constraints_Singleton.getInstance().getOriginalCSP(),valuesOfVariables,-1, model.selectedProductID,model.weightedProducts_of_User);
 					 
 					 Solver solver = testModel.chocoModel.getSolver();
-					 
 					 
 					 startTime = System.nanoTime();
 					 isConsistent = solver.solve();
@@ -251,8 +262,8 @@ public class LearningHeuristics {
 				 return resp;
 			 }
 
-	// returns precision btw 0..1 and time in negative value
-	public static float[] diagnoseCSP_FastDiag(CSP model, int [] variableOrder){
+	 // returns precision btw 0..1 and time in negative value
+	 public static float[] diagnoseCSP_FastDiag(CSP model, int [] variableOrder){
 		 	 
 			 //System.out.println("Diagnose with fastdiag for variable order"+variableOrder[0]+variableOrder[1]); 
 		 	 float precision = (float) 0.0;
@@ -416,7 +427,7 @@ public class LearningHeuristics {
 				     if(modelIndex==0)
 				    	 modelIndex=0;
 					 //CSP userModel = cspList.get(modelIndex);
-				     CSP userModel = new CSP(2, null,Constraints_Singleton.getInstance().getCSPs_tobe_Clustered().get(modelIndex),null,0,0);
+				     CSP userModel = new CSP(2, null,Constraints_Singleton.getInstance().getCSPs_tobe_Clustered().get(modelIndex),null,0,0,null);
 					 //System.out.println("evaluateFitnessValueOfCluster: Model#"+modelIndex);
 					 float fitnessValueOfOrder = 0;
 					 
@@ -457,7 +468,6 @@ public class LearningHeuristics {
 	 }
 	 	
 
-	 
 //	 
 //	 // returns time in negative value
 //	 public static float diagnoseCSPwithFastDiag_Time(CSP model, int [] variableOrder){

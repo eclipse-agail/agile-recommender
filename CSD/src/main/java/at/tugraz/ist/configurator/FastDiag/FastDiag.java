@@ -164,7 +164,7 @@ public class FastDiag {
 		
 		// CSP (boolean type, int[][]productTable, CSP originalCSP, int[] variables, int userID, int prodID)
 		// create test CSP, type =1
-		CSP subCSP = new CSP(1,null,rootCSP,varArray,-1,model.selectedProductID);
+		CSP subCSP = new CSP(1,null,rootCSP,varArray,-1,model.selectedProductID,null);
 		return subCSP;
 	}
 

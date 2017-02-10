@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ReadFile {
 
-	public static List<String> readFile(String filename) throws FileNotFoundException, IOException{
+	public static List<String> readFile(String filename){
 		
 		List<String> lines = new ArrayList<String>();
 		

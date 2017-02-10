@@ -10,8 +10,8 @@ import java.util.List;
 public class WriteToFile {
 	
 	 static FileWriter writer = null;
-
-	 public static FileWriter writeCSV(String fileDir, List<String> line, boolean first,boolean last){
+	 
+	 public static FileWriter writeFile(String fileDir, List<String> line,boolean first, boolean last,boolean append){
 		 try {
 			 File file = new File(fileDir);
 				// if file doesnt exists, then create it
@@ -19,8 +19,9 @@ public class WriteToFile {
 					file.createNewFile();
 					
 			 }
+			 // append mode
 			 if(writer==null || first)
-				 writer = new FileWriter(file.getPath());
+				 writer = new FileWriter(file.getPath(),append);
 			 
 			 CSVUtils.writeLine(writer,line);
 
@@ -28,6 +29,7 @@ public class WriteToFile {
 				 writer.flush();
 				 writer.close();
 			 }
+		
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -35,5 +37,4 @@ public class WriteToFile {
 		}
 		return writer;
 	 }
-	 
 }

@@ -52,40 +52,44 @@ public static void applyKMeans(String inputFile, int numberofVars, int numberOfC
 	 }
 
 	
-public static int[][] getClusters(int numberOfCluster, String outputFolder){
-		 
-		int [][] clusters = new int [numberOfCluster][];
-		 
-		 for (int i=0;i<numberOfCluster;i++){
-			 List<Integer> indexes = new ArrayList<Integer>();
+	public static int[][] getClusters(int numberOfCluster, String outputFolder){
 			 
-			 try {
-				 BufferedReader br = new BufferedReader(new FileReader(outputFolder+"/Cluster"+i+".txt"));
-			     StringBuilder sb = new StringBuilder();
-			     
-			     String line = br.readLine();
-	
-			     while (line != null) {
-			         sb.append(line);
-			         sb.append(System.lineSeparator());
-			         int val = Integer.valueOf(line.split("\t")[0]);
-			         indexes.add(val);
-			         
-			         // read next string
-			         line = br.readLine();
-			     }
-			     clusters[i]= new int[indexes.size()];
-			     for(int m=0;m<indexes.size();m++){
-			    	 clusters[i][m]=indexes.get(m);
-			     }
-			     String everything = sb.toString();
-			     br.close();
+			int [][] clusters = new int [numberOfCluster][];
+			 
+			 for (int i=0;i<numberOfCluster;i++){
+				 List<Integer> indexes = new ArrayList<Integer>();
+				 
+				 try {
+					 BufferedReader br = new BufferedReader(new FileReader(outputFolder+"/Cluster"+i+".txt"));
+				     StringBuilder sb = new StringBuilder();
+				     
+				     String line = br.readLine();
+		
+				     while (line != null) {
+				         sb.append(line);
+				         sb.append(System.lineSeparator());
+				         int val = Integer.valueOf(line.split("\t")[0]);
+				         indexes.add(val);
+				         
+				         // read next string
+				         line = br.readLine();
+				     }
+				     clusters[i]= new int[indexes.size()];
+				     for(int m=0;m<indexes.size();m++){
+				    	 clusters[i][m]=indexes.get(m);
+				     }
+				     String everything = sb.toString();
+				     br.close();
+				 }
+				 catch(Exception e){
+					 int z =0;
+				 }
 			 }
-			 catch(Exception e){
-				 int z =0;
-			 }
+			 return clusters;
 		 }
-		 return clusters;
-	 }
-
+	
+	
 }
+
+
+

@@ -10,6 +10,7 @@ import org.chocosolver.solver.variables.IntVar;
 public class ChocoDuplications {
 	
 	public static Constraints_Singleton seteOfVarsandCons = Constraints_Singleton.getInstance();
+	
 	//public static List<Constraint> ifconstraints = new ArrayList<Constraint>(); 
 //	
 //	public static Model duplicateModel(Model inputModel, String name){
