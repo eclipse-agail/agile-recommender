@@ -460,7 +460,7 @@ public class TestCSD {
 		for(int i=0;i<numberOfUsers;i++){
 			CSP model = new CSP(2, null,Constraints_Singleton.getInstance().getCSPs_tobe_Clustered().get(i),null,0,0,null);
 			//CSP model = ChocoDuplications.duplicateModel(Constraints_Singleton.getInstance().getCSPs_tobe_Clustered().get(i), String.valueOf(Math.random()));
-			float [] resp = LearningHeuristics.diagnoseCSP_GeneticAlgorithm(model, variableOrders.get(getClusterID(i)));
+			float [] resp = LearningHeuristics.diagnoseCSP_GA4D(model, variableOrders.get(getClusterID(i)));
 			lines.add(i+"\t\t"+(0-resp[1])+"\t\t"+resp[0]);
 			avgPresicion += resp[0];
 			avgTime += resp[1];
@@ -561,7 +561,7 @@ public class TestCSD {
 		for(int i=0;i<numberOfUsers;i++){
 			CSP model = new CSP(2, null,Constraints_Singleton.getInstance().getCSPs_tobe_Clustered().get(i),null,0,0,null);
 			//CSP model = ChocoDuplications.duplicateModel(Constraints_Singleton.getInstance().getCSPs_tobe_Clustered().get(i), String.valueOf(Math.random()));
-			float [] resp = LearningHeuristics.diagnoseCSP_GeneticAlgorithm(model, variableOrders.get(getClusterID(i)));
+			float [] resp = LearningHeuristics.diagnoseCSP_GA4D(model, variableOrders.get(getClusterID(i)));
 			lines.add(i+"\t\t"+(0-resp[1])+"\t\t"+resp[0]);
 			avgPresicion += resp[0];
 			avgTime += resp[1];

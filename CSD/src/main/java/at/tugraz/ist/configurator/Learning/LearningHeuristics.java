@@ -48,7 +48,7 @@ public class LearningHeuristics {
 	 public static float averageFitness=0;
 	 
 	
-	 public static List<int []> learnHeuristicsForClusters(int vars, int [][]clus, List<CSP> csps){
+	 public static List<int []> learnHeuristicsForClusters (int vars, int [][]clus, List<CSP> csps){
 		 
 		 System.out.println("####################################");
 		 System.out.println("GENETIC ALGORITHM - USED PARAMETERS:");
@@ -172,7 +172,7 @@ public class LearningHeuristics {
 		return solver;
 	 }
 	 
-	 // returns execution time
+	 // returns execution time of Choco
 	 public static float solveCSPwithChoco(CSP model, int [] variableOrder){
 		 
 		 long startTime = System.nanoTime();
@@ -189,11 +189,13 @@ public class LearningHeuristics {
 	 }
 	 
 	 // returns precision btw 0..1 and time in negative value
-	 public static float[] diagnoseCSP_GeneticAlgorithm(CSP model, int [] variableOrder){
+	 // Genetic Algorithm for Diagnosis
+	 public static float[] diagnoseCSP_GA4D(CSP model, int [] variableOrder){
 			 	 
 				 float precision = (float) 0.0;
 			 	 float time = (float)0;
 			 	 int [] valuesOfVariables = new int[variableOrder.length];
+			 	 
 			 	 for(int v=0;v<variableOrder.length;v++){
 			 		int varIndex = variableOrder[v];
 			 		int constrID = model.constraint_IDs_user.get(varIndex);
@@ -445,12 +447,12 @@ public class LearningHeuristics {
 					 		
 					 	// RETURNS DIAGNOSIS PRECISION OF GENETIC ALGORITHM WITH VAR ORDER (0..1)
 					 	case 3:
-					 		fitnessValueOfOrder = diagnoseCSP_GeneticAlgorithm(userModel,variableOrder)[0];
+					 		fitnessValueOfOrder = diagnoseCSP_GA4D(userModel,variableOrder)[0];
 					 		break;
 					 		
 					 	// RETURNS DIAGNOSIS PERFORMANCE OF GENETIC ALGORITHM WITH VAR ORDER (negative value of the executiontime)
 					 	case 4:
-					 		fitnessValueOfOrder = diagnoseCSP_GeneticAlgorithm(userModel,variableOrder)[1];
+					 		fitnessValueOfOrder = diagnoseCSP_GA4D(userModel,variableOrder)[1];
 					 		break;
 					 		
 					 	default:
@@ -468,7 +470,6 @@ public class LearningHeuristics {
 	 }
 	 	
 
-//	 
 //	 // returns time in negative value
 //	 public static float diagnoseCSPwithFastDiag_Time(CSP model, int [] variableOrder){
 //			 
