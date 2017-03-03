@@ -1,8 +1,8 @@
-at/tugraz/ist/agileconfigurator/models/App.class
-at/tugraz/ist/agileconfigurator/ConfiguratorAPI.class
-at/tugraz/ist/agileconfigurator/TestMautExample.class
-at/tugraz/ist/agileconfigurator/Optimizer.class
-at/tugraz/ist/agileconfigurator/models/ProtocolsKnowledgeBase.class
-at/tugraz/ist/agileconfigurator/models/GatewayProfile.class
-at/tugraz/ist/agileconfigurator/models/Results.class
-at/tugraz/ist/agileconfigurator/models/Protocol.class
+at\tugraz\ist\agileconfigurator\models\GatewayProfile.class
+at\tugraz\ist\agileconfigurator\models\App.class
+at\tugraz\ist\agileconfigurator\ConfiguratorAPI.class
+at\tugraz\ist\agileconfigurator\TestMautExample.class
+at\tugraz\ist\agileconfigurator\models\Results.class
+at\tugraz\ist\agileconfigurator\models\Protocol.class
+at\tugraz\ist\agileconfigurator\models\ProtocolsKnowledgeBase.class
+at\tugraz\ist\agileconfigurator\Optimizer.class

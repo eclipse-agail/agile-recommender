@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
-Implementation-Title: dockerTest
+Implementation-Title: resourceoptimizer
 Implementation-Version: 0.0.1-SNAPSHOT
 Built-By: spolater
 Implementation-Vendor-Id: agile.configurator
-Build-Jdk: 1.8.0_91
+Build-Jdk: 1.8.0_92
 Implementation-URL: http://projects.spring.io/spring-boot/resourceopti
  mizer/
 Created-By: Maven Integration for Eclipse
