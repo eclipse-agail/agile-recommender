@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import at.tugraz.ist.agile.configuratormodels.GatewayProfile;
 import at.tugraz.ist.agile.recommendermodels.RecommendedApps;
 import at.tugraz.ist.agile.recommendermodels.RecommendedClouds;
+import at.tugraz.ist.agile.recommendermodels.RecommendedDevices;
 import at.tugraz.ist.agile.recommendermodels.RecommendedWFs;
 
 @RestController
@@ -44,7 +45,7 @@ public class ConfiguratorAPI {
     	
     	RestTemplate restTemplate = new RestTemplate();
     	
-		final String uri = "http://54.213.147.198:8080/recommender/getAppRecommendation";
+		final String uri = "http://54.213.147.198:8080/Recommender/getAppRecommendation";
 		 
 		RecommendedApps recommendedApps = restTemplate.postForObject(uri, profile, RecommendedApps.class);
 		
@@ -55,7 +56,7 @@ public class ConfiguratorAPI {
     public RecommendedWFs getWorkflowRecommendation (@RequestBody at.tugraz.ist.agile.recommendermodels.GatewayProfile profile) {
     	
     	RestTemplate restTemplate = new RestTemplate();
-    	final String uri = "http://54.213.147.198:8080/recommender/getWorkflowRecommendation";
+    	final String uri = "http://54.213.147.198:8080/Recommender/getWorkflowRecommendation";
 		 
     	RecommendedWFs result = restTemplate.postForObject(uri, profile, RecommendedWFs.class);
 		
@@ -66,9 +67,21 @@ public class ConfiguratorAPI {
     public RecommendedClouds getCloudRecommendation (@RequestBody at.tugraz.ist.agile.recommendermodels.GatewayProfile profile) {
     	
     	RestTemplate restTemplate = new RestTemplate();
-    	final String uri = "http://54.213.147.198:8080/recommender/getCloudRecommendation";
+    	final String uri = "http://54.213.147.198:8080/Recommender/getCloudRecommendation";
 		 
     	RecommendedClouds result = restTemplate.postForObject(uri, profile, RecommendedClouds.class);
+		
+		return result;
+      
+    }
+    
+    @ResponseBody @RequestMapping("/getDeviceRecommendation")
+    public RecommendedDevices getDeviceRecommendation (@RequestBody at.tugraz.ist.agile.recommendermodels.GatewayProfile profile) {
+    	
+    	RestTemplate restTemplate = new RestTemplate();
+    	final String uri = "http://54.213.147.198:8080/Recommender/getDeviceRecommendation";
+		 
+    	RecommendedDevices result = restTemplate.postForObject(uri, profile, RecommendedDevices.class);
 		
 		return result;
       
@@ -78,7 +91,7 @@ public class ConfiguratorAPI {
     public String getCloudRecommendation () {
     	
     	RestTemplate restTemplate = new RestTemplate();
-    	final String uri = "http://54.213.147.198:8080/recommender/updateRepositories";
+    	final String uri = "http://54.213.147.198:8080/Recommender/updateRepositories";
 		 
     	String str = restTemplate.getForObject(uri, String.class);
 		
