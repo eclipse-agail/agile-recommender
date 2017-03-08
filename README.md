@@ -9,12 +9,11 @@ localhost:8090/recommenderdockerservice/getWorkflowRecommendation
 localhost:8090/recommenderdockerservice/getDeviceRecommendation
 localhost:8090/recommenderdockerservice/getCloudRecommendation
 
-One API for Configurator:
+### One API for Configurator:
 
-### localhost:8090/recommenderdockerservice/getResourceOptimization
+localhost:8090/recommenderdockerservice/getResourceOptimization
 
-
-Example Input and Output:
+Example Input and Output of Configurator API:
 
 ```
 INPUT: 
@@ -94,9 +93,9 @@ OUTPUT:
 }
 ```
 
-## Implemented Cases in the Resource Optimizer:
+## Implemented Configuration Scenario::
 
-### Case-1: Optimize App Configurations
+### Optimize App Configurations
 - Goal: Update the configuration of each app on the gateway based on utility maximization for each
 - Apps support different Data encoding and Connectivity protocols,
 - Gateway support different Data encoding and Connectivity protocols,
