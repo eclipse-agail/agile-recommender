@@ -1,14 +1,17 @@
-# AGILE Configurator
+# AGILE Recommender Service
 
-## Resource Optimizer
-This configurator is a agile service that runs on the Gateway.
-It opens an API for other AGILE services to be able to get optimum settings for the gateway.
+## This service provides 6 APIs in total:
+### Five APIs for Recommender:
 
-Resource Optimizer is developed as a Spring Boot Application. 
-Later it will be wrapped as Docker microservice and will run on the AGILE gateway.
+localhost:8090/recommenderdockerservice/updateRepositories
+localhost:8090/recommenderdockerservice/getAppRecommendation
+localhost:8090/recommenderdockerservice/getWorkflowRecommendation
+localhost:8090/recommenderdockerservice/getDeviceRecommendation
+localhost:8090/recommenderdockerservice/getCloudRecommendation
 
-Provides 1 restful services: 
-* http://localhost:8080/configurator/getResourceOptimization
+One API for Configurator:
+
+### localhost:8090/recommenderdockerservice/getResourceOptimization
 
 
 Example Input and Output:
