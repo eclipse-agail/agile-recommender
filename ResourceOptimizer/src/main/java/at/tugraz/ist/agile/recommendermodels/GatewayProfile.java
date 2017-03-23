@@ -4,66 +4,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class GatewayProfile {
 	
-
-	public long userID;
-	public String devices;
-	public String apps;
-	public String wfs;
-	public String resources;
+	public ListOfDevices devices;
+	public ListOfApps apps;
+	public ListOfWFs wfs;
+	public ListOfClouds clouds;
 	public String location;
 	public String pricingPreferences;
 	
+	
 	public GatewayProfile(){
-		this.userID = 0;
-		this.devices = "";
-		this.apps = "";
-		this.wfs = ""; 
-		this.resources = "";
+		this.devices = new ListOfDevices();
+		this.apps = new ListOfApps();
+		this.wfs = new ListOfWFs();
 		this.location = "";
 		this.pricingPreferences = "";
+		this.clouds = new ListOfClouds();
 		
 	}
-	public GatewayProfile (long id, String str1, String str2, String str3, String str4, String loc,String pricing){
-		this.userID = id;
+	public GatewayProfile (ListOfDevices str1, ListOfApps str2, ListOfWFs str3, String loc,String pricing, ListOfClouds clouds){
+		
 		this.devices = str1;
 		this.apps = str2;
 		this.wfs = str3; 
-		this.resources = str4;
 		this.location = loc;
 		this.pricingPreferences = pricing;
+		this.clouds = clouds;
 	}
 	
-	
-	public long getUserID() {
-		return userID;
-	}
-	public void setUserID(long userID) {
-		this.userID = userID;
-	}
-	public String getDevices() {
-		return devices;
-	}
-	public void setDevices(String devices) {
-		this.devices = devices;
-	}
-	public String getApps() {
-		return apps;
-	}
-	public void setApps(String apps) {
-		this.apps = apps;
-	}
-	public String getWfs() {
-		return wfs;
-	}
-	public void setWfs(String wfs) {
-		this.wfs = wfs;
-	}
-	public String getResources() {
-		return resources;
-	}
-	public void setResources(String resources) {
-		this.resources = resources;
-	}
+
 	public String getLocation() {
 		return location;
 	}
@@ -76,7 +44,30 @@ public class GatewayProfile {
 	public void setPricingPreferences(String pricingPreferences) {
 		this.pricingPreferences = pricingPreferences;
 	}
-	
+	public ListOfDevices getDevices() {
+		return devices;
+	}
+	public void setDevices(ListOfDevices devices) {
+		this.devices = devices;
+	}
+	public ListOfApps getApps() {
+		return apps;
+	}
+	public void setApps(ListOfApps apps) {
+		this.apps = apps;
+	}
+	public ListOfWFs getWfs() {
+		return wfs;
+	}
+	public void setWfs(ListOfWFs wfs) {
+		this.wfs = wfs;
+	}
+	public ListOfClouds getClouds() {
+		return clouds;
+	}
+	public void setClouds(ListOfClouds clouds) {
+		this.clouds = clouds;
+	}
 	
 
 }

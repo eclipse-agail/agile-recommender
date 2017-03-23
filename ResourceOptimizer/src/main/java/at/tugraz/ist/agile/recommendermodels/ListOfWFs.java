@@ -1,12 +1,11 @@
 package at.tugraz.ist.agile.recommendermodels;
 
+import java.util.ArrayList;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class RecommendedWFs {
+public class ListOfWFs {
 	
-	private List<Workflow> wfList;
+	private List<Workflow> wfList = new ArrayList<Workflow>();
 
 	public List<Workflow> getWfList() {
 		return wfList;

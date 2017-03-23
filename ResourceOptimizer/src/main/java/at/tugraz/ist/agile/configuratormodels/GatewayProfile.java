@@ -54,6 +54,5 @@ public class GatewayProfile {
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
-	
-	
+
 }

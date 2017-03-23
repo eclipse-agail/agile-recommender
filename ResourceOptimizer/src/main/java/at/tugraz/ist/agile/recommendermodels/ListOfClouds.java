@@ -1,12 +1,11 @@
 package at.tugraz.ist.agile.recommendermodels;
 
+import java.util.ArrayList;
 import java.util.List;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class RecommendedClouds {
+public class ListOfClouds {
 	
-	private List<Cloud> cloudList;
+	private List<Cloud> cloudList = new ArrayList<Cloud>();
 
 	public List<Cloud> getCloudList() {
 		return cloudList;
