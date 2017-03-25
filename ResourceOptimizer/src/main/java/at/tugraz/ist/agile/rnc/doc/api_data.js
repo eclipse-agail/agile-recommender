@@ -294,7 +294,7 @@ define({ "api": [
     },
     "sampleRequest": [
       {
-        "url": "http://192.168.1.246:8090/recommenderdockerservice/getServiceConfiguration/"
+        "url": "http://192.168.1.246:8090/"
       }
     ],
     "filename": "./RnCAPI.java",

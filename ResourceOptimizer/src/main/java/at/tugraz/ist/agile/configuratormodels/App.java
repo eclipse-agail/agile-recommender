@@ -13,7 +13,6 @@ public class App {
 	private int [] supportedDataEncodingProtocolsOfApp;
 	private int [] supportedConnectivitiyProtocolsOfApp;
 	
-
 	
 	public String getName() {
 		return name;

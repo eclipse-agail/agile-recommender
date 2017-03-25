@@ -62,7 +62,7 @@ public class StaticServiceConfiguration {
 		return 0;
 	}
 
-	public int updateProperties(StaticServiceConfiguration conf){
+	/*public int updateProperties(StaticServiceConfiguration conf){
 		
 		FileOutputStream out;
 		try {
@@ -88,7 +88,7 @@ public class StaticServiceConfiguration {
 			return -1;
 		}
 		return 0;
-	}
+	} */
 
 	public boolean isRecommenderServiceForDevelopmentUIActive() {
 		return recommenderServiceForDevelopmentUIActive;
