@@ -476,6 +476,11 @@ public class LearningHeuristics {
 		
 	 }
 	 	
+	 
+//	 public static boolean isPredictionCorrect(CSP userModel, ){
+//		 
+//		 return false;
+//	 }
 
 //	 // returns time in negative value
 //	 public static float diagnoseCSPwithFastDiag_Time(CSP model, int [] variableOrder){

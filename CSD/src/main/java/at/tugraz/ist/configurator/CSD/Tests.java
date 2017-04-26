@@ -39,7 +39,7 @@ public class Tests{
 		 
 		 // USER CONST
 		 int selectedProductID_byUser = 0;
-		 int [] varArray_userConstraints = {20,50,80};
+		 int [] varArray_userConstraints = {80,100,2000};
 		 // CSP (int type, int[][]productTable, CSP originalCSP, int[] variables, int userID, int prodID,int[]weightedProducts)
 		 // create test CSP, type =1
 		 CSP usermodelCSP  = new CSP(1,null,productTableCSP, varArray_userConstraints,0, selectedProductID_byUser, null);
@@ -50,7 +50,7 @@ public class Tests{
 		 if(fastDiagDiagnosis==null)
 			 System.out.println("Dig = null");
 		 else
-			 System.out.println(fastDiagDiagnosis);
+			 System.out.println("Dig ="+fastDiagDiagnosis);
 	 }
 	 
 	
