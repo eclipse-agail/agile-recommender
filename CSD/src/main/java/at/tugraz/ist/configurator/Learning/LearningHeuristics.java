@@ -325,7 +325,7 @@ public class LearningHeuristics {
 			 fastDiagDiagnosis = FastDiag.computeDiagnose(model,Constraints_Singleton.getInstance().getOriginalCSP());
 			 long endTime = System.currentTimeMillis();
 			 time =  (float)(startTime - endTime);
-			 
+			  
 			
 			 if (fastDiagDiagnosis!=null && userDiagnosis!=null && fastDiagDiagnosis.size()==userDiagnosis.size()){	
 //				 System.out.println("####################################");

@@ -40,8 +40,8 @@ public class FastDiag {
 		if(userModel.constraints_user.isEmpty())
 			return null;
 		
-		if(isConsistent(userModel))
-			return null;
+//		if(isConsistent(userModel))
+//			return null;
 		
 		List<Constraint> emptyList = new ArrayList<Constraint>();
 		return fd(emptyList,userModel);
@@ -76,9 +76,20 @@ public class FastDiag {
 		List<Constraint> C2 = new ArrayList<Constraint>();
 		C2.addAll(userModel.constraints_user.subList(k, userModel.constraints_user.size()));
 		
-		List<Constraint> D1 = fd(C2, subtractConstraints(userModel,UC,C2)); 
-		List<Constraint> D2 = fd(D1, subtractConstraints(userModel,UC,D1)); 
-	
+		System.out.println("UC: "+ UC);
+		
+		CSP left = subtractConstraints(userModel,UC,C2); 
+		System.out.println("left: "+ left.constraints_user);
+		List<Constraint> D1 = fd(C2, left);  
+		System.out.println("D1: "+ D1);
+		
+		List<Constraint> C1_and_D1 = new ArrayList<Constraint>();
+		C1_and_D1.addAll(C1);
+		C1_and_D1.addAll(D1);
+		CSP right = subtractConstraints(userModel,UC,C1_and_D1); 
+		System.out.println("right: "+ right.constraints_user);
+		List<Constraint> D2 = fd(D1, right); 
+		System.out.println("D2: "+ D2);
 		
 		// ADD D1
 		boolean isFound=false;
@@ -124,7 +135,7 @@ public class FastDiag {
 	}
 	
 	
-	private static CSP subtractConstraints(CSP model,List<Constraint> L1,List<Constraint> L2){
+	private static CSP subtractConstraints(CSP model,List<Constraint> L1, List<Constraint> L2){
 		
 		if(L1.size()==0 || L2.size()==0)
 			return model;
