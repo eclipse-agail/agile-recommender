@@ -113,7 +113,7 @@ public class FastDiag {
 		return finalDiagnosis;
 	} 
 	
-	private static boolean isConsistent(CSP userModel){
+	public static boolean isConsistent(CSP userModel){
 		boolean isSolvable = false;
 		userModel.chocoModel.getSolver().reset();
 		isSolvable = userModel.chocoModel.getSolver().solve();
