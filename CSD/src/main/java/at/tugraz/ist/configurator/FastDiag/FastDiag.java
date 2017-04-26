@@ -18,12 +18,12 @@ public class FastDiag {
 	
 	
 //	1 func FastDiag(C ⊆ AC, AC = {c1..ct}) : ∆
-//	2 if isEmpty(C) or inconsistent(AC − C) return ∅
-//	3 else return F D(∅, C, AC)
+//	2 if isEmpty(C) or inconsistent(AC − C) return null
+//	3 else return F D(null, C, AC)
 	
 	
 //	4 func FD(D, C = {c1..cq}, AC) : diagnosis ∆
-//	5 if D 6= ∅ and consistent(AC) return ∅;
+//	5 if D != null and consistent(AC) return ∅;
 //	6 if singleton(C) return C;
 //	7 k = q/2;
 //	8 C1 = {c1..ck}; C2 = {ck+1..cq};
@@ -40,6 +40,9 @@ public class FastDiag {
 		if(userModel.constraints_user.isEmpty())
 			return null;
 		
+		if(isConsistent(userModel))
+			return null;
+		
 		List<Constraint> emptyList = new ArrayList<Constraint>();
 		return fd(emptyList,userModel);
 	}
@@ -50,14 +53,14 @@ public class FastDiag {
 //	6 if singleton(C) return C;
 //	7 k = q/2;
 //	8 C1 = {c1..ck}; C2 = {ck+1..cq};
-//	9 D1 = F D(C1, C2, AC − C1);
-//	10 D2 = F D(D1, C1, AC − D1);
+//	9 D1 = F D(C2, C1, AC − C2);
+//	10 D2 = F D(D1, C2, AC − D1);
 	private static List<Constraint> fd( List<Constraint>D, CSP userModel){
 		
 		List<Constraint> finalDiagnosis = new ArrayList<Constraint>();
 		
-		if( !D.isEmpty() && isConsistent(userModel))
-			return D;
+		if(!D.isEmpty() && isConsistent(userModel))
+			return new ArrayList<Constraint>();
 		
 		if(userModel.constraints_user.size()==1)
 			return userModel.constraints_user;
@@ -73,8 +76,8 @@ public class FastDiag {
 		List<Constraint> C2 = new ArrayList<Constraint>();
 		C2.addAll(userModel.constraints_user.subList(k, userModel.constraints_user.size()));
 		
-		List<Constraint> D1 = fd(C1, subtractConstraints(userModel,UC,C1)); // user constraints are C2 = UC - C1
-		List<Constraint> D2 = fd(C2, subtractConstraints(userModel,UC,C2)); // user constraints are C1 = UC - C2
+		List<Constraint> D1 = fd(C2, subtractConstraints(userModel,UC,C2)); 
+		List<Constraint> D2 = fd(D1, subtractConstraints(userModel,UC,D1)); 
 	
 		
 		// ADD D1
@@ -122,6 +125,10 @@ public class FastDiag {
 	
 	
 	private static CSP subtractConstraints(CSP model,List<Constraint> L1,List<Constraint> L2){
+		
+		if(L1.size()==0 || L2.size()==0)
+			return model;
+			
 		int [] varArray = new int[rootCSP.numberOfVariables];
 		for (int a=0;a<varArray.length;a++)
 			varArray[a] = -1;
