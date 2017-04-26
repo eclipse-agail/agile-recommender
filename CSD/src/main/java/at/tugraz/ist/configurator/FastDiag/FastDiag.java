@@ -14,14 +14,6 @@ import at.tugraz.ist.configurator.ChocoExtensions.Constraints_Singleton;
 
 public class FastDiag {
 	
-
-	public static void main(String []args){
-		
-	
-	}
-	
-	
-	
 //	Algorithm 1 − FastDiag
 	
 	
