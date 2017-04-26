@@ -477,19 +477,20 @@ public class LearningHeuristics {
 	 }
 	 	
 	 
-	 public static boolean isPredictionCorrect(CSP userModel, List<Constraint> diagnosis){
-		 
-		 List<Integer> productIDList = new ArrayList<Integer>();
-		 CSP cspAfterDiagnose = FastDiag.subtractConstraints(userModel, userModel.constraints_user, diagnosis);
-		 cspAfterDiagnose.chocoModel.getSolver().reset();
-		 
-		 while(cspAfterDiagnose.chocoModel.getSolver().solve()){
-			 productIDList.add(cspAfterDiagnose.chocoModel.getVar(0));
-		 }
-		 
-		 
-		 return false;
-	 }
+//	 public static boolean isPredictionCorrect(CSP userModel, List<Constraint> diagnosis){
+//		 
+//		 List<Integer> productIDList = new ArrayList<Integer>();
+//		 CSP cspAfterDiagnose = FastDiag.subtractConstraints(userModel, userModel.constraints_user, diagnosis);
+//		 cspAfterDiagnose.chocoModel.getSolver().reset();
+//		 
+//		 while(cspAfterDiagnose.chocoModel.getSolver().solve()){
+//			 System.out.println();
+//			 productIDList.add(cspAfterDiagnose.chocoModel.getVars()[0]);
+//		 }
+//		 
+//		 
+//		 return false;
+//	 }
 
 //	 // returns time in negative value
 //	 public static float diagnoseCSPwithFastDiag_Time(CSP model, int [] variableOrder){

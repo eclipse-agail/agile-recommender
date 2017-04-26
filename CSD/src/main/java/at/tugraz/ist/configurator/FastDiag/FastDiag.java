@@ -44,54 +44,49 @@ public class FastDiag {
 			return null;
 		
 		List<Constraint> emptyList = new ArrayList<Constraint>();
-		return fd(emptyList,userModel);
+		return fd(emptyList,userModel.constraints_user,userModel);
 	}
 	
 	
 //	4 func FD(D, C = {c1..cq}, AC) : diagnosis ∆
-//	5 if D 6= ∅ and consistent(AC) return ∅;
+//	5 if D != ∅ and consistent(AC) return ∅;
 //	6 if singleton(C) return C;
 //	7 k = q/2;
 //	8 C1 = {c1..ck}; C2 = {ck+1..cq};
 //	9 D1 = F D(C1, C2, AC − C1);
 //	10 D2 = F D(D1, C1, AC − D1);
-	private static List<Constraint> fd( List<Constraint>D, CSP userModel){
+	static List<Constraint> D1;
+	static List<Constraint> D2;
+	private static List<Constraint> fd(List<Constraint>D, List<Constraint> C, CSP AC){
 		
 		List<Constraint> finalDiagnosis = new ArrayList<Constraint>();
 		
-		if(!D.isEmpty() && isConsistent(userModel))
+		if(!D.isEmpty() && isConsistent(AC))
 			return new ArrayList<Constraint>();
 		
-		if(userModel.constraints_user.size()==1)
-			return userModel.constraints_user;
+		if(C.size()==1)
+			return C;
+			
+		int k = C.size()/2;
 		
-				
-		List<Constraint> UC = userModel.constraints_user;
-		
-		int k = UC.size()/2;
-		
-
 		List<Constraint> C1 = new ArrayList<Constraint>();
-		C1.addAll(userModel.constraints_user.subList(0, k));
+		C1.addAll(C.subList(0, k));
 		List<Constraint> C2 = new ArrayList<Constraint>();
-		C2.addAll(userModel.constraints_user.subList(k, userModel.constraints_user.size()));
+		C2.addAll(C.subList(k, C.size()));
 		
-		System.out.println("UC: "+ UC);
+	
+		CSP AC_C1 = subtractConstraints(AC,C,C1); 
+		System.out.println("right: "+ AC_C1.constraints_user);
 		
-		CSP right = subtractConstraints(userModel,UC,C1); 
-		System.out.println("right: "+ right.constraints_user);
-		
-		List<Constraint> D1 = fd(C1, right);  
+		System.out.println("FD_D1, D:"+ C1 +" C:"+ AC_C1.constraints_user );
+		D1 = fd(C1, C2, AC_C1);  
 		System.out.println("D1: "+ D1);
+	
+		CSP AC_D1 = subtractConstraints(AC,C,D1); 
+		System.out.println("left: "+ AC_D1.constraints_user);
 		
-		List<Constraint> C2_and_D1 = new ArrayList<Constraint>();
-		C2_and_D1.addAll(C2);
-		C2_and_D1.addAll(D1);
-		
-		CSP left = subtractConstraints(userModel,UC,C2_and_D1); 
-		System.out.println("left: "+ left.constraints_user);
-		
-		List<Constraint> D2 = fd(D1, left); 
+		System.out.println("FD_D2, D:"+ D1 +" C:"+ AC_D1.constraints_user );
+		D2 = fd(D1, C1, AC_D1); 
 		System.out.println("D2: "+ D2);
 		
 		// ADD D1
