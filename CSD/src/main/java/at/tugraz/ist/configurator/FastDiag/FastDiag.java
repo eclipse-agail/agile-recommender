@@ -79,7 +79,7 @@ public class FastDiag {
 		System.out.println("UC: "+ UC);
 		
 		CSP right = subtractConstraints(userModel,UC,C1); 
-		System.out.println("left: "+ right.constraints_user);
+		System.out.println("right: "+ right.constraints_user);
 		
 		List<Constraint> D1 = fd(C1, right);  
 		System.out.println("D1: "+ D1);
@@ -89,7 +89,7 @@ public class FastDiag {
 		C2_and_D1.addAll(D1);
 		
 		CSP left = subtractConstraints(userModel,UC,C2_and_D1); 
-		System.out.println("right: "+ right.constraints_user);
+		System.out.println("left: "+ left.constraints_user);
 		
 		List<Constraint> D2 = fd(D1, left); 
 		System.out.println("D2: "+ D2);
@@ -138,7 +138,7 @@ public class FastDiag {
 	}
 	
 	
-	private static CSP subtractConstraints(CSP model,List<Constraint> L1, List<Constraint> L2){
+	public static CSP subtractConstraints(CSP model,List<Constraint> L1, List<Constraint> L2){
 		
 		if(L1.size()==0 || L2.size()==0)
 			return model;
