@@ -14,6 +14,14 @@ import at.tugraz.ist.configurator.ChocoExtensions.Constraints_Singleton;
 
 public class FastDiag {
 	
+
+	public static void main(String []args){
+		
+	
+	}
+	
+	
+	
 //	Algorithm 1 − FastDiag
 	
 	
@@ -44,10 +52,14 @@ public class FastDiag {
 		return fd(emptyList,userModel);
 	}
 	
-	//	func FD(D, C = {c1..cq}, AC) : diagnosis ∆ 
-	// D =D
-	// C is inside usermodel.userconstraints
-	// AC is inside usermodel.productconstraints + usermodel.userconstraints
+	
+//	4 func FD(D, C = {c1..cq}, AC) : diagnosis ∆
+//	5 if D 6= ∅ and consistent(AC) return ∅;
+//	6 if singleton(C) return C;
+//	7 k = q/2;
+//	8 C1 = {c1..ck}; C2 = {ck+1..cq};
+//	9 D1 = F D(C1, C2, AC − C1);
+//	10 D2 = F D(D1, C1, AC − D1);
 	private static List<Constraint> fd( List<Constraint>D, CSP userModel){
 		
 		List<Constraint> finalDiagnosis = new ArrayList<Constraint>();
@@ -58,23 +70,12 @@ public class FastDiag {
 		if(userModel.constraints_user.size()==1)
 			return userModel.constraints_user;
 		
-		
-//		List<Constraint> AC = new ArrayList<Constraint>();
-//		AC.addAll(userModel.constraints_user); 
-//		AC.addAll(userModel.constraints_products); 
-		
+				
 		List<Constraint> UC = userModel.constraints_user;
 		
 		int k = UC.size()/2;
 		
-//		4 func FD(D, C = {c1..cq}, AC) : diagnosis ∆
-//		5 if D 6= ∅ and consistent(AC) return ∅;
-//		6 if singleton(C) return C;
-//		7 k = q/2;
-//		8 C1 = {c1..ck}; C2 = {ck+1..cq};
-//		9 D1 = F D(C1, C2, AC − C1);
-//		10 D2 = F D(D1, C1, AC − D1);
-		
+
 		List<Constraint> C1 = new ArrayList<Constraint>();
 		C1.addAll(userModel.constraints_user.subList(0, k));
 		List<Constraint> C2 = new ArrayList<Constraint>();
@@ -126,6 +127,7 @@ public class FastDiag {
 		isSolvable = userModel.chocoModel.getSolver().solve();
 		return isSolvable;
 	}
+	
 	
 	private static CSP subtractConstraints(CSP model,List<Constraint> L1,List<Constraint> L2){
 		int [] varArray = new int[rootCSP.numberOfVariables];

@@ -40,13 +40,13 @@ public class LearningHeuristics {
 	 // 4: diagnoseByGeneticAlgorithm_Fastest
 	 
 	 /// UPDATE 
-	 static int sizeOfPopulation = 9;
+	 static int sizeOfPopulation = 10; // for 10 variables, it can be max: 10!= 3628800
 	 static int maxNumberOfGeneration = 2;
-	 static int generationTimeOut = 100000000;
+	 static int generationTimeOut = 100;
 	 ///
 	 
 	 public static float averageFitness=0;
-	 
+	 public static int count = 0;
 	
 	 public static List<int []> learnHeuristicsForClusters (int vars, int [][]clus, List<CSP> csps){
 		 
@@ -59,7 +59,7 @@ public class LearningHeuristics {
 		 System.out.println("####################################");
 		 
 		 numberOfVariables = vars;
-		 sizeOfPopulation = vars*vars;
+		 //sizeOfPopulation = vars*vars;
 		 clusters = clus;
 		 cspList = csps;
 		 numberOfClusters = clusters.length;
@@ -109,8 +109,8 @@ public class LearningHeuristics {
 			   // apply new test over new population
 			   // testPopulationOverCluster(myPop,cl);
 			   currentTime = System.nanoTime();
-			   if((currentTime-startTime)>generationTimeOut)
-				   break;
+//			   if((currentTime-startTime)>generationTimeOut)
+//				   break;
 			 } 
 			 
 			 int [] varOrder = myPop.getFittest().getGenes();
@@ -409,8 +409,9 @@ public class LearningHeuristics {
 	 }
 
 	 public static float evaluateFitnessValueOfCluster(Individual ind, int clusterIndex){
-		 //System.out.println("evaluateFitnessValueOfCluster: Cluster#"+clusterIndex);
-
+		 
+		 
+		    
 		 	if (clusters[clusterIndex].length<=0)
 			  return 0;
 		  
@@ -423,7 +424,13 @@ public class LearningHeuristics {
 			  // run CSP over the models except the last one and take avg time
 			  //System.out.println("totalModels in cluster: #"+(clusters[clusterIndex].length-1));
 			  for (int md=0;md<clusters[clusterIndex].length;md++){
-				  	 	 
+				     if(count==1000){
+					     System.out.println("evaluateFitnessValueOfCluster: count#"+count);
+					     System.out.println("clusterIndex: "+clusterIndex);
+					     count=0;
+				     }
+				     count++;
+				     
 				  	 //long startTime = System.nanoTime();
 				     int modelIndex = clusters[clusterIndex][md];
 				     if(modelIndex==0)

@@ -10,14 +10,16 @@ public class Population {
      */
     // Create a population
     public Population(int populationSize,int geneSize, boolean initialise, int cl) {
+    	//System.out.println("Population size:"+populationSize);
     	clusterIndex = cl;
         individuals = new Individual[populationSize];
         // Initialise population
         if (initialise) {
             // Loop and create individuals
-            for (int i = 0; i < size(); i++) {
+            for (int i = 0; i < populationSize; i++) {
                 Individual newIndividual = new Individual(geneSize,cl);
                 newIndividual.generateIndividual(geneSize,clusterIndex);
+                //System.out.println("Individual generated:"+i);
                 saveIndividual(i, newIndividual);
             }
         }

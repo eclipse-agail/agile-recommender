@@ -41,12 +41,10 @@ public class TestCSD {
 	 public static void main(String []args){
 		 
 		int test_index = Integer.valueOf(args[0]); // 1
-		numberOfWeights = Integer.valueOf(args[2]); //3;
-		numberOfVariables = Integer.valueOf(args[3]); //10;
-		
-		numberOfClusters = Integer.valueOf(args[1]); //4; 
+		numberOfWeights = Integer.valueOf(args[1]); //3;
+		numberOfVariables = Integer.valueOf(args[2]); //10;
+		numberOfClusters = Integer.valueOf(args[3]); //4; 
 		diagnosisType = Integer.valueOf(args[4]); //0;
-		
 		
 		outputFile=  outputFolder + "\\Type="+diagnosisType+" Clusters="+numberOfClusters+" testIndex:"+test_index+".data";
 		outputFile_AvgPresicion = outputFolder + "\\AveragePrecisions.data";
@@ -96,7 +94,8 @@ public class TestCSD {
 			System.out.println("####################################");
 	  }
 	
-	 
+	
+	 // LOAD INPUTS
 	 public static void step1and2(){
 		 
 		// STEP-1 : generate the original problem with products table
@@ -135,6 +134,7 @@ public class TestCSD {
 		 
 	 }
 	 
+	 // CLUSTER AND LEARN
 	 public static void step3and4(){
 		 
 		 // STEP-3 : apply clustering
