@@ -74,10 +74,12 @@ public class TestCSD {
 				diagnoseByFastDiag(); // DONE 
 				break;
 			case 3:
+				LearningHeuristics.targetValueOfFitness = 1;
 				LearningHeuristics.type = 3; 
 				diagnoseByGeneticAlgorithm_BestPrecision();
 				break;
 			case 4:
+				LearningHeuristics.targetValueOfFitness = 0;
 				LearningHeuristics.type = 4;
 				diagnoseByGeneticAlgorithm_Fastest();
 				break;

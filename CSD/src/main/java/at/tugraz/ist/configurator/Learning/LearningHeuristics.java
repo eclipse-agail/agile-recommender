@@ -219,7 +219,9 @@ public class LearningHeuristics {
 					 int varIndex = variableOrder[count];
 					 
 					 // when varIndex =0, this represents v1 not the v0, v0 is the selectedproduct
-					 GADiagnosis.add(varIndex+1);
+					 // GADiagnosis.add(varIndex+1);
+					 
+					 GADiagnosis.add(count);
 					 
 					 // -1 means do not add this var as a user constraint
 					 valuesOfVariables[varIndex] = -1;
@@ -237,29 +239,30 @@ public class LearningHeuristics {
 				 }
 				
 				 
-				 // IS DIAGNOSIS EQUAL TO USER DIAGNOSIS
-				 if (GADiagnosis!=null && userDiagnosis!=null && GADiagnosis.size()==userDiagnosis.size()){	
-	 		
-					 	for (int k=0;k<GADiagnosis.size();k++)
-						{
-							for (int u=0;u<GADiagnosis.size();u++){
-								int varID_userDiagnosis =  userDiagnosis.get(u);
-								int varID_ofDiagnoseAlgorithmArray =  GADiagnosis.get(k);
-							  	
-								if (varID_userDiagnosis == varID_ofDiagnoseAlgorithmArray){
-									precision ++;
-									break; // SEARCH FOR OTHER VARIABLES IN USER DIAG
-								}
-							
-							}
-						} 
-					 	
-						if(precision==GADiagnosis.size())
-							precision = 1;
-						else
-							precision = 0;
-				 	}
+//				 // IS DIAGNOSIS EQUAL TO USER DIAGNOSIS
+//				 if (GADiagnosis!=null && userDiagnosis!=null && GADiagnosis.size()==userDiagnosis.size()){	
+//	 		
+//					 	for (int k=0;k<GADiagnosis.size();k++)
+//						{
+//							for (int u=0;u<GADiagnosis.size();u++){
+//								int varID_userDiagnosis =  userDiagnosis.get(u);
+//								int varID_ofDiagnoseAlgorithmArray =  GADiagnosis.get(k);
+//							  	
+//								if (varID_userDiagnosis == varID_ofDiagnoseAlgorithmArray){
+//									precision ++;
+//									break; // SEARCH FOR OTHER VARIABLES IN USER DIAG
+//								}
+//							
+//							}
+//						} 
+//					 	
+//						if(precision==GADiagnosis.size())
+//							precision = 1;
+//						else
+//							precision = 0;
+//				 	}
 				
+				 precision = isPredictionCorrect(model,null,GADiagnosis);
 				 float[] resp = {precision,time};
 				 return resp;
 			 }
@@ -327,41 +330,7 @@ public class LearningHeuristics {
 			 time =  (float)(startTime - endTime);
 			  
 			
-			 if (fastDiagDiagnosis!=null && userDiagnosis!=null && fastDiagDiagnosis.size()==userDiagnosis.size()){	
-//				 System.out.println("####################################");
-//				 System.out.println("FAST DIAG ALGORITHM DIAGNOSIS EVALUATION");
-//				 System.out.println("User Model ID: "+model.originalIndex);
-//				 System.out.println("FastDiag Diagnosis Size: "+fastDiagDiagnosis.size());
-//				 System.out.println("Users Diagnosis Size: "+userDiagnosis.size());
-//			 		 
-					 
-			 		
-				 	for (int k=0;k<fastDiagDiagnosis.size();k++)
-					{
-						for (int u=0;u<fastDiagDiagnosis.size();u++){
-							int varID_userDiagnosis =  userDiagnosis.get(u);
-							int varID_ofDiagnoseAlgorithmArray =  -1;
-						    int constrID_ofDiagnoseAlgorithm = -1;
-							try{
-								constrID_ofDiagnoseAlgorithm = Integer.valueOf(fastDiagDiagnosis.get(k).getName());
-								varID_ofDiagnoseAlgorithmArray = Constraints_Singleton.getInstance().getConstraintList_extension__UserRequirements().get(constrID_ofDiagnoseAlgorithm).getVar_1_ID();
-										
-								if (varID_userDiagnosis == varID_ofDiagnoseAlgorithmArray){
-									precision ++;
-									break; // SEARCH FOR OTHER VARIABLES IN USER DIAG
-								}
-										 
-							}catch(Exception ex){}
-									
-						}
-					} 
-				 	
-					if(precision==fastDiagDiagnosis.size())
-						precision = 1;
-					else
-						precision = 0;
-					
-			 	}
+			precision = isPredictionCorrect(model,fastDiagDiagnosis,null);
 			
 //			 	System.out.println("User Diagnosis: ");
 //			 	for(int u=0;u<userDiagnosis.size();u++){System.out.print(" var-"+userDiagnosis.get(u));}
@@ -475,22 +444,47 @@ public class LearningHeuristics {
 			  return fitness;
 		
 	 }
-	 	
 	 
-//	 public static boolean isPredictionCorrect(CSP userModel, List<Constraint> diagnosis){
-//		 
-//		 List<Integer> productIDList = new ArrayList<Integer>();
-//		 CSP cspAfterDiagnose = FastDiag.subtractConstraints(userModel, userModel.constraints_user, diagnosis);
-//		 cspAfterDiagnose.chocoModel.getSolver().reset();
-//		 
-//		 while(cspAfterDiagnose.chocoModel.getSolver().solve()){
-//			 System.out.println();
-//			 productIDList.add(cspAfterDiagnose.chocoModel.getVars()[0]);
-//		 }
-//		 
-//		 
-//		 return false;
-//	 }
+	 public static int isPredictionCorrect(CSP userModel, List<Constraint> diagnosis, List<Integer> diagnosis_constIDs){
+		 int res= 0;
+		 List<Integer> productIDList = new ArrayList<Integer>();
+		 
+	
+		 
+		 // GA
+		 if(diagnosis==null){
+			 
+			 diagnosis = new ArrayList<Constraint>();
+			 for(int i=0;i<diagnosis_constIDs.size();i++){
+				 diagnosis.add(userModel.constraints_user.get(i));
+			 } 
+			 
+		 }
+		 
+		
+			 CSP cspAfterDiagnose = FastDiag.subtractConstraints(userModel, userModel.constraints_user, diagnosis);
+			 cspAfterDiagnose.chocoModel.getSolver().reset();
+			 
+			 while(cspAfterDiagnose.chocoModel.getSolver().solve()){
+				 //System.out.println(cspAfterDiagnose.chocoModel.getVars()[0]);
+				 IntVar temp = (IntVar) cspAfterDiagnose.chocoModel.getVars()[0];
+				 productIDList.add(temp.getValue());
+			 }
+			 // System.out.println(productIDList);
+			 
+			 for(int i=0;i<productIDList.size();i++){
+				 if(productIDList.get(i)==userModel.selectedProductID ){
+					 res = 1;
+					 break;
+				 }
+			 }
+		 
+		 
+		 // System.out.println("SPID: "+userModel.selectedProductID);
+		 // System.out.println("After Diag: "+productIDList);
+		 //System.out.println("Prediction is "+res);
+		 return res;
+	 }
 
 //	 // returns time in negative value
 //	 public static float diagnoseCSPwithFastDiag_Time(CSP model, int [] variableOrder){

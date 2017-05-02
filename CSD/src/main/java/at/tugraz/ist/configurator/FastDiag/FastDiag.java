@@ -44,7 +44,9 @@ public class FastDiag {
 			return null;
 		
 		List<Constraint> emptyList = new ArrayList<Constraint>();
-		return fd(emptyList,userModel.constraints_user,userModel);
+		List<Constraint> diagnosis= fd(emptyList,userModel.constraints_user,userModel);
+		//System.out.println("Diagnosis: "+ diagnosis);
+		return diagnosis;
 	}
 	
 	
@@ -55,8 +57,6 @@ public class FastDiag {
 //	8 C1 = {c1..ck}; C2 = {ck+1..cq};
 //	9 D1 = F D(C1, C2, AC − C1);
 //	10 D2 = F D(D1, C1, AC − D1);
-	static List<Constraint> D1;
-	static List<Constraint> D2;
 	private static List<Constraint> fd(List<Constraint>D, List<Constraint> C, CSP AC){
 		
 		List<Constraint> finalDiagnosis = new ArrayList<Constraint>();
@@ -69,25 +69,37 @@ public class FastDiag {
 			
 		int k = C.size()/2;
 		
+		// System.out.println("C: "+ C);
+		
 		List<Constraint> C1 = new ArrayList<Constraint>();
 		C1.addAll(C.subList(0, k));
 		List<Constraint> C2 = new ArrayList<Constraint>();
 		C2.addAll(C.subList(k, C.size()));
-		
+
+//		System.out.println("C1: "+ C1);
+//		System.out.println("C2: "+ C2);
+//		System.out.println("-------------------------------------");
+//		System.out.println();
 	
-		CSP AC_C1 = subtractConstraints(AC,C,C1); 
-		System.out.println("right: "+ AC_C1.constraints_user);
+		CSP AC_C1 = subtractConstraints(AC,AC.constraints_user,C1); 
+		//System.out.println("AC_C1: "+ AC_C1.constraints_user);
 		
-		System.out.println("FD_D1, D:"+ C1 +" C:"+ AC_C1.constraints_user );
-		D1 = fd(C1, C2, AC_C1);  
-		System.out.println("D1: "+ D1);
-	
-		CSP AC_D1 = subtractConstraints(AC,C,D1); 
-		System.out.println("left: "+ AC_D1.constraints_user);
+		//System.out.println("FD_D1, \nD:"+ C1 +"\nC:"+ C2 +"\nAC:"+ AC_C1.constraints_user );
+	    List<Constraint> D1 = fd(C1, C2, AC_C1);  
+	    //System.out.println("D1: "+ D1);
+	    //System.out.println("-------------------------------------");
+	    //System.out.println();
 		
-		System.out.println("FD_D2, D:"+ D1 +" C:"+ AC_D1.constraints_user );
-		D2 = fd(D1, C1, AC_D1); 
-		System.out.println("D2: "+ D2);
+		
+		CSP AC_D1 = subtractConstraints(AC,AC.constraints_user,D1); 
+		//System.out.println("AC_D1: "+ AC_D1.constraints_user);
+		
+		//System.out.println("FD_D2, \nD:"+ D1 +"\nC:"+ C1 +"\nAC:"+ AC_D1.constraints_user );
+		List<Constraint> D2 = fd(D1, C1, AC_D1); 
+		//System.out.println("D2: "+ D2);
+		
+		//System.out.println("-------------------------------------");
+		//System.out.println();
 		
 		// ADD D1
 		boolean isFound=false;
@@ -138,7 +150,7 @@ public class FastDiag {
 		if(L1.size()==0 || L2.size()==0)
 			return model;
 			
-		int [] varArray = new int[rootCSP.numberOfVariables];
+		int [] varArray = new int[model.numberOfVariables];
 		for (int a=0;a<varArray.length;a++)
 			varArray[a] = -1;
 		
@@ -174,7 +186,7 @@ public class FastDiag {
 		
 		// CSP (boolean type, int[][]productTable, CSP originalCSP, int[] variables, int userID, int prodID)
 		// create test CSP, type =1
-		CSP subCSP = new CSP(1,null,rootCSP,varArray,-1,model.selectedProductID,null);
+		CSP subCSP = new CSP(1,null,model,varArray,-1,model.selectedProductID,null);
 		return subCSP;
 	}
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import at.tugraz.ist.configurator.ChocoExtensions.CSP;
+import at.tugraz.ist.configurator.FastDiag.FastDiag;
 import at.tugraz.ist.configurator.fileOperations.ReadFile;
 
 public class FileToChocoModel {
@@ -37,7 +38,11 @@ public class FileToChocoModel {
 				int selectedProductID = Integer.valueOf(values[numberOfVars+3]);
 				
 				CSP userConstraints = new CSP(2,null,orginalCSP,variables,i,selectedProductID,userweightedProducts);
-				users.add(userConstraints);
+				
+				if(FastDiag.isConsistent(userConstraints))
+					System.out.println("Consistent User !!!");
+				else
+					users.add(userConstraints);
 			}
 		}
 		
