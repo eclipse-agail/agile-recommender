@@ -10,6 +10,7 @@ public class GatewayProfile {
 	public ListOfClouds clouds;
 	public String location;
 	public String pricingPreferences;
+	public String requiredServices;
 	
 	
 	public GatewayProfile(){
@@ -19,9 +20,10 @@ public class GatewayProfile {
 		this.location = "";
 		this.pricingPreferences = "";
 		this.clouds = new ListOfClouds();
-		
+		this.requiredServices = "";
 	}
-	public GatewayProfile (ListOfDevices str1, ListOfApps str2, ListOfWFs str3, String loc,String pricing, ListOfClouds clouds){
+	
+	public GatewayProfile (ListOfDevices str1, ListOfApps str2, ListOfWFs str3, String loc,String pricing, ListOfClouds clouds, String requiredServices){
 		
 		this.devices = str1;
 		this.apps = str2;
@@ -29,9 +31,9 @@ public class GatewayProfile {
 		this.location = loc;
 		this.pricingPreferences = pricing;
 		this.clouds = clouds;
+		this.requiredServices = requiredServices;
 	}
 	
-
 	public String getLocation() {
 		return location;
 	}
@@ -67,6 +69,12 @@ public class GatewayProfile {
 	}
 	public void setClouds(ListOfClouds clouds) {
 		this.clouds = clouds;
+	}
+	public String getRequiredServices() {
+		return requiredServices;
+	}
+	public void setRequiredServices(String requiredServices) {
+		this.requiredServices = requiredServices;
 	}
 	
 
