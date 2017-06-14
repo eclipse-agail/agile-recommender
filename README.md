@@ -1,4 +1,4 @@
-# Recommender and Configurator Service on the AGILE Gateway
+# Recommender and Configurator Docker Service
 
 ## This service provides 6 APIs in total:
 localhost:8090/recommenderdockerservice/updateRepositories
