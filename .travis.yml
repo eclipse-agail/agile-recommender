@@ -1,6 +1,14 @@
-language: node_js
-node_js:
-  - "7"
+#-------------------------------------------------------------------------------
+# Copyright (C) 2017 Create-Net / FBK.
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+# 
+# Contributors:
+#     Create-Net / FBK - initial API and implementation
+#-------------------------------------------------------------------------------
+language: generic
 
 sudo: required
 
@@ -13,24 +21,37 @@ cache:
 
 env:
   global:
-    - COMPONENT=agile-nodered
+    - COMPONENT=agile-core
     - DOCKER_CACHE_FILE=/home/travis/docker-cache/cache.tar.gz
   matrix:
-    - DOCKER_IMAGE=agileiot/$COMPONENT-armv7l
-      VERSIONIST=true
-    - DOCKER_IMAGE=agileiot/$COMPONENT-x86_64
+    - IMAGE=agileiot/$COMPONENT-x86_64
       BASEIMAGE=resin\\/intel-nuc-openjdk:openjdk-8-jdk-20170425
 
 before_install:
-  - source <(curl -s https://raw.githubusercontent.com/Agile-IoT/agile-ci-scripts/master/agile-ci-functions.sh)
-  - cache_load
-  - bootstrap
-  - echo "Tagging the build with tag - $DOCKER_TAG"
+  - wget https://download.docker.com/linux/ubuntu/dists/trusty/pool/test/amd64/docker-ce_17.05.0~ce~rc3-0~ubuntu-trusty_amd64.deb
+  - sudo dpkg -i --force-confnew docker-ce_17.05.0~ce~rc3-0~ubuntu-trusty_amd64.deb
+  - if [ -f $DOCKER_CACHE_FILE ]; then
+      gunzip -c $DOCKER_CACHE_FILE | docker load || true;
+    fi
 
 script:
-  - docker_build_if_needed
-  - cache_save
+  - docker run --rm --privileged multiarch/qemu-user-static:register
+  - if [ "$BASEIMAGE" ] ; then sed -i "s/^FROM .*/FROM $BASEIMAGE/" Dockerfile ; fi
+  - if [[ ${TRAVIS_PULL_REQUEST} != "false" ]]; then
+      export DOCKER_TAG=$TRAVIS_BRANCH-pr-$TRAVIS_PULL_REQUEST;
+    else
+      export DOCKER_TAG=$TRAVIS_BRANCH;
+    fi
+  - docker build -t $IMAGE:$DOCKER_TAG .
+  - if [[ ${TRAVIS_PULL_REQUEST} == "false" ]]; then
+      mkdir -p $(dirname ${DOCKER_CACHE_FILE});
+      docker save $(docker history -q $IMAGE:$DOCKER_TAG | grep -v '<missing>') | gzip > ${DOCKER_CACHE_FILE};
+    fi
 
 after_success:
-  - docker_push_if_needed
-  - versionist_if_needed
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+  - docker push $IMAGE:$DOCKER_TAG;
+  - if [ "$DOCKER_TAG" == "master" ]; then
+      docker tag $IMAGE:$DOCKER_TAG $IMAGE;
+      docker push $IMAGE;
+    fi
