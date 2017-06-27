@@ -1,9 +1,10 @@
-FROM resin/raspberrypi3-openjdk:openjdk-8-jdk-20170217
+FROM resin/intel-nuc-openjdk:openjdk-8-jdk-20170425
 # Add packages
 RUN apt-get update && apt-get install --no-install-recommends -y \
     maven \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
-COPY . .
+COPY ResourceOptimizer /usr/src/app
+WORKDIR /usr/src/app
 RUN mvn package
 RUN sh -c 'touch /dockerservice 0.0.1-SNAPSHOT.jar'
 ENV JAVA_OPTS=""
