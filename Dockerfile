@@ -1,4 +1,4 @@
-FROM resin/intel-nuc-openjdk:openjdk-8-jdk-20170425
+FROM resin/raspberrypi3-openjdk:openjdk-8-jdk-20170217
 # Add packages
 RUN apt-get update && apt-get install --no-install-recommends -y \
     maven \
