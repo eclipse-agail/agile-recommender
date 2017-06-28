@@ -1,0 +1,3 @@
+[submodule "docker-zulujdk"]
+	path = docker-zulujdk
+	url = https://github.com/Agile-IoT/docker-zulujdk.git
