@@ -1,9 +1,4 @@
-FROM agileiot/raspberry-pi3-zulujdk:8-jdk
-
-# Add packages
-RUN apt-get update && apt-get install --no-install-recommends -y \
-    maven \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+FROM agileiot/raspberry-pi3-zulujdk:8-jdk-maven
 
 COPY ResourceOptimizer /usr/src/app
 WORKDIR /usr/src/app
