@@ -27,7 +27,7 @@ env:
     - DOCKER_CACHE_FILE=/home/travis/docker-cache/cache.tar.gz
   matrix:
     - DOCKER_IMAGE=agileiot/$COMPONENT
-      BASEIMAGE=resin\\/raspberry-pi3-openjdk:openjdk-8-jdk-20170426
+      BASEIMAGE=resin\\/raspberry-pi3-buildpack-deps:jessie-scm
 
 before_install:
   - source <(curl -s https://raw.githubusercontent.com/Agile-IoT/agile-ci-scripts/master/agile-ci-functions.sh)
