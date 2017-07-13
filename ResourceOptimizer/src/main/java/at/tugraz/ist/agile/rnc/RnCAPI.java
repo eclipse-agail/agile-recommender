@@ -6,9 +6,13 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Properties;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -30,16 +34,24 @@ public class RnCAPI {
 	//public static String recommenderIP = "http://ec2-54-201-143-18.us-west-2.compute.amazonaws.com:8080/Recommender/";
 	static at.tugraz.ist.agile.recommendermodels.GatewayProfile profile = new at.tugraz.ist.agile.recommendermodels.GatewayProfile(); 
 	static at.tugraz.ist.agile.configuratormodels.GatewayProfile configurationProfile = new at.tugraz.ist.agile.configuratormodels.GatewayProfile();
-	
+	 
+   
 	public static void main(String[] args) throws Exception {
 	    SpringApplication.run(RnCAPI.class, args);
 	    conf = new StaticServiceConfiguration();
 	    conf.loadProperties();
 	    profile = LoadConfigurations.loadGatewayProfile_ForRecom_Properties();
 	    configurationProfile= LoadConfigurations.loadGatewayProfile_ForConf_Properties();
-	    
+	   
 	}
 
+	
+	@ModelAttribute
+	public void setResponseHeader(HttpServletResponse response) {
+	    response.setHeader("Access-Control-Allow-Origin", "*");
+	}  
+	
+	
 	/**
 	 * @apiDescription AGILE Recommender and Configurator Docker Service
 	 * @apiVersion 1.0.0
@@ -156,6 +168,7 @@ public class RnCAPI {
     	
     	return recommendedApps;
     	
+    	//return Response.ok(recommendedApps).header("Access-Control-Allow-Origin", "*").build();
     }
     
     /**
