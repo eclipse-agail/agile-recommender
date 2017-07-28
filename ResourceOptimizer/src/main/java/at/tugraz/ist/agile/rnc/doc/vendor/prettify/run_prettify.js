@@ -1,3 +1,13 @@
+/*******************************************************************************
+ *Copyright (C) 2017 TU Graz.
+ *All rights reserved. This program and the accompanying materials
+ *are made available under the terms of the Eclipse Public License v1.0
+ *which accompanies this distribution, and is available at
+ *http://www.eclipse.org/legal/epl-v10.html
+ *
+ *Contributors:
+ *    TU Graz - initial API and implementation
+ ******************************************************************************/
 !function(){var r=null;
 (function(){function X(e){function j(){try{J.doScroll("left")}catch(e){P(j,50);return}w("poll")}function w(j){if(!(j.type=="readystatechange"&&x.readyState!="complete")&&((j.type=="load"?n:x)[z](i+j.type,w,!1),!m&&(m=!0)))e.call(n,j.type||j)}var Y=x.addEventListener,m=!1,C=!0,t=Y?"addEventListener":"attachEvent",z=Y?"removeEventListener":"detachEvent",i=Y?"":"on";if(x.readyState=="complete")e.call(n,"lazy");else{if(x.createEventObject&&J.doScroll){try{C=!n.frameElement}catch(A){}C&&j()}x[t](i+"DOMContentLoaded",
 w,!1);x[t](i+"readystatechange",w,!1);n[t](i+"load",w,!1)}}function Q(){S&&X(function(){var e=K.length;$(e?function(){for(var j=0;j<e;++j)(function(e){P(function(){n.exports[K[e]].apply(n,arguments)},0)})(j)}:void 0)})}for(var n=window,P=n.setTimeout,x=document,J=x.documentElement,L=x.head||x.getElementsByTagName("head")[0]||J,z="",A=x.scripts,m=A.length;--m>=0;){var M=A[m],T=M.src.match(/^[^#?]*\/run_prettify\.js(\?[^#]*)?(?:#.*)?$/);if(T){z=T[1]||"";M.parentNode.removeChild(M);break}}var S=!0,D=

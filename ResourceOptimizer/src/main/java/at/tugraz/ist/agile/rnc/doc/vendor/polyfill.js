@@ -1,3 +1,13 @@
+/*******************************************************************************
+ *Copyright (C) 2017 TU Graz.
+ *All rights reserved. This program and the accompanying materials
+ *are made available under the terms of the Eclipse Public License v1.0
+ *which accompanies this distribution, and is available at
+ *http://www.eclipse.org/legal/epl-v10.html
+ *
+ *Contributors:
+ *    TU Graz - initial API and implementation
+ ******************************************************************************/
 // From https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/keys
 if (!Object.keys) {
   Object.keys = (function () {
