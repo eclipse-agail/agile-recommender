@@ -1,4 +1,5 @@
 # Recommender and Configurator Docker Service
+Maintainer: Seda Polat Erdeniz, TUGraz
 
 ## This service provides 6 APIs in total:
 localhost:8090/recommenderdockerservice/updateRepositories
