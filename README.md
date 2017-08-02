@@ -1,11 +1,11 @@
 # Recommender and Configurator Docker Service
 Maintainer: Seda Polat Erdeniz, TUGraz
 
-## This service provides an API to other AGILE Gateway services to access to the recommender and configurator service 
+This service provides an API to other AGILE Gateway services to access to the recommender and configurator service 
 
 
-
-## API Document: http://54.186.105.109:8080/doc/
+## API Document 
+http://54.186.105.109:8080/doc/
 
 ### Recommender Use Cases
 #### Use Case 1 : App Recommendation
@@ -14,7 +14,7 @@ Maintainer: Seda Polat Erdeniz, TUGraz
 #### Use Case 4 : PaaS Provider (Cloud) Recommendation 
  
 ### Configurator Use Cases
-#### Use Case 1 :
+#### Use Case 1 : App Configuration 
 - Goal: Update the configuration of each app on the gateway based on utility maximization for each
 - Apps support different Data encoding and Connectivity protocols,
 - Gateway support different Data encoding and Connectivity protocols,
