@@ -18,6 +18,9 @@ public class Workflow {
 	public String datatag;
 	public String dataowner;
 	public String href;
+	public String description;
+	public String installCommand;
+	public String javascriptCode;
 	
 	public Workflow(){
 		
@@ -53,6 +56,30 @@ public class Workflow {
 	}
 	public void setHref(String href) {
 		this.href = href;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getInstallCommand() {
+		return installCommand;
+	}
+
+	public void setInstallCommand(String installCommand) {
+		this.installCommand = installCommand;
+	}
+
+	public String getJavascriptCode() {
+		return javascriptCode;
+	}
+
+	public void setJavascriptCode(String javascriptCode) {
+		this.javascriptCode = javascriptCode;
 	}
 	
 
