@@ -7,4 +7,4 @@ COPY RecommenderAndConfigurator /usr/src/app
 WORKDIR /usr/src/app
 RUN mvn package
 ENV JAVA_OPTS=""
-ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar target/dockerservice-0.0.1-SNAPSHOT.jar" ]
+ENTRYPOINT [ "sh", "-c", "java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar target/recommenderandconfigurator-0.0.1-SNAPSHOT.jar" ]
