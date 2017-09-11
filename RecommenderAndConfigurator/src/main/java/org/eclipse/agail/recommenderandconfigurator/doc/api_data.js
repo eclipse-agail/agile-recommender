@@ -235,13 +235,34 @@ define({ "api": [
             "optional": false,
             "field": "ListOfWFs.href",
             "description": ""
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "ListOfWFs.description",
+            "description": ""
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "ListOfWFs.installCommand",
+            "description": ""
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "ListOfWFs.javascriptCode",
+            "description": ""
           }
         ]
       },
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 200 OK\n\n{\n    \"wfList\": [\n        {\n            \"type\": \"Workflow\",\n            \"datatag\": \"Workflow\",\n            \"dataowner\": \"Workflow\",\n            \"href\": \"wflink1\"\n        },\n        {\n            \"type\": \"Workflow\",\n            \"datatag\": \"Workflow\",\n            \"dataowner\": \"Workflow\",\n            \"href\": \"wflink2\"\n        },\n        {\n            \"type\": \"flow\",\n            \"datatag\": \"Hive,Thermostat,Hot-water,boost,british,gas\",\n            \"dataowner\": \"twonk\",\n            \"href\": \"/flow/62e04c333b192f6119d9d5b72f675d5f\"\n        },\n        {\n            \"type\": \"node\",\n            \"datatag\": \"node-red,sensor,temperature,DS18B20\",\n            \"dataowner\": \"Brendan Murray\",\n            \"href\": \"/node/node-red-contrib-ds18b20-sensor\"\n        },\n        {\n            \"type\": \"node\",\n            \"datatag\": \"node-red,sensor,temperature,DS18B20\",\n            \"dataowner\": \"Brendan Murray\",\n            \"href\": \"/node/node-red-ds18b20-sensor\"\n        },\n        {\n            \"type\": \"node\",\n            \"datatag\": \"node-red,netatmo,camera,tags,sensors,weather,iot,ibm\",\n            \"dataowner\": \"Guido Bellomo\",\n            \"href\": \"/node/node-red-contrib-netatmo-dashboard\"\n        },\n        {\n            \"type\": \"node\",\n            \"datatag\": \"node-red,netatmo,camera,tags,sensors,weather,iot,ibm\",\n            \"dataowner\": \"Sam Adams\",\n            \"href\": \"/node/node-red-contrib-netatmo\"\n        },\n        {\n            \"type\": \"flow\",\n            \"datatag\": \"arduino,johnny-five,monitoring,research,R&amp;D,data,logging,temperature,thermistor,sensor,johnny5\",\n            \"dataowner\": \"BradleyBock\",\n            \"href\": \"/flow/4bceef5251eaa1f17a8f1fbeb5b6c34d\"\n        },\n        {\n            \"type\": \"flow\",\n            \"datatag\": \"Plant ,Monitoring ,emoncms,Arduino ,Rasberry ,sensors ,sensor,humidity ,temperature,soil ,moisture,light,water ,Graphic\",\n            \"dataowner\": \"caasisaac\",\n            \"href\": \"/flow/25bbcb5246633806463d\"\n        },\n        {\n            \"type\": \"flow\",\n            \"datatag\": \"test,abb,temperature\",\n            \"dataowner\": \"pankeshlinux\",\n            \"href\": \"/flow/976d93d4a017c3f46b6bac7433b3c143\"\n        },\n        {\n            \"type\": \"flow\",\n            \"datatag\": \"modbus,serial,temperature,humidity\",\n            \"dataowner\": \"nygma2004\",\n            \"href\": \"/flow/670ba131f74bd127d884aab2a580bffb\"\n        },\n        {\n            \"type\": \"flow\",\n            \"datatag\": \"rmap,relay,temperature\",\n            \"dataowner\": \"pat1\",\n            \"href\": \"/flow/6f03c1f31b1b494a79bd36b30ca86278\"\n        }\n    ]\n}",
+          "content": "HTTP/1.1 200 OK\n\n{\n    \"wfList\": [\n        {\n            \"type\": \"node\",\n            \"datatag\": \"node-red,ads-b,dump1090,ibm\",\n            \"dataowner\": \"Neil Kolban\",\n            \"href\": \"https://flows.nodered.org/node/node-red-contrib-ads-b\",\n            \"description\": \"low-description\\\">A Node-Red ADS-B decoded node\",\n            \"installCommand\": \"npm install node-red-contrib-ads-b\",\n            \"javascriptCode\": null\n        },\n        {\n            \"type\": \"node\",\n            \"datatag\": \"pm,pm2.5,pm10,sensor,air,node-red\",\n            \"dataowner\": \"Jannik Becher\",\n            \"href\": \"https://flows.nodered.org/node/node-red-contrib-sds011-sensor\",\n            \"description\": \"low-description\\\">This is a Node Red node to manage connection to the SDS011 sensor on a Raspberry Pi. It allows you to specify the variables that define the connections to the sensor. This node is added to the Raspberry Pi section.\",\n            \"installCommand\": \"npm install node-red-contrib-sds011-sensor\",\n            \"javascriptCode\": null\n        },\n        {\n            \"type\": \"node\",\n            \"datatag\": \"pcap,Packet Capture,ARP,node-red\",\n            \"dataowner\": \"Nicholas Humfrey\",\n            \"href\": \"https://flows.nodered.org/node/node-red-contrib-pcap\",\n            \"description\": \"low-description\\\">Network packet capture for Node-RED\",\n            \"installCommand\": \"npm install node-red-contrib-pcap\",\n            \"javascriptCode\": null\n        },\n        {\n            \"type\": \"node\",\n            \"datatag\": \"node-red,lego,boost,move,hub,robotics,ble,bluetooth\",\n            \"dataowner\": \"Sebastian Raff\",\n            \"href\": \"https://flows.nodered.org/node/node-red-contrib-movehub\",\n            \"description\": \"low-description\\\">Node-RED Nodes to control the Lego Boost Move Hub\",\n            \"installCommand\": \"npm install node-red-contrib-movehub\",\n            \"javascriptCode\": null\n        },\n        {\n            \"type\": \"node\",\n            \"datatag\": \"node-red,aws-sdk\",\n            \"dataowner\": \"high-u\",\n            \"href\": \"https://flows.nodered.org/node/node-red-contrib-aws-sdk-anything\",\n            \"description\": \"low-description\\\">node-red aws sdk anything\",\n            \"installCommand\": \"npm install node-red-contrib-aws-sdk-anything\",\n            \"javascriptCode\": null\n        },\n        {\n            \"type\": \"node\",\n            \"datatag\": \"node-red,fritzbox,fritz,router,tr064,presence,avm,callmonitor,phonebook\",\n            \"dataowner\": \"Jochen Scheib\",\n            \"href\": \"https://flows.nodered.org/node/node-red-contrib-fritz\",\n            \"description\": \"low-description\\\">This node gives access to the fritzbox tr064 api\",\n            \"installCommand\": \"npm install node-red-contrib-fritz\",\n            \"javascriptCode\": null\n        },\n        {\n            \"type\": \"node\",\n            \"datatag\": \"node-red,Yamaha,AVR,RX-777,RX-677,RX-477,RX-A740,HTR-4065,TSR-5790\",\n            \"dataowner\": \"Sebastian Krauskopf\",\n            \"href\": \"https://flows.nodered.org/node/node-red-contrib-avr-yamaha\",\n            \"description\": \"low-description\\\">Node-RED node to connect to Yamaha Audio Video Receivers (e.g. Yamaha AVR RX-677)\",\n            \"installCommand\": \"npm install node-red-contrib-avr-yamaha\",\n            \"javascriptCode\": null\n        },\n        {\n            \"type\": \"node\",\n            \"datatag\": \"node-red,db2,ibm,ibmi,os400,ibm i,iseries\",\n            \"dataowner\": \"Benoit Marolleau\",\n            \"href\": \"https://flows.nodered.org/node/node-red-contrib-db2-for-i\",\n            \"description\": \"low-description\\\">A Node-RED node to use a IBM DB2 for i database\",\n            \"installCommand\": \"npm install node-red-contrib-db2-for-i\",\n            \"javascriptCode\": null\n        },\n        {\n            \"type\": \"flow\",\n            \"datatag\": \"slack,bot,sdk\",\n            \"dataowner\": \"joshendriks\",\n            \"href\": \"https://flows.nodered.org/flow/51f68bd87a897caa5c3148457cc084c0\",\n            \"description\": \"e-red-contrib-slackbotsdk</h1>\\n          <p>This package implements a slackbot for <a href=\\\"https://slackapi.github.io/node-slack-sdk/\\\">node-red</a> using the official <a href=\\\"https://slackapi.github.io/node-slack-sdk/\\\">Slack Developer Kit for Node.js</a>\",\n            \"installCommand\": null,\n            \"javascriptCode\": \"[{\\\"id\\\":\\\"1d4829a6.6aa586\\\",\\\"type\\\":\\\"tab\\\",\\\"label\\\":\\\"Flow 1\\\",\\\"disabled\\\":false},{\\\"id\\\":\\\"baf3ec3e.50bc8\\\",\\\"type\\\":\\\"slackbot in\\\",\\\"z\\\":\\\"1d4829a6.6aa586\\\",\\\"name\\\":\\\"\\\",\\\"token\\\":\\\"a7e55e6.54507a\\\",\\\"x\\\":720,\\\"y\\\":120,\\\"wires\\\":[[\\\"bf5d7d2f.2fb\\\"]]},{\\\"id\\\":\\\"bf5d7d2f.2fb\\\",\\\"type\\\":\\\"change\\\",\\\"z\\\":\\\"1d4829a6.6aa586\\\",\\\"name\\\":\\\"Echo\\\",\\\"rules\\\":[{\\\"t\\\":\\\"set\\\",\\\"p\\\":\\\"payload\\\",\\\"pt\\\":\\\"msg\\\",\\\"to\\\":\\\"This is a test reply\\\",\\\"tot\\\":\\\"str\\\"}],\\\"action\\\":\\\"\\\",\\\"property\\\":\\\"\\\",\\\"from\\\":\\\"\\\",\\\"to\\\":\\\"\\\",\\\"reg\\\":false,\\\"x\\\":610,\\\"y\\\":380,\\\"wires\\\":[[\\\"baf3ec3e.50bc8\\\"]]},{\\\"id\\\":\\\"895ba886.b35758\\\",\\\"type\\\":\\\"inject\\\",\\\"z\\\":\\\"1d4829a6.6aa586\\\",\\\"name\\\":\\\"\\\",\\\"topic\\\":\\\"\\\",\\\"payload\\\":\\\"node-red slackbot is here\\\",\\\"payloadType\\\":\\\"str\\\",\\\"repeat\\\":\\\"\\\",\\\"crontab\\\":\\\"\\\",\\\"once\\\":false,\\\"x\\\":170,\\\"y\\\":139,\\\"wires\\\":[[\\\"fb623394.7c9ac\\\"]]},{\\\"id\\\":\\\"fb623394.7c9ac\\\",\\\"type\\\":\\\"change\\\",\\\"z\\\":\\\"1d4829a6.6aa586\\\",\\\"name\\\":\\\"\\\",\\\"rules\\\":[{\\\"t\\\":\\\"set\\\",\\\"p\\\":\\\"channel\\\",\\\"pt\\\":\\\"msg\\\",\\\"to\\\":\\\"channelID\\\",\\\"tot\\\":\\\"str\\\"}],\\\"action\\\":\\\"\\\",\\\"property\\\":\\\"\\\",\\\"from\\\":\\\"\\\",\\\"to\\\":\\\"\\\",\\\"reg\\\":false,\\\"x\\\":460,\\\"y\\\":100,\\\"wires\\\":[[\\\"baf3ec3e.50bc8\\\"]]},{\\\"id\\\":\\\"a7e55e6.54507a\\\",\\\"type\\\":\\\"slackbot-token\\\",\\\"z\\\":\\\"\\\",\\\"name\\\":\\\"Testbot\\\",\\\"token\\\":\\\"configure token here\\\"}]\"\n        },\n        {\n           \"type\": \"flow\",\n            \"datatag\": \"ibmi,iseries,db2\",\n            \"dataowner\": \"bmarolleau\",\n            \"href\": \"https://flows.nodered.org/flow/b255f32b8e07a5cc0c17e654fd338354\",\n            \"description\": \"e-red-contrib-db2-for-i  basic flow</h1>\\n          <h2 id=\\\"description\\\">Description</h2>\\n<p>A basic flow for reading or writing to a DB2 for i db using Node.js v6 / Node-RED on IBM i\",\n            \"installCommand\": null,\n            \"javascriptCode\": \"[{\\\"id\\\":\\\"f336e0ee.99fdf8\\\",\\\"type\\\":\\\"inject\\\",\\\"z\\\":\\\"e5e26fd6.5797\\\",\\\"name\\\":\\\"SQL Query\\\",\\\"topic\\\":\\\"database\\\",\\\"payload\\\":\\\"SELECT * FROM ACMEDB.MYTABLE\\\",\\\"payloadType\\\":\\\"str\\\",\\\"repeat\\\":\\\"\\\",\\\"crontab\\\":\\\"\\\",\\\"once\\\":false,\\\"x\\\":144,\\\"y\\\":470,\\\"wires\\\":[[\\\"8c1463e2.299be8\\\"]]},{\\\"id\\\":\\\"994e12fc.b6d598\\\",\\\"type\\\":\\\"debug\\\",\\\"z\\\":\\\"e5e26fd6.5797\\\",\\\"name\\\":\\\"\\\",\\\"active\\\":true,\\\"console\\\":\\\"false\\\",\\\"complete\\\":\\\"false\\\",\\\"x\\\":846,\\\"y\\\":472,\\\"wires\\\":[]},{\\\"id\\\":\\\"8c1463e2.299be8\\\",\\\"type\\\":\\\"template\\\",\\\"z\\\":\\\"e5e26fd6.5797\\\",\\\"name\\\":\\\"ACMEDB-Connection\\\",\\\"field\\\":\\\"database\\\",\\\"fieldType\\\":\\\"msg\\\",\\\"format\\\":\\\"handlebars\\\",\\\"syntax\\\":\\\"mustache\\\",\\\"template\\\":\\\"*LOCAL\\\",\\\"output\\\":\\\"str\\\",\\\"x\\\":390,\\\"y\\\":472,\\\"wires\\\":[[\\\"6800df26.7aed4\\\"]]},{\\\"id\\\":\\\"6800df26.7aed4\\\",\\\"type\\\":\\\"DB2 for i\\\",\\\"z\\\":\\\"e5e26fd6.5797\\\",\\\"mydb\\\":\\\"4d3a95ef.d7e97c\\\",\\\"name\\\":\\\"\\\",\\\"x\\\":603,\\\"y\\\":470,\\\"wires\\\":[[\\\"994e12fc.b6d598\\\"]]},{\\\"id\\\":\\\"4d3a95ef.d7e97c\\\",\\\"type\\\":\\\"DB2 for i Config\\\",\\\"z\\\":\\\"\\\",\\\"db\\\":\\\"*LOCAL\\\"}]\"\n        }\n    ]\n}",
           "type": "json"
         }
       ]
@@ -1082,36 +1103,8 @@ define({ "api": [
     "type": "",
     "url": "",
     "filename": "./RnCAPI.java",
-    "group": "C__Users_spolater_Desktop_AGILE_AGILE_GITHUB_Configurator_Configurator_ResourceOptimizer_src_main_java_at_tugraz_ist_agile_rnc_RnCAPI_java",
-    "groupTitle": "C__Users_spolater_Desktop_AGILE_AGILE_GITHUB_Configurator_Configurator_ResourceOptimizer_src_main_java_at_tugraz_ist_agile_rnc_RnCAPI_java",
-    "name": ""
-  },
-  {
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "optional": false,
-            "field": "varname1",
-            "description": "<p>No type.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "varname2",
-            "description": "<p>With type.</p>"
-          }
-        ]
-      }
-    },
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "./doc/main.js",
-    "group": "C__Users_spolater_Desktop_AGILE_AGILE_GITHUB_Configurator_Configurator_ResourceOptimizer_src_main_java_at_tugraz_ist_agile_rnc_doc_main_js",
-    "groupTitle": "C__Users_spolater_Desktop_AGILE_AGILE_GITHUB_Configurator_Configurator_ResourceOptimizer_src_main_java_at_tugraz_ist_agile_rnc_doc_main_js",
+    "group": "C__Users_spolater_Desktop_AGILE_AGILE_GITHUB_Configurator_Configurator_RecommenderAndConfigurator_src_main_java_org_eclipse_agail_recommenderandconfigurator_RnCAPI_java",
+    "groupTitle": "C__Users_spolater_Desktop_AGILE_AGILE_GITHUB_Configurator_Configurator_RecommenderAndConfigurator_src_main_java_org_eclipse_agail_recommenderandconfigurator_RnCAPI_java",
     "name": ""
   }
 ] });

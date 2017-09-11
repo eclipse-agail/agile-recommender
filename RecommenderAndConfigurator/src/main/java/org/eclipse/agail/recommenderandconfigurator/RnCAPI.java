@@ -194,6 +194,9 @@ public class RnCAPI {
      * @apiSuccess {String} ListOfWFs.datatag
      * @apiSuccess {String} ListOfWFs.dataowner
      * @apiSuccess {String} ListOfWFs.href
+     * @apiSuccess {String} ListOfWFs.description
+     * @apiSuccess {String} ListOfWFs.installCommand
+     * @apiSuccess {String} ListOfWFs.javascriptCode
      * 
      * 
      * @apiSuccessExample {json} Success-Response:
