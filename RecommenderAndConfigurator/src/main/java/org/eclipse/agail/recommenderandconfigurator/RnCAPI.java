@@ -14,7 +14,9 @@ package org.eclipse.agail.recommenderandconfigurator;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletResponse;
@@ -26,6 +28,7 @@ import org.eclipse.agail.recommenderandconfigurator.recommendermodels.ListOfApps
 import org.eclipse.agail.recommenderandconfigurator.recommendermodels.ListOfClouds;
 import org.eclipse.agail.recommenderandconfigurator.recommendermodels.ListOfDevices;
 import org.eclipse.agail.recommenderandconfigurator.recommendermodels.ListOfWFs;
+import org.eclipse.agail.recommenderandconfigurator.recommendermodels.Workflow;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.http.HttpHeaders;
@@ -77,9 +80,60 @@ public class RnCAPI {
 		}catch(Exception e){
 			
 		}
-	    
-	    // WORKFLOW
 		
+		try{
+			// WORKFLOW
+			RestTemplate restTemplate = new RestTemplate();
+		    final String uri2 = "localhost:1880/red-agile/flows";
+		    AgileWorkflowModel wfs = restTemplate.getForObject(uri2, AgileWorkflowModel.class);
+		    
+		    List<Workflow> wfList = new ArrayList<Workflow>();
+	    	
+		    for(int i=0;i<wfs.v1.length;i++){
+		    	Workflow wf = new Workflow();
+		    	String title = wfs.v1[i].type;
+		    	if(checkTitle(title)){
+			    	wf.setDatatag(title);
+			    	wfList.add(wf);
+		    	}
+		    }
+		    for(int i=0;i<wfs.v2.flows.length;i++){
+		    	Workflow wf = new Workflow();
+		    	String title = wfs.v2.flows[i].type;
+		    	if(checkTitle(title)){
+			    	wf.setDatatag(title);
+			    	wfList.add(wf);
+		    	}
+		    }
+		    
+		    recommenderProfile.wfs = new ListOfWFs();
+		    recommenderProfile.wfs.setWfList(wfList);
+		    
+		}catch(Exception e){
+			
+		}	
+	}
+	
+	static boolean checkTitle(String title){
+		boolean flag = false;
+		
+		// remove commen nodes in search
+		if (title.contains("function") || 
+				title.contains("switch") || 
+				title.contains("debug") || 
+				title.contains("template") || 
+				title.contains("inject") ||
+				title.contains("catch") ||
+				title.contains("status") ||
+				title.contains("delay") ||
+				title.contains("trigger") ||
+				title.contains("comment") ||
+				title.contains("trigger") 
+				){
+			
+			flag = true;
+		}
+		return flag;
 	}
 
 	
