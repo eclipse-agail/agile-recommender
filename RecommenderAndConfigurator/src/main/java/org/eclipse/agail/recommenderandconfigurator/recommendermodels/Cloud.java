@@ -13,6 +13,7 @@ package org.eclipse.agail.recommenderandconfigurator.recommendermodels;
 
 public class Cloud {
 
+	public String type="cloud";
 	public String title;
 	public String link;
 	public String accesstype;
@@ -129,6 +130,14 @@ public class Cloud {
 
 	public void setPricing(String pricing) {
 		this.pricing = pricing;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 	
 }

@@ -14,17 +14,21 @@ package org.eclipse.agail.recommenderandconfigurator;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.agail.recommenderandconfigurator.configurator.Optimizer;
 import org.eclipse.agail.recommenderandconfigurator.configurator.StaticServiceConfiguration;
+import org.eclipse.agail.recommenderandconfigurator.recommendermodels.Device;
 import org.eclipse.agail.recommenderandconfigurator.recommendermodels.ListOfApps;
 import org.eclipse.agail.recommenderandconfigurator.recommendermodels.ListOfClouds;
 import org.eclipse.agail.recommenderandconfigurator.recommendermodels.ListOfDevices;
 import org.eclipse.agail.recommenderandconfigurator.recommendermodels.ListOfWFs;
+import org.eclipse.agail.recommenderandconfigurator.recommendermodels.Workflow;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.http.HttpHeaders;
@@ -42,7 +46,7 @@ public class RnCAPI {
 	
 	public static StaticServiceConfiguration conf = new StaticServiceConfiguration();
 	//public static String recommenderIP = "http://ec2-54-201-143-18.us-west-2.compute.amazonaws.com:8080/Recommender/";
-	static org.eclipse.agail.recommenderandconfigurator.recommendermodels.GatewayProfile profile = new org.eclipse.agail.recommenderandconfigurator.recommendermodels.GatewayProfile(); 
+	static org.eclipse.agail.recommenderandconfigurator.recommendermodels.GatewayProfile recommenderProfile = new org.eclipse.agail.recommenderandconfigurator.recommendermodels.GatewayProfile(); 
 	static org.eclipse.agail.recommenderandconfigurator.configuratormodels.GatewayProfile configurationProfile = new org.eclipse.agail.recommenderandconfigurator.configuratormodels.GatewayProfile();
 	 
    
@@ -50,9 +54,86 @@ public class RnCAPI {
 	    SpringApplication.run(RnCAPI.class, args);
 	    conf = new StaticServiceConfiguration();
 	    conf.loadProperties();
-	    profile = LoadConfigurations.loadGatewayProfile_ForRecom_Properties();
+	    // recommenderProfile = LoadConfigurations.loadGatewayProfile_ForRecom_Properties();
 	    configurationProfile= LoadConfigurations.loadGatewayProfile_ForConf_Properties();
 	   
+	}
+	
+	public static void updateProfile(){
+	
+		try{
+			// DEVICES
+			RestTemplate restTemplate = new RestTemplate();
+		    final String uri = "localhost:8080/api/devices";
+		    AgileDeviceModel devices = restTemplate.getForObject(uri, AgileDeviceModel.class);
+	    	
+		    for(int i=0;i<devices.devices.length;i++){
+		    	Device dev = new Device();
+		    	String devTitle="";
+		    	for(int j=0;j<devices.devices[i].streams.length;j++){
+		    		devTitle += devices.devices[i].streams[j].id+" ";
+		    	} 
+		    	dev.setTitle(devTitle);
+		    	recommenderProfile.devices = new ListOfDevices();
+		    	recommenderProfile.devices.addDevice(dev);
+	    }
+		}catch(Exception e){
+			
+		}
+		
+		try{
+			// WORKFLOW
+			RestTemplate restTemplate = new RestTemplate();
+		    final String uri2 = "localhost:1880/red-agile/flows";
+		    AgileWorkflowModel wfs = restTemplate.getForObject(uri2, AgileWorkflowModel.class);
+		    
+		    List<Workflow> wfList = new ArrayList<Workflow>();
+	    	
+		    for(int i=0;i<wfs.v1.length;i++){
+		    	Workflow wf = new Workflow();
+		    	String title = wfs.v1[i].type;
+		    	if(checkTitle(title)){
+			    	wf.setDatatag(title);
+			    	wfList.add(wf);
+		    	}
+		    }
+		    for(int i=0;i<wfs.v2.flows.length;i++){
+		    	Workflow wf = new Workflow();
+		    	String title = wfs.v2.flows[i].type;
+		    	if(checkTitle(title)){
+			    	wf.setDatatag(title);
+			    	wfList.add(wf);
+		    	}
+		    }
+		    
+		    recommenderProfile.wfs = new ListOfWFs();
+		    recommenderProfile.wfs.setWfList(wfList);
+		    
+		}catch(Exception e){
+			
+		}	
+	}
+	
+	static boolean checkTitle(String title){
+		boolean flag = false;
+		
+		// remove commen nodes in search
+		if (title.contains("function") || 
+				title.contains("switch") || 
+				title.contains("debug") || 
+				title.contains("template") || 
+				title.contains("inject") ||
+				title.contains("catch") ||
+				title.contains("status") ||
+				title.contains("delay") ||
+				title.contains("trigger") ||
+				title.contains("comment") ||
+				title.contains("trigger") 
+				){
+			
+			flag = true;
+		}
+		return flag;
 	}
 
 	
@@ -165,6 +246,9 @@ public class RnCAPI {
      */
     @ResponseBody @RequestMapping("/getAppRecommendation")
     public ListOfApps getAppRecommendation() {
+    	
+    	updateProfile();
+    	
     	ListOfApps recommendedApps = new ListOfApps();
     	
     	if(conf.allowRecommenderServerToUseGatewayProfile==true && conf.recommenderServiceForAppManagementUIActive==true ){
@@ -173,7 +257,7 @@ public class RnCAPI {
 	    	
 			final String uri = conf.recommenderServerIP+"getAppRecommendation";
 			 
-			recommendedApps = restTemplate.postForObject(uri, profile, ListOfApps.class);
+			recommendedApps = restTemplate.postForObject(uri, recommenderProfile, ListOfApps.class);
     	}
     	
     	return recommendedApps;
@@ -300,6 +384,8 @@ public class RnCAPI {
      */
     @ResponseBody @RequestMapping("/getWorkflowRecommendation")
     public ListOfWFs getWorkflowRecommendation () {
+    	
+    	updateProfile();
     	ListOfWFs result = new ListOfWFs();
     	
     	if(conf.allowRecommenderServerToUseGatewayProfile==true && conf.recommenderServiceForDevelopmentUIActive==true ){
@@ -307,7 +393,7 @@ public class RnCAPI {
 	    	RestTemplate restTemplate = new RestTemplate();
 	    	final String uri = conf.recommenderServerIP+"getWorkflowRecommendation";
 			 
-	    	result = restTemplate.postForObject(uri, profile, ListOfWFs.class);
+	    	result = restTemplate.postForObject(uri, recommenderProfile, ListOfWFs.class);
     	}
 			
 		return result;
@@ -411,6 +497,8 @@ public class RnCAPI {
      */
     @ResponseBody @RequestMapping("/getCloudRecommendation")
     public ListOfClouds getCloudRecommendation () {
+    	
+    	updateProfile();
     	ListOfClouds result = new ListOfClouds();
     	
     	if(conf.allowRecommenderServerToUseGatewayProfile==true && conf.recommenderServiceForDevelopmentUIActive==true ){
@@ -418,7 +506,7 @@ public class RnCAPI {
 	    	RestTemplate restTemplate = new RestTemplate();
 	    	final String uri = conf.recommenderServerIP+"getCloudRecommendation";
 			 
-	    	result = restTemplate.postForObject(uri, profile, ListOfClouds.class);
+	    	result = restTemplate.postForObject(uri, recommenderProfile, ListOfClouds.class);
     	}
 		return result;
       
@@ -483,6 +571,8 @@ public class RnCAPI {
      */
     @ResponseBody @RequestMapping("/getDeviceRecommendation")
     public ListOfDevices getDeviceRecommendation () {
+    	
+    	updateProfile();
     	ListOfDevices result = new ListOfDevices();
     	
     	if(conf.allowRecommenderServerToUseGatewayProfile==true && conf.recommenderServiceForDeviceManagementUIActive==true ){
@@ -490,178 +580,11 @@ public class RnCAPI {
 	    	RestTemplate restTemplate = new RestTemplate();
 	    	final String uri = conf.recommenderServerIP+"getDeviceRecommendation";
 			 
-	    	result = restTemplate.postForObject(uri, profile, ListOfDevices.class);
+	    	result = restTemplate.postForObject(uri, recommenderProfile, ListOfDevices.class);
     	}
 		return result;
       
     }
-    
-    /**
-     * @api {get} /updateRepositories UpdateRepositories 
-     * @apiName UpdateRepositories
-     * @apiVersion 1.0.0
-     * @apiGroup 1-Recommender
-     * @apiDescription Updates the local repositories by getting new items from Amazon, Docker.hub and Node.Red websites.
-     *
-     *
-     * @apiSuccess {Number} success is 0, error is -1
-     *
-     */
-    @ResponseBody @RequestMapping("/updateRepositories")
-    public int updateRepositories () {
-    	int res = -1;
-    	
-    	if(conf.allowRecommenderServerToUseGatewayProfile==true){
-	    	RestTemplate restTemplate = new RestTemplate();
-	    	final String uri = conf.recommenderServerIP+"updateRepositories";
-			 
-	    	String str = restTemplate.getForObject(uri, String.class);
-	    	res=0;
-    	}
-			
-		return res;
-      
-    }
-    
-   
-//    @ResponseBody @RequestMapping("/updateGatewayProfile")
-//    public int updateGatewayProfile () {
-//    	
-//    	profile = new at.tugraz.ist.agile.recommendermodels.GatewayProfile(); 
-//    	configurationProfile = new at.tugraz.ist.agile.configuratormodels.GatewayProfile();
-//    	
-//    	Properties prop = new Properties();
-//		InputStream input = null;
-//	
-//		// LOAD GATEWAY PROFILE FOR RECoMMENDER
-//		try {
-//	
-//			String filename = "gateway_recommender.properties";
-//			input = at.tugraz.ist.agile.recommendermodels.GatewayProfile.class.getClassLoader().getResourceAsStream(filename);
-//			if(input==null){
-//		            System.out.println("Sorry, unable to find " + filename);
-//			    return -1;
-//			}
-//	
-//			//load a properties file from class path, inside static method
-//			prop.load(input);
-//	
-//	        //get the property value and print it out
-//			String[] installedApps = prop.getProperty("installedApps").split(";");
-//			String[] pluggedDevs = prop.getProperty("pluggedDevs").split(";");
-//			String[] installedWFs = prop.getProperty("installedWFs").split(";");
-//			String location = prop.getProperty("location");
-//			String pricingPreferences = prop.getProperty("pricingPreferences");
-//			
-//			for(int i=0; i<installedApps.length;i++){
-//				String[] elements= installedApps[i].split(",");
-//				profile.apps.getAppList().add(new at.tugraz.ist.agile.recommendermodels.App(elements[0],elements[1],Integer.valueOf(elements[2]),Integer.valueOf(elements[3])));
-//			}
-//			for(int i=0; i<pluggedDevs.length;i++){
-//				String[] elements= pluggedDevs[i].split(",");
-//				profile.devices.getDeviceList().add(new at.tugraz.ist.agile.recommendermodels.Device(elements[0],elements[1]));
-//			}
-//			for(int i=0; i<installedWFs.length;i++){
-//				String[] elements= installedWFs[i].split(",");
-//				profile.wfs.getWfList().add(new at.tugraz.ist.agile.recommendermodels.Workflow(elements[0],elements[1],elements[2],elements[3]));
-//			}
-//			
-//			profile.location = location;
-//			profile.pricingPreferences = pricingPreferences;
-//			
-//		} catch (IOException ex) {
-//			ex.printStackTrace();
-//	    } finally{
-//	    	if(input!=null){
-//	    		try {
-//				input.close();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//	    	}    
-//	   }
-//		
-//		// LOAD GATEWAY PROFILE FOR CONFIGURATOR
-//				try {
-//			
-//					String filename = "gateway_configurator.properties";
-//					input = at.tugraz.ist.agile.recommendermodels.GatewayProfile.class.getClassLoader().getResourceAsStream(filename);
-//					if(input==null){
-//				            System.out.println("Sorry, unable to find " + filename);
-//					    return -1;
-//					}
-//			
-//					//load a properties file from class path, inside static method
-//					prop.load(input);
-//			
-//			        //get the property value and print it out
-//					String[] supportedDataEncodingProtocolsOfGateway = prop.getProperty("supportedDataEncodingProtocolsOfGateway").split(",");
-//					String[] supportedConnectivityProtocolsOfGateway = prop.getProperty("supportedConnectivityProtocolsOfGateway").split(",");
-//					String userRequirementWeight_Performance = prop.getProperty("userRequirementWeight_Performance");
-//					String userRequirementWeight_Reliability = prop.getProperty("userRequirementWeight_Reliability");
-//					String userRequirementWeight_Cost = prop.getProperty("userRequirementWeight_Cost");
-//					String[] installedApps = prop.getProperty("installedApps").split(";");
-//					
-//					int [] supportedConnectivityProtocolsOfGateway_int = new int[supportedConnectivityProtocolsOfGateway.length];
-//					for(int i=0; i<supportedConnectivityProtocolsOfGateway.length;i++){
-//						supportedConnectivityProtocolsOfGateway_int[i]= Integer.valueOf(supportedDataEncodingProtocolsOfGateway[i]);
-//					}
-//					
-//					int [] supportedDataEncodingProtocolsOfGateway_int=new int[supportedDataEncodingProtocolsOfGateway.length];
-//					for(int i=0; i<supportedDataEncodingProtocolsOfGateway.length;i++){
-//						supportedDataEncodingProtocolsOfGateway_int[i]= Integer.valueOf(supportedDataEncodingProtocolsOfGateway[i]);
-//					}
-//					at.tugraz.ist.agile.configuratormodels.App [] apps = new at.tugraz.ist.agile.configuratormodels.App [installedApps.length];
-//					for(int i=0; i<installedApps.length;i++){
-//						String [] elements = installedApps[i].split(",");
-//						apps[i]= new at.tugraz.ist.agile.configuratormodels.App();
-//						apps[i].setName(elements[0]);
-//						apps[i].setUrl(elements[1]);
-//						apps[i].setInUse_DataEncodingProtocol(Integer.valueOf(elements[2]));
-//						apps[i].setInUse_ConnectivitiyProtocol(Integer.valueOf(elements[3]));
-//						
-//						String [] elements2 = elements[4].split(" ");
-//						int [] elements2_int=new int[elements2.length];
-//						for(int e=0; e<elements2.length;i++){
-//							elements2_int[e]= Integer.valueOf(elements2[e]);
-//						}
-//						
-//						String [] elements3 = elements[5].split(" ");
-//						int [] elements3_int=new int[elements3.length];
-//						for(int e=0; e<elements3.length;i++){
-//							elements3_int[e]= Integer.valueOf(elements3[e]);
-//						}
-//						 
-//						apps[i].setSupportedDataEncodingProtocolsOfApp(elements2_int);
-//						apps[i].setSupportedConnectivitiyProtocolsOfApp(elements3_int);
-//					}
-//					
-//					
-//					configurationProfile.setSupportedConnectivityProtocolsOfGateway(supportedConnectivityProtocolsOfGateway_int);
-//					configurationProfile.setSupportedDataEncodingProtocolsOfGateway(supportedDataEncodingProtocolsOfGateway_int);
-//					configurationProfile.setInstalledApps(apps);
-//					
-//					configurationProfile.setUserRequirementWeight_Performance(Integer.valueOf(userRequirementWeight_Performance));
-//					configurationProfile.setUserRequirementWeight_Reliability(Integer.valueOf(userRequirementWeight_Reliability));
-//					configurationProfile.setUserRequirementWeight_Cost(Integer.valueOf(userRequirementWeight_Cost));
-//					
-//				} catch (IOException ex) {
-//					ex.printStackTrace();
-//			    } finally{
-//			    	if(input!=null){
-//			    		try {
-//						input.close();
-//					} catch (IOException e) {
-//						e.printStackTrace();
-//					}
-//			    	}    
-//			   }		
-//    	
-//		
-//    	
-//       return 0;
-//      
-//    }
 
     /**
      * @api {get} /getServiceConfiguration GetServiceConfiguration 
@@ -848,7 +771,7 @@ public class RnCAPI {
     @ResponseBody @RequestMapping("/getGatewayProfileForRecommender")
     public org.eclipse.agail.recommenderandconfigurator.recommendermodels.GatewayProfile getGatewayProfileForRecommender () {
     	
-		return profile;
+		return recommenderProfile;
     }
     
     /**
@@ -886,7 +809,7 @@ public class RnCAPI {
      */
     @ResponseBody @RequestMapping("/setGatewayProfileForRecommender")
     public void setGatewayProfileForRecommender (@RequestBody  org.eclipse.agail.recommenderandconfigurator.recommendermodels.GatewayProfile prof) {
-		this.profile = prof;
+		this.recommenderProfile = prof;
     }
   
     
@@ -1003,6 +926,174 @@ public class RnCAPI {
 		this.configurationProfile = prof;
     }
   
+    
+//  
+//  /**
+//   * @api {get} /updateRepositories UpdateRepositories 
+//   * @apiName UpdateRepositories
+//   * @apiVersion 1.0.0
+//   * @apiGroup 1-Recommender
+//   * @apiDescription Updates the local repositories by getting new items from Amazon, Docker.hub and Node.Red websites.
+//   *
+//   *
+//   * @apiSuccess {Number} success is 0, error is -1
+//   *
+//   */
+//  @ResponseBody @RequestMapping("/updateRepositories")
+//  public int updateRepositories () {
+//  	int res = -1;
+//  	
+//  	if(conf.allowRecommenderServerToUseGatewayProfile==true){
+//	    	RestTemplate restTemplate = new RestTemplate();
+//	    	final String uri = conf.recommenderServerIP+"updateRepositories";
+//			 
+//	    	String str = restTemplate.getForObject(uri, String.class);
+//	    	res=0;
+//  	}
+//			
+//		return res;
+//    
+//  }
+  
+ 
+//  @ResponseBody @RequestMapping("/updateGatewayProfile")
+//  public int updateGatewayProfile () {
+//  	
+//  	profile = new at.tugraz.ist.agile.recommendermodels.GatewayProfile(); 
+//  	configurationProfile = new at.tugraz.ist.agile.configuratormodels.GatewayProfile();
+//  	
+//  	Properties prop = new Properties();
+//		InputStream input = null;
+//	
+//		// LOAD GATEWAY PROFILE FOR RECoMMENDER
+//		try {
+//	
+//			String filename = "gateway_recommender.properties";
+//			input = at.tugraz.ist.agile.recommendermodels.GatewayProfile.class.getClassLoader().getResourceAsStream(filename);
+//			if(input==null){
+//		            System.out.println("Sorry, unable to find " + filename);
+//			    return -1;
+//			}
+//	
+//			//load a properties file from class path, inside static method
+//			prop.load(input);
+//	
+//	        //get the property value and print it out
+//			String[] installedApps = prop.getProperty("installedApps").split(";");
+//			String[] pluggedDevs = prop.getProperty("pluggedDevs").split(";");
+//			String[] installedWFs = prop.getProperty("installedWFs").split(";");
+//			String location = prop.getProperty("location");
+//			String pricingPreferences = prop.getProperty("pricingPreferences");
+//			
+//			for(int i=0; i<installedApps.length;i++){
+//				String[] elements= installedApps[i].split(",");
+//				profile.apps.getAppList().add(new at.tugraz.ist.agile.recommendermodels.App(elements[0],elements[1],Integer.valueOf(elements[2]),Integer.valueOf(elements[3])));
+//			}
+//			for(int i=0; i<pluggedDevs.length;i++){
+//				String[] elements= pluggedDevs[i].split(",");
+//				profile.devices.getDeviceList().add(new at.tugraz.ist.agile.recommendermodels.Device(elements[0],elements[1]));
+//			}
+//			for(int i=0; i<installedWFs.length;i++){
+//				String[] elements= installedWFs[i].split(",");
+//				profile.wfs.getWfList().add(new at.tugraz.ist.agile.recommendermodels.Workflow(elements[0],elements[1],elements[2],elements[3]));
+//			}
+//			
+//			profile.location = location;
+//			profile.pricingPreferences = pricingPreferences;
+//			
+//		} catch (IOException ex) {
+//			ex.printStackTrace();
+//	    } finally{
+//	    	if(input!=null){
+//	    		try {
+//				input.close();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//	    	}    
+//	   }
+//		
+//		// LOAD GATEWAY PROFILE FOR CONFIGURATOR
+//				try {
+//			
+//					String filename = "gateway_configurator.properties";
+//					input = at.tugraz.ist.agile.recommendermodels.GatewayProfile.class.getClassLoader().getResourceAsStream(filename);
+//					if(input==null){
+//				            System.out.println("Sorry, unable to find " + filename);
+//					    return -1;
+//					}
+//			
+//					//load a properties file from class path, inside static method
+//					prop.load(input);
+//			
+//			        //get the property value and print it out
+//					String[] supportedDataEncodingProtocolsOfGateway = prop.getProperty("supportedDataEncodingProtocolsOfGateway").split(",");
+//					String[] supportedConnectivityProtocolsOfGateway = prop.getProperty("supportedConnectivityProtocolsOfGateway").split(",");
+//					String userRequirementWeight_Performance = prop.getProperty("userRequirementWeight_Performance");
+//					String userRequirementWeight_Reliability = prop.getProperty("userRequirementWeight_Reliability");
+//					String userRequirementWeight_Cost = prop.getProperty("userRequirementWeight_Cost");
+//					String[] installedApps = prop.getProperty("installedApps").split(";");
+//					
+//					int [] supportedConnectivityProtocolsOfGateway_int = new int[supportedConnectivityProtocolsOfGateway.length];
+//					for(int i=0; i<supportedConnectivityProtocolsOfGateway.length;i++){
+//						supportedConnectivityProtocolsOfGateway_int[i]= Integer.valueOf(supportedDataEncodingProtocolsOfGateway[i]);
+//					}
+//					
+//					int [] supportedDataEncodingProtocolsOfGateway_int=new int[supportedDataEncodingProtocolsOfGateway.length];
+//					for(int i=0; i<supportedDataEncodingProtocolsOfGateway.length;i++){
+//						supportedDataEncodingProtocolsOfGateway_int[i]= Integer.valueOf(supportedDataEncodingProtocolsOfGateway[i]);
+//					}
+//					at.tugraz.ist.agile.configuratormodels.App [] apps = new at.tugraz.ist.agile.configuratormodels.App [installedApps.length];
+//					for(int i=0; i<installedApps.length;i++){
+//						String [] elements = installedApps[i].split(",");
+//						apps[i]= new at.tugraz.ist.agile.configuratormodels.App();
+//						apps[i].setName(elements[0]);
+//						apps[i].setUrl(elements[1]);
+//						apps[i].setInUse_DataEncodingProtocol(Integer.valueOf(elements[2]));
+//						apps[i].setInUse_ConnectivitiyProtocol(Integer.valueOf(elements[3]));
+//						
+//						String [] elements2 = elements[4].split(" ");
+//						int [] elements2_int=new int[elements2.length];
+//						for(int e=0; e<elements2.length;i++){
+//							elements2_int[e]= Integer.valueOf(elements2[e]);
+//						}
+//						
+//						String [] elements3 = elements[5].split(" ");
+//						int [] elements3_int=new int[elements3.length];
+//						for(int e=0; e<elements3.length;i++){
+//							elements3_int[e]= Integer.valueOf(elements3[e]);
+//						}
+//						 
+//						apps[i].setSupportedDataEncodingProtocolsOfApp(elements2_int);
+//						apps[i].setSupportedConnectivitiyProtocolsOfApp(elements3_int);
+//					}
+//					
+//					
+//					configurationProfile.setSupportedConnectivityProtocolsOfGateway(supportedConnectivityProtocolsOfGateway_int);
+//					configurationProfile.setSupportedDataEncodingProtocolsOfGateway(supportedDataEncodingProtocolsOfGateway_int);
+//					configurationProfile.setInstalledApps(apps);
+//					
+//					configurationProfile.setUserRequirementWeight_Performance(Integer.valueOf(userRequirementWeight_Performance));
+//					configurationProfile.setUserRequirementWeight_Reliability(Integer.valueOf(userRequirementWeight_Reliability));
+//					configurationProfile.setUserRequirementWeight_Cost(Integer.valueOf(userRequirementWeight_Cost));
+//					
+//				} catch (IOException ex) {
+//					ex.printStackTrace();
+//			    } finally{
+//			    	if(input!=null){
+//			    		try {
+//						input.close();
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					}
+//			    	}    
+//			   }		
+//  	
+//		
+//  	
+//     return 0;
+//    
+//  }
    
 }
 
