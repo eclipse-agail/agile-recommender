@@ -14,6 +14,7 @@ package org.eclipse.agail.recommenderandconfigurator;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.eclipse.agail.recommenderandconfigurator.configurator.Optimizer;
 import org.eclipse.agail.recommenderandconfigurator.configurator.StaticServiceConfiguration;
 import org.eclipse.agail.recommenderandconfigurator.recommendermodels.Device;
@@ -31,10 +33,13 @@ import org.eclipse.agail.recommenderandconfigurator.recommendermodels.ListOfWFs;
 import org.eclipse.agail.recommenderandconfigurator.recommendermodels.Workflow;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.*;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.*;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -64,7 +69,7 @@ public class RnCAPI {
 		try{
 			// DEVICES
 			RestTemplate restTemplate = new RestTemplate();
-		    final String uri = "localhost:8080/api/devices";
+		    final String uri = "http://localhost:8080/api/devices";
 		    AgileDeviceModel devices = restTemplate.getForObject(uri, AgileDeviceModel.class);
 	    	
 		    for(int i=0;i<devices.devices.length;i++){
@@ -84,8 +89,26 @@ public class RnCAPI {
 		try{
 			// WORKFLOW
 			RestTemplate restTemplate = new RestTemplate();
-		    final String uri2 = "localhost:1880/red-agile/flows";
-		    AgileWorkflowModel wfs = restTemplate.getForObject(uri2, AgileWorkflowModel.class);
+			
+			// 1- GET TOKEN
+		    String uri2 = "http://localhost:1880/red/auth/token";
+		    DataModel data = new DataModel();
+		    TokenModel token = restTemplate.postForObject(uri2, data, TokenModel.class);
+		    
+		    // 2- SET TOKEN
+		    // curl -H "Authorization: Bearer AEqPo4CKKr7j1CMUeqou7EuzjceeI6n4YPGcRd6XIQ3PJmBsXhyHjgX873z9J7ZoRjwU5YWPA7NBTdbGJNSWzt64K1z1nepPThS4EOFZZAZYBXX2aD4HvPjIJjlrr210" 
+		    String uri3 = "http://localhost:1880/red/settings";
+		    restTemplate = new RestTemplate();
+		    HttpHeaders headers = new HttpHeaders();
+		    headers.setContentType(MediaType.APPLICATION_JSON);
+		    headers.set("Authorization", "Bearer "+token.access_token );
+
+		    HttpEntity<?> entity = new HttpEntity(headers);
+		    String result = restTemplate.postForObject(uri3, entity, String.class);
+		    
+		    // 3- GET FLOWS
+		    String uri4 = "http://localhost:1880/red/flows";
+		    AgileWorkflowModel wfs = restTemplate.postForObject(uri4, entity, AgileWorkflowModel.class);
 		    
 		    List<Workflow> wfList = new ArrayList<Workflow>();
 	    	
@@ -113,6 +136,7 @@ public class RnCAPI {
 			
 		}	
 	}
+	
 	
 	static boolean checkTitle(String title){
 		boolean flag = false;

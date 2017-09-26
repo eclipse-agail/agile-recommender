@@ -9,7 +9,6 @@ public class AgileWorkflowModel {
 class V1{
 	String type;
 	String id;
-	String label;
 }
 
 class V2{
