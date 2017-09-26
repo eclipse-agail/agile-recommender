@@ -3,7 +3,6 @@ Maintainer: Seda Polat Erdeniz, TUGraz
 
 This service provides an API to other AGILE Gateway services to access to the recommender and configurator service 
 
-
 ## API Document 
 http://54.186.105.109:8080/doc/
 
