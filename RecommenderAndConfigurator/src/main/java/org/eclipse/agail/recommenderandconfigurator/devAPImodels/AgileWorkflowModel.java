@@ -5,6 +5,8 @@ public class AgileWorkflowModel {
 	V1 [] v1;
 	V2 v2;
 	
+	public AgileWorkflowModel(){}
+	
 	public V1[] getV1() {
 		return v1;
 	}

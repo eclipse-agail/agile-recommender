@@ -3,6 +3,10 @@ package org.eclipse.agail.recommenderandconfigurator.devAPImodels;
 public class AgileDeviceModel {
 
 	AgileDevice[] devices;
+	
+	public AgileDeviceModel(){
+		
+	}
 
 	public AgileDevice[] getDevices() {
 		return devices;

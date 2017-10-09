@@ -4,6 +4,8 @@ public class V1{
 	String type;
 	String id;
 	
+	public V1(){}
+	
 	public String getType() {
 		return type;
 	}

@@ -6,6 +6,8 @@ public class TokenModel {
 	String expires_in;
 	String token_type;
 
+	public TokenModel(){}
+	
 	public String getAccess_token() {
 		return access_token;
 	}

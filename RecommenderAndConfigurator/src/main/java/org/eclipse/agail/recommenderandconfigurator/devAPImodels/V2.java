@@ -4,6 +4,8 @@ public class V2{
 	String rev;
 	V1 [] flows;
 	
+	public V2(){}
+	
 	public String getRev() {
 		return rev;
 	}

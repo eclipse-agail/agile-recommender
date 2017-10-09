@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.eclipse.agail.recommenderandconfigurator.configurator.Optimizer;
 import org.eclipse.agail.recommenderandconfigurator.configurator.StaticServiceConfiguration;
+import org.eclipse.agail.recommenderandconfigurator.devAPImodels.AgileDevice;
 import org.eclipse.agail.recommenderandconfigurator.devAPImodels.AgileDeviceModel;
 import org.eclipse.agail.recommenderandconfigurator.devAPImodels.AgileWorkflowModel;
 import org.eclipse.agail.recommenderandconfigurator.devAPImodels.DataModel;
@@ -75,13 +76,13 @@ public class RnCAPI {
 			// DEVICES
 			RestTemplate restTemplate = new RestTemplate();
 		    final String uri = "http://172.18.0.1:8080/api/devices";
-		    AgileDeviceModel devices = restTemplate.getForObject(uri, AgileDeviceModel.class);
+		    AgileDevice [] devices = restTemplate.getForObject(uri, AgileDevice[].class);
 	    	
-		    for(int i=0;i<devices.getDevices().length;i++){
+		    for(int i=0;i<devices.length;i++){
 		    	Device dev = new Device();
 		    	String devTitle="";
-		    	for(int j=0;j<devices.getDevices()[i].getStreams().length;j++){
-		    		devTitle += devices.getDevices()[i].getStreams()[j].getId()+" ";
+		    	for(int j=0;j<devices[i].getStreams().length;j++){
+		    		devTitle += devices[i].getStreams()[j].getId()+" ";
 		    	} 
 		    	dev.setTitle(devTitle);
 		    	recommenderProfile.devices = new ListOfDevices();
@@ -99,13 +100,13 @@ public class RnCAPI {
 			
 			// 1- GET TOKEN
 			//  curl --data "client_id=node-red-admin&grant_type=password&scope=*&username=admin&password=password" http://172.18.0.1:1880/red/auth/token
-		    String uri2 = "http://172.18.0.1:1880/red/auth/token";
+		    String uri2 = "http://172.18.0.6:1880/red/auth/token";
 		    DataModel data = new DataModel();
 		    TokenModel token = restTemplate.postForObject(uri2, data, TokenModel.class);
 		    
 		    // 2- SET TOKEN
-		    // curl -H "Authorization: Bearer AEqPo4CKKr7j1CMUeqou7EuzjceeI6n4YPGcRd6XIQ3PJmBsXhyHjgX873z9J7ZoRjwU5YWPA7NBTdbGJNSWzt64K1z1nepPThS4EOFZZAZYBXX2aD4HvPjIJjlrr210" http://172.18.0.1:1880/red/settings
-		    String uri3 = "http://172.18.0.1:1880/red/settings";
+		    // curl -H "Authorization: Bearer AEqPo4CKKr7j1CMUeqou7EuzjceeI6n4YPGcRd6XIQ3PJmBsXhyHjgX873z9J7ZoRjwU5YWPA7NBTdbGJNSWzt64K1z1nepPThS4EOFZZAZYBXX2aD4HvPjIJjlrr210" http://172.18.0.6:1880/red/settings
+		    String uri3 = "http://172.18.0.6:1880/red/settings";
 		    restTemplate = new RestTemplate();
 		    HttpHeaders headers = new HttpHeaders();
 		    headers.setContentType(MediaType.APPLICATION_JSON);
@@ -115,7 +116,7 @@ public class RnCAPI {
 		    String result = restTemplate.postForObject(uri3, entity, String.class);
 		    
 		    // 3- GET FLOWS
-		    String uri4 = "http://172.18.0.1:1880/red/flows";
+		    String uri4 = "http://172.18.0.6:1880/red/flows";
 		    AgileWorkflowModel wfs = restTemplate.postForObject(uri4, entity, AgileWorkflowModel.class);
 		    
 		    List<Workflow> wfList = new ArrayList<Workflow>();

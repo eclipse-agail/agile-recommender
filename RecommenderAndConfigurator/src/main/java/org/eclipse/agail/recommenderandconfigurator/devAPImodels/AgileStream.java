@@ -5,6 +5,10 @@ public class AgileStream{
 	String id;
 	String unit;
 	
+	public AgileStream(){
+		
+	}
+	
 	public String getUnit() {
 		return unit;
 	}

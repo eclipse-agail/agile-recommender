@@ -12,6 +12,11 @@ public class AgileDevice{
 	AgileStream [] streams;
 	
 	
+	public AgileDevice(){
+		
+	}
+	
+	
 	public String getDeviceId() {
 		return deviceId;
 	}

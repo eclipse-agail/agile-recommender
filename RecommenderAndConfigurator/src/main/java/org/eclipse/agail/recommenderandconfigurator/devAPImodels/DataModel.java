@@ -8,6 +8,9 @@ public class DataModel {
 	 String username= "admin";
 	 String password= "password";
 	 
+	 
+	public DataModel(){}
+	
 	public String getClient_id() {
 		return client_id;
 	}
