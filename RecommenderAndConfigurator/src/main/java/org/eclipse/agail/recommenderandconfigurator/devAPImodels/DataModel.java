@@ -1,4 +1,4 @@
-package org.eclipse.agail.recommenderandconfigurator;
+package org.eclipse.agail.recommenderandconfigurator.devAPImodels;
 
 public class DataModel {
 
@@ -38,17 +38,4 @@ public class DataModel {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-}
-
-class TokenModel{
-	String access_token;
-
-	public String getAccess_token() {
-		return access_token;
-	}
-
-	public void setAccess_token(String access_token) {
-		this.access_token = access_token;
-	}
-	
 }

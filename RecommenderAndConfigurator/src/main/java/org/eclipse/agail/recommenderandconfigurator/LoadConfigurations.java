@@ -67,7 +67,6 @@ public class LoadConfigurations {
 		return  conf;
 	}
 
-	
 	public static org.eclipse.agail.recommenderandconfigurator.recommendermodels.GatewayProfile loadGatewayProfile_ForRecom_Properties(){
 		
 		org.eclipse.agail.recommenderandconfigurator.recommendermodels.GatewayProfile profile = new org.eclipse.agail.recommenderandconfigurator.recommendermodels.GatewayProfile();
@@ -243,4 +242,5 @@ public class LoadConfigurations {
 		return profile;
 	}
 
+	
 }

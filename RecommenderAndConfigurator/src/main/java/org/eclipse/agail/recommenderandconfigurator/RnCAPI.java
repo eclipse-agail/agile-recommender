@@ -25,6 +25,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.eclipse.agail.recommenderandconfigurator.configurator.Optimizer;
 import org.eclipse.agail.recommenderandconfigurator.configurator.StaticServiceConfiguration;
+import org.eclipse.agail.recommenderandconfigurator.devAPImodels.AgileDeviceModel;
+import org.eclipse.agail.recommenderandconfigurator.devAPImodels.AgileWorkflowModel;
+import org.eclipse.agail.recommenderandconfigurator.devAPImodels.DataModel;
+import org.eclipse.agail.recommenderandconfigurator.devAPImodels.TokenModel;
 import org.eclipse.agail.recommenderandconfigurator.recommendermodels.Device;
 import org.eclipse.agail.recommenderandconfigurator.recommendermodels.ListOfApps;
 import org.eclipse.agail.recommenderandconfigurator.recommendermodels.ListOfClouds;
@@ -66,24 +70,27 @@ public class RnCAPI {
 	
 	public static void updateProfile(){
 	
+		System.out.println("This part adds devices and workflows into the profile");
 		try{
 			// DEVICES
 			RestTemplate restTemplate = new RestTemplate();
-		    final String uri = "http://localhost:8080/api/devices";
+		    final String uri = "http://172.18.0.1:8080/api/devices";
 		    AgileDeviceModel devices = restTemplate.getForObject(uri, AgileDeviceModel.class);
 	    	
-		    for(int i=0;i<devices.devices.length;i++){
+		    for(int i=0;i<devices.getDevices().length;i++){
 		    	Device dev = new Device();
 		    	String devTitle="";
-		    	for(int j=0;j<devices.devices[i].streams.length;j++){
-		    		devTitle += devices.devices[i].streams[j].id+" ";
+		    	for(int j=0;j<devices.getDevices()[i].getStreams().length;j++){
+		    		devTitle += devices.getDevices()[i].getStreams()[j].getId()+" ";
 		    	} 
 		    	dev.setTitle(devTitle);
 		    	recommenderProfile.devices = new ListOfDevices();
 		    	recommenderProfile.devices.addDevice(dev);
+		    	
+		    	System.out.println("Devices in the Profile: " + devTitle);
 	    }
 		}catch(Exception e){
-			
+			System.out.println("Exception in devices api: " + e.getMessage());
 		}
 		
 		try{
@@ -91,41 +98,43 @@ public class RnCAPI {
 			RestTemplate restTemplate = new RestTemplate();
 			
 			// 1- GET TOKEN
-		    String uri2 = "http://localhost:1880/red/auth/token";
+			//  curl --data "client_id=node-red-admin&grant_type=password&scope=*&username=admin&password=password" http://172.18.0.1:1880/red/auth/token
+		    String uri2 = "http://172.18.0.1:1880/red/auth/token";
 		    DataModel data = new DataModel();
 		    TokenModel token = restTemplate.postForObject(uri2, data, TokenModel.class);
 		    
 		    // 2- SET TOKEN
-		    // curl -H "Authorization: Bearer AEqPo4CKKr7j1CMUeqou7EuzjceeI6n4YPGcRd6XIQ3PJmBsXhyHjgX873z9J7ZoRjwU5YWPA7NBTdbGJNSWzt64K1z1nepPThS4EOFZZAZYBXX2aD4HvPjIJjlrr210" 
-		    String uri3 = "http://localhost:1880/red/settings";
+		    // curl -H "Authorization: Bearer AEqPo4CKKr7j1CMUeqou7EuzjceeI6n4YPGcRd6XIQ3PJmBsXhyHjgX873z9J7ZoRjwU5YWPA7NBTdbGJNSWzt64K1z1nepPThS4EOFZZAZYBXX2aD4HvPjIJjlrr210" http://172.18.0.1:1880/red/settings
+		    String uri3 = "http://172.18.0.1:1880/red/settings";
 		    restTemplate = new RestTemplate();
 		    HttpHeaders headers = new HttpHeaders();
 		    headers.setContentType(MediaType.APPLICATION_JSON);
-		    headers.set("Authorization", "Bearer "+token.access_token );
+		    headers.set("Authorization", "Bearer "+token.getAccess_token() );
 
 		    HttpEntity<?> entity = new HttpEntity(headers);
 		    String result = restTemplate.postForObject(uri3, entity, String.class);
 		    
 		    // 3- GET FLOWS
-		    String uri4 = "http://localhost:1880/red/flows";
+		    String uri4 = "http://172.18.0.1:1880/red/flows";
 		    AgileWorkflowModel wfs = restTemplate.postForObject(uri4, entity, AgileWorkflowModel.class);
 		    
 		    List<Workflow> wfList = new ArrayList<Workflow>();
 	    	
-		    for(int i=0;i<wfs.v1.length;i++){
+		    for(int i=0;i<wfs.getV1().length;i++){
 		    	Workflow wf = new Workflow();
-		    	String title = wfs.v1[i].type;
+		    	String title = wfs.getV1()[i].getType();
 		    	if(checkTitle(title)){
 			    	wf.setDatatag(title);
 			    	wfList.add(wf);
 		    	}
 		    }
-		    for(int i=0;i<wfs.v2.flows.length;i++){
+		    for(int i=0;i<wfs.getV2().getFlows().length;i++){
 		    	Workflow wf = new Workflow();
-		    	String title = wfs.v2.flows[i].type;
+		    	String title = wfs.getV2().getFlows()[i].getType();
 		    	if(checkTitle(title)){
 			    	wf.setDatatag(title);
 			    	wfList.add(wf);
+			    	System.out.println("Workflow in the Profile: " + title);
 		    	}
 		    }
 		    
@@ -133,8 +142,11 @@ public class RnCAPI {
 		    recommenderProfile.wfs.setWfList(wfList);
 		    
 		}catch(Exception e){
-			
-		}	
+			System.out.println("Exception in nodered api: " + e.getMessage());
+		}
+		
+		System.out.println("End of adding devices and workflows into the profile");
+		
 	}
 	
 	
