@@ -75,7 +75,7 @@ public class RnCAPI {
 		try{
 			// DEVICES
 			RestTemplate restTemplate = new RestTemplate();
-		    final String uri = "http://172.18.0.1:8080/api/devices";
+		    final String uri = "http://agile-core:8080/api/devices";
 		    AgileDevice [] devices = restTemplate.getForObject(uri, AgileDevice[].class);
 	    	
 		    for(int i=0;i<devices.length;i++){
@@ -99,14 +99,14 @@ public class RnCAPI {
 			RestTemplate restTemplate = new RestTemplate();
 			
 			// 1- GET TOKEN
-			//  curl --data "client_id=node-red-admin&grant_type=password&scope=*&username=admin&password=password" http://172.18.0.1:1880/red/auth/token
-		    String uri2 = "http://172.18.0.6:1880/red/auth/token";
+			//  curl --data "client_id=node-red-admin&grant_type=password&scope=*&username=admin&password=password" http://agile-nodered:1880/red/auth/token
+		    String uri2 = "http://agile-nodered:1880/red/auth/token";
 		    DataModel data = new DataModel();
 		    TokenModel token = restTemplate.postForObject(uri2, data, TokenModel.class);
 		    
 		    // 2- SET TOKEN
 		    // curl -H "Authorization: Bearer AEqPo4CKKr7j1CMUeqou7EuzjceeI6n4YPGcRd6XIQ3PJmBsXhyHjgX873z9J7ZoRjwU5YWPA7NBTdbGJNSWzt64K1z1nepPThS4EOFZZAZYBXX2aD4HvPjIJjlrr210" http://172.18.0.6:1880/red/settings
-		    String uri3 = "http://172.18.0.6:1880/red/settings";
+		    String uri3 = "http://agile-nodered:1880/red/settings";
 		    restTemplate = new RestTemplate();
 		    HttpHeaders headers = new HttpHeaders();
 		    headers.setContentType(MediaType.APPLICATION_JSON);
@@ -116,7 +116,7 @@ public class RnCAPI {
 		    String result = restTemplate.postForObject(uri3, entity, String.class);
 		    
 		    // 3- GET FLOWS
-		    String uri4 = "http://172.18.0.6:1880/red/flows";
+		    String uri4 = "http://agile-nodered:1880/red/flows";
 		    AgileWorkflowModel wfs = restTemplate.postForObject(uri4, entity, AgileWorkflowModel.class);
 		    
 		    List<Workflow> wfList = new ArrayList<Workflow>();
