@@ -24,3 +24,4 @@ http://54.202.180.98:8080/doc/
 - App should be configured to a protocol that has maximum utility based on user weights and the performance/reliability/cost values of the protocols
 - Configurator returns the configured protocols for each app,
 - If protocols of app are not supported by the gateway, configured protocol of the app is set to -1 and in the error message it is given as a warning.
+
