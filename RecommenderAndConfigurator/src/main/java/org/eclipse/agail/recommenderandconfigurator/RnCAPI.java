@@ -101,7 +101,7 @@ public class RnCAPI {
 		try{
 			// DEVICES
 			RestTemplate restTemplate = new RestTemplate();
-		    final String uri = "http://agile-core:8080/api/devices";
+		    final String uri = "http://172.18.0.1:8080/api/devices";
 		    AgileDevice [] devices = restTemplate.getForObject(uri, AgileDevice[].class);
 		    
 		    System.out.println("devices are taken");
