@@ -73,27 +73,31 @@ public class RnCAPI {
 	   
 	}
 	
-	@ResponseBody @RequestMapping("/testDataModel")
-    public void testDataModel (@RequestBody AgileDevice [] devices) {
-		int dn= devices.length;
-		try{
-			for(int i=0;i<devices.length;i++){
-		    	Device dev = new Device();
-		    	String devTitle="";
-		    	devTitle += devices[i].getName()+" ";
-		    	for(int j=0;j<devices[i].getStreams().length;j++){
-		    		devTitle += devices[i].getStreams()[j].getId()+" ";
-		    	} 
-		    	dev.setTitle(devTitle);
-		    	recommenderProfile.devices = new ListOfDevices();
-		    	recommenderProfile.devices.addDevice(dev);
-		    	
-		    	System.out.println("Devices in the Profile: " + devTitle);
-			}
-		}catch(Exception e){
-			System.out.println("Exception in devices api: " + e.getMessage());
-		}
-    }
+//	@ResponseBody @RequestMapping("/testDataModel")
+//    public ListOfWFs testDataModel (@RequestBody AgileDevice [] devices) {
+//		int dn= devices.length;
+//		try{
+//			for(int i=0;i<devices.length;i++){
+//		    	Device dev = new Device();
+//		    	String devTitle="";
+//		    	devTitle += devices[i].getName().trim();
+//		    	for(int j=0;j<devices[i].getStreams().length;j++){
+//		    		devTitle += " ";
+//		    		devTitle += devices[i].getStreams()[j].getId().trim();
+//		    	} 
+//		    	dev.setTitle(devTitle);
+//		    	recommenderProfile.devices = new ListOfDevices();
+//		    	recommenderProfile.devices.addDevice(dev);
+//		    	
+//		    	System.out.println("Devices in the Profile: " + devTitle);
+//		    	
+//			}
+//		}catch(Exception e){
+//			System.out.println("Exception in devices api: " + e.getMessage());
+//		}
+//		
+//		return getWorkflowRecommendation();
+//    }
 	
 	public static void updateProfile(){
 	
@@ -112,10 +116,10 @@ public class RnCAPI {
 		    for(int i=0;i<devices.length;i++){
 		    	Device dev = new Device();
 		    	String devTitle="";
-		    	devTitle += devices[i].getName();
+		    	devTitle += devices[i].getName().trim();
 		    	for(int j=0;j<devices[i].getStreams().length;j++){
 		    		devTitle += " ";
-		    		devTitle += devices[i].getStreams()[j].getId();
+		    		devTitle += devices[i].getStreams()[j].getId().trim();
 		    	} 
 		    	
 		    	dev.setTitle(devTitle);
