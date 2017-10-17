@@ -23,6 +23,9 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.eclipse.agail.recommenderandconfigurator.configurator.Optimizer;
 import org.eclipse.agail.recommenderandconfigurator.configurator.StaticServiceConfiguration;
 import org.eclipse.agail.recommenderandconfigurator.devAPImodels.AgileDevice;
@@ -42,6 +45,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -69,6 +73,28 @@ public class RnCAPI {
 	   
 	}
 	
+	@ResponseBody @RequestMapping("/testDataModel")
+    public void testDataModel (@RequestBody AgileDevice [] devices) {
+		int dn= devices.length;
+		try{
+			for(int i=0;i<devices.length;i++){
+		    	Device dev = new Device();
+		    	String devTitle="";
+		    	devTitle += devices[i].getName()+" ";
+		    	for(int j=0;j<devices[i].getStreams().length;j++){
+		    		devTitle += devices[i].getStreams()[j].getId()+" ";
+		    	} 
+		    	dev.setTitle(devTitle);
+		    	recommenderProfile.devices = new ListOfDevices();
+		    	recommenderProfile.devices.addDevice(dev);
+		    	
+		    	System.out.println("Devices in the Profile: " + devTitle);
+			}
+		}catch(Exception e){
+			System.out.println("Exception in devices api: " + e.getMessage());
+		}
+    }
+	
 	public static void updateProfile(){
 	
 		System.out.println("This part adds devices and workflows into the profile");
@@ -77,13 +103,21 @@ public class RnCAPI {
 			RestTemplate restTemplate = new RestTemplate();
 		    final String uri = "http://agile-core:8080/api/devices";
 		    AgileDevice [] devices = restTemplate.getForObject(uri, AgileDevice[].class);
+		    
+		    System.out.println("devices are taken");
+		    System.out.println("devices lenght: "+devices.length);
+		    System.out.println("first device's name: "+devices[0].getName());
+		    
 	    	
 		    for(int i=0;i<devices.length;i++){
 		    	Device dev = new Device();
 		    	String devTitle="";
+		    	devTitle += devices[i].getName();
 		    	for(int j=0;j<devices[i].getStreams().length;j++){
-		    		devTitle += devices[i].getStreams()[j].getId()+" ";
+		    		devTitle += " ";
+		    		devTitle += devices[i].getStreams()[j].getId();
 		    	} 
+		    	
 		    	dev.setTitle(devTitle);
 		    	recommenderProfile.devices = new ListOfDevices();
 		    	recommenderProfile.devices.addDevice(dev);
@@ -99,25 +133,47 @@ public class RnCAPI {
 			RestTemplate restTemplate = new RestTemplate();
 			
 			// 1- GET TOKEN
+<<<<<<< HEAD
+			//  curl --data "client_id=node-red-admin&grant_type=password&scope=*&username=admin&password=password" http://172.18.0.1:1880/red/auth/token
+			System.out.println("will call get token");
+			
+			String uri2 = "http://172.18.0.1:1880/red/auth/token";
+=======
 			//  curl --data "client_id=node-red-admin&grant_type=password&scope=*&username=admin&password=password" http://agile-nodered:1880/red/auth/token
 		    String uri2 = "http://agile-nodered:1880/red/auth/token";
+>>>>>>> fd42cb88356740220191fb2b02d9377c63b1ec86
 		    DataModel data = new DataModel();
 		    TokenModel token = restTemplate.postForObject(uri2, data, TokenModel.class);
+		    System.out.println("get token succeeded");
 		    
 		    // 2- SET TOKEN
 		    // curl -H "Authorization: Bearer AEqPo4CKKr7j1CMUeqou7EuzjceeI6n4YPGcRd6XIQ3PJmBsXhyHjgX873z9J7ZoRjwU5YWPA7NBTdbGJNSWzt64K1z1nepPThS4EOFZZAZYBXX2aD4HvPjIJjlrr210" http://172.18.0.6:1880/red/settings
+<<<<<<< HEAD
+		    // System.out.println("will call settings");
+		    
+		    String uri3 = "http://172.18.0.1:1880/red/settings";
+=======
 		    String uri3 = "http://agile-nodered:1880/red/settings";
+>>>>>>> fd42cb88356740220191fb2b02d9377c63b1ec86
 		    restTemplate = new RestTemplate();
 		    HttpHeaders headers = new HttpHeaders();
 		    headers.setContentType(MediaType.APPLICATION_JSON);
 		    headers.set("Authorization", "Bearer "+token.getAccess_token() );
-
+		    
 		    HttpEntity<?> entity = new HttpEntity(headers);
-		    String result = restTemplate.postForObject(uri3, entity, String.class);
+		    // String result = restTemplate.postForObject(uri3, entity, String.class);
+		    // System.out.println("settings succeeded");
 		    
 		    // 3- GET FLOWS
+<<<<<<< HEAD
+		    System.out.println("will call flows");
+		    String uri4 = "http://172.18.0.1:1880/red/flows";
+=======
 		    String uri4 = "http://agile-nodered:1880/red/flows";
+>>>>>>> fd42cb88356740220191fb2b02d9377c63b1ec86
 		    AgileWorkflowModel wfs = restTemplate.postForObject(uri4, entity, AgileWorkflowModel.class);
+		    System.out.println("flows succeeded");
+		    
 		    
 		    List<Workflow> wfList = new ArrayList<Workflow>();
 	    	
@@ -422,22 +478,40 @@ public class RnCAPI {
     @ResponseBody @RequestMapping("/getWorkflowRecommendation")
     public ListOfWFs getWorkflowRecommendation () {
     	
+    	System.out.println("getWorkflowRecommendation is started");
+    	System.out.println("1- update profile is started");
     	updateProfile();
+    	System.out.println("1- update profile is done");
     	ListOfWFs result = new ListOfWFs();
     	
     	if(conf.allowRecommenderServerToUseGatewayProfile==true && conf.recommenderServiceForDevelopmentUIActive==true ){
 	    	
 	    	RestTemplate restTemplate = new RestTemplate();
 	    	final String uri = conf.recommenderServerIP+"getWorkflowRecommendation";
-			 
-	    	result = restTemplate.postForObject(uri, recommenderProfile, ListOfWFs.class);
+			
+	    	System.out.println("2- call the service");
+	    	System.out.println("with recommenderProfile with dev size: "+recommenderProfile.getDevices().getDeviceList().size());
+	    	if(recommenderProfile.getDevices().getDeviceList().size()>0 && recommenderProfile.getDevices().getDeviceList().get(0).getTitle()!=null)
+	    	System.out.println("with recommenderProfile with dev title: "+recommenderProfile.getDevices().getDeviceList().get(0).getTitle());
+	    	
+	    	ObjectMapper mapper = new ObjectMapper();
+	    	
+	    	try{
+	    		System.out.println(mapper.writeValueAsString(recommenderProfile));	
+	    		restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
+	 		  
+	 		    System.out.println("settings succeeded");
+	 		    
+	    		result = restTemplate.postForObject(uri, recommenderProfile, ListOfWFs.class);
+	    	}catch(Exception e){
+	    		System.out.println("2- call the service failed: "+e.getMessage());
+	    	}
+	    	System.out.println("2- call the service done");
     	}
 			
 		return result;
-      
     }
-    
-    
+      
     /**
      * @api {get} /getCloudRecommendation GetCloudRecommendation 
      * @apiName GetCloudRecommendation
