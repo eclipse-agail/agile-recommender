@@ -133,28 +133,28 @@ public class RnCAPI {
 			RestTemplate restTemplate = new RestTemplate();
 			
 			// 1- GET TOKEN
-<<<<<<< HEAD
+
 			//  curl --data "client_id=node-red-admin&grant_type=password&scope=*&username=admin&password=password" http://172.18.0.1:1880/red/auth/token
 			System.out.println("will call get token");
 			
 			String uri2 = "http://172.18.0.1:1880/red/auth/token";
-=======
+
 			//  curl --data "client_id=node-red-admin&grant_type=password&scope=*&username=admin&password=password" http://agile-nodered:1880/red/auth/token
-		    String uri2 = "http://agile-nodered:1880/red/auth/token";
->>>>>>> fd42cb88356740220191fb2b02d9377c63b1ec86
+		    //String uri2 = "http://agile-nodered:1880/red/auth/token";
+
 		    DataModel data = new DataModel();
 		    TokenModel token = restTemplate.postForObject(uri2, data, TokenModel.class);
 		    System.out.println("get token succeeded");
 		    
 		    // 2- SET TOKEN
 		    // curl -H "Authorization: Bearer AEqPo4CKKr7j1CMUeqou7EuzjceeI6n4YPGcRd6XIQ3PJmBsXhyHjgX873z9J7ZoRjwU5YWPA7NBTdbGJNSWzt64K1z1nepPThS4EOFZZAZYBXX2aD4HvPjIJjlrr210" http://172.18.0.6:1880/red/settings
-<<<<<<< HEAD
+
 		    // System.out.println("will call settings");
 		    
 		    String uri3 = "http://172.18.0.1:1880/red/settings";
-=======
-		    String uri3 = "http://agile-nodered:1880/red/settings";
->>>>>>> fd42cb88356740220191fb2b02d9377c63b1ec86
+
+		    //String uri3 = "http://agile-nodered:1880/red/settings";
+
 		    restTemplate = new RestTemplate();
 		    HttpHeaders headers = new HttpHeaders();
 		    headers.setContentType(MediaType.APPLICATION_JSON);
@@ -165,12 +165,12 @@ public class RnCAPI {
 		    // System.out.println("settings succeeded");
 		    
 		    // 3- GET FLOWS
-<<<<<<< HEAD
+
 		    System.out.println("will call flows");
 		    String uri4 = "http://172.18.0.1:1880/red/flows";
-=======
-		    String uri4 = "http://agile-nodered:1880/red/flows";
->>>>>>> fd42cb88356740220191fb2b02d9377c63b1ec86
+
+		    //String uri4 = "http://agile-nodered:1880/red/flows";
+
 		    AgileWorkflowModel wfs = restTemplate.postForObject(uri4, entity, AgileWorkflowModel.class);
 		    System.out.println("flows succeeded");
 		    
