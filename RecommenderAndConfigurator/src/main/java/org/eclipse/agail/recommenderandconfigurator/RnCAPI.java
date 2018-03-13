@@ -10,24 +10,16 @@
 package org.eclipse.agail.recommenderandconfigurator;
 
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eclipse.agail.recommenderandconfigurator.configurator.Optimizer;
 import org.eclipse.agail.recommenderandconfigurator.configurator.StaticServiceConfiguration;
 import org.eclipse.agail.recommenderandconfigurator.devAPImodels.AgileDevice;
-import org.eclipse.agail.recommenderandconfigurator.devAPImodels.AgileDeviceModel;
 import org.eclipse.agail.recommenderandconfigurator.devAPImodels.AgileWorkflowModel;
 import org.eclipse.agail.recommenderandconfigurator.devAPImodels.DataModel;
 import org.eclipse.agail.recommenderandconfigurator.devAPImodels.TokenModel;
@@ -37,17 +29,18 @@ import org.eclipse.agail.recommenderandconfigurator.recommendermodels.ListOfClou
 import org.eclipse.agail.recommenderandconfigurator.recommendermodels.ListOfDevices;
 import org.eclipse.agail.recommenderandconfigurator.recommendermodels.ListOfWFs;
 import org.eclipse.agail.recommenderandconfigurator.recommendermodels.Workflow;
-import org.springframework.boot.*;
-import org.springframework.boot.autoconfigure.*;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.stereotype.*;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 
