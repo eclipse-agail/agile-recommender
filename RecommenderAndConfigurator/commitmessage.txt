@@ -1,4 +1,0 @@
-device api error is fixed
-
-Change-type: patch
-Signed-off-by: Seda Polat Erdeniz
