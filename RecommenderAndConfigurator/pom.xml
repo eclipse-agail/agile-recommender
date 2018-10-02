@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.eclipse.agail</groupId>
-	<artifactId>recommenderandconfigurator</artifactId>
+	<artifactId>recommenderservice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
@@ -59,12 +59,7 @@
 		
 		
 		<!-- https://mvnrepository.com/artifact/org.choco-solver/choco-solver -->
-		<dependency>
-		    <groupId>org.choco-solver</groupId>
-		    <artifactId>choco-solver</artifactId>
-		    <version>4.0.0</version>
-		</dependency>
-		
+			
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
