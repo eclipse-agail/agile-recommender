@@ -28,8 +28,8 @@ public class GatewayProfile {
 		this.devices = new ListOfDevices();
 		this.apps = new ListOfApps();
 		this.wfs = new ListOfWFs();
-		this.location = "";
-		this.pricingPreferences = "";
+		this.location = "EU";
+		this.pricingPreferences = "free";
 		this.clouds = new ListOfClouds();
 		this.requiredServices = "";
 	}

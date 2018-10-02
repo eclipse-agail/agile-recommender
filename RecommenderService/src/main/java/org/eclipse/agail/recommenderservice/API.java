@@ -22,6 +22,7 @@ import org.eclipse.agail.recommenderservice.devAPImodels.AgileWorkflowModel;
 import org.eclipse.agail.recommenderservice.devAPImodels.DataModel;
 import org.eclipse.agail.recommenderservice.devAPImodels.TokenModel;
 import org.eclipse.agail.recommenderservice.recommendermodels.Device;
+import org.eclipse.agail.recommenderservice.recommendermodels.GatewayProfile;
 import org.eclipse.agail.recommenderservice.recommendermodels.ListOfClouds;
 import org.eclipse.agail.recommenderservice.recommendermodels.ListOfDevices;
 import org.eclipse.agail.recommenderservice.recommendermodels.ListOfWFs;
@@ -45,7 +46,7 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 public class API {
 	
-	static org.eclipse.agail.recommenderservice.recommendermodels.GatewayProfile recommenderProfile = new org.eclipse.agail.recommenderservice.recommendermodels.GatewayProfile(); 
+	public static GatewayProfile recommenderProfile = new GatewayProfile(); 
 	 
 	public static String recommenderServerIP = "http:/agile.ist.tugraz.at:8080/Recommender/";
 	
