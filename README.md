@@ -6,8 +6,8 @@ This service provides an API to other AGILE Gateway services to access to the re
 ## API Document 
 http://agile.ist.tugraz.at:8080/doc/
 
-### API Functions
-#### Workflow/Node Recommendation
-#### Device Recommendation 
-#### PaaS Provider (Cloud) Recommendation 
+### API Functions:
+#### 1- GetWorkflowRecommendation
+#### 2- GetDeviceRecommendation 
+#### 3- GetCloudRecommendation 
  
