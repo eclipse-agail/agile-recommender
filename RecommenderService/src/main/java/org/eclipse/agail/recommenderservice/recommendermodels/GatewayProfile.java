@@ -31,7 +31,7 @@ public class GatewayProfile {
 		this.location = "EU";
 		this.pricingPreferences = "free";
 		this.clouds = new ListOfClouds();
-		this.requiredServices = "";
+		this.requiredServices = "node";
 	}
 	
 	public GatewayProfile (ListOfDevices str1, ListOfApps str2, ListOfWFs str3, String loc,String pricing, ListOfClouds clouds, String requiredServices){

@@ -48,7 +48,7 @@ public class API {
 	
 	public static GatewayProfile recommenderProfile = new GatewayProfile(); 
 	 
-	public static String recommenderServerIP = "http:/agile.ist.tugraz.at:8080/Recommender/";
+	public static String recommenderServerIP = "http://agile.ist.tugraz.at:8080/Recommender/";
 	
 	public static void main(String[] args) throws Exception {
 	    SpringApplication.run(API.class, args);
@@ -60,6 +60,8 @@ public class API {
 		System.out.println("This part adds devices and workflows into the profile");
 		try{
 			// DEVICES
+			recommenderProfile.devices = new ListOfDevices();
+			
 			RestTemplate restTemplate = new RestTemplate();
 		    final String uri = "http://172.18.0.1:8080/api/devices";
 		    AgileDevice [] devices = restTemplate.getForObject(uri, AgileDevice[].class);
@@ -68,28 +70,30 @@ public class API {
 		    System.out.println("devices lenght: "+devices.length);
 		    System.out.println("first device's name: "+devices[0].getName());
 		    
+	    	if(devices!=null)
+			    for(int i=0;i<devices.length;i++){
+			    	Device dev = new Device();
+			    	String devTitle="";
+			    	devTitle += devices[i].getName().trim();
+			    	for(int j=0;j<devices[i].getStreams().length;j++){
+			    		devTitle += " ";
+			    		devTitle += devices[i].getStreams()[j].getId().trim();
+			    	} 
+			    	
+			    	dev.setTitle(devTitle);
+			    	recommenderProfile.devices = new ListOfDevices();
+			    	recommenderProfile.devices.addDevice(dev);
+			    	
+			    	System.out.println("Devices in the Profile: " + devTitle);
+			    }
 	    	
-		    for(int i=0;i<devices.length;i++){
-		    	Device dev = new Device();
-		    	String devTitle="";
-		    	devTitle += devices[i].getName().trim();
-		    	for(int j=0;j<devices[i].getStreams().length;j++){
-		    		devTitle += " ";
-		    		devTitle += devices[i].getStreams()[j].getId().trim();
-		    	} 
-		    	
-		    	dev.setTitle(devTitle);
-		    	recommenderProfile.devices = new ListOfDevices();
-		    	recommenderProfile.devices.addDevice(dev);
-		    	
-		    	System.out.println("Devices in the Profile: " + devTitle);
-	    }
 		}catch(Exception e){
 			System.out.println("Exception in devices api: " + e.getMessage());
 		}
 		
 		try{
 			// WORKFLOW
+			recommenderProfile.wfs = new ListOfWFs();
 			RestTemplate restTemplate = new RestTemplate();
 			
 			// 1- GET TOKEN
@@ -154,8 +158,7 @@ public class API {
 			    	System.out.println("Workflow in the Profile: " + title);
 		    	}
 		    }
-		    
-		    recommenderProfile.wfs = new ListOfWFs();
+		   
 		    recommenderProfile.wfs.setWfList(wfList);
 		    
 		}catch(Exception e){
@@ -333,18 +336,19 @@ public class API {
     	System.out.println("1- update profile is started");
     	updateProfile();
     	System.out.println("1- update profile is done");
+    	
     	ListOfWFs result = new ListOfWFs();
     	
        	
-	    	RestTemplate restTemplate = new RestTemplate();
-	    	final String uri = recommenderServerIP+"getWorkflowRecommendation";
+	    RestTemplate restTemplate = new RestTemplate();
+	    final String uri = recommenderServerIP+"getWorkflowRecommendation";
 			
-	    	System.out.println("2- call the service");
-	    	System.out.println("with recommenderProfile with dev size: "+recommenderProfile.getDevices().getDeviceList().size());
-	    	if(recommenderProfile.getDevices().getDeviceList().size()>0 && recommenderProfile.getDevices().getDeviceList().get(0).getTitle()!=null)
+	    System.out.println("2- call the service");
+	    System.out.println("with recommenderProfile with dev size: "+recommenderProfile.getDevices().getDeviceList().size());
+	    if(recommenderProfile.getDevices().getDeviceList().size()>0 && recommenderProfile.getDevices().getDeviceList().get(0).getTitle()!=null)
 	    	System.out.println("with recommenderProfile with dev title: "+recommenderProfile.getDevices().getDeviceList().get(0).getTitle());
 	    	
-	    	ObjectMapper mapper = new ObjectMapper();
+	    ObjectMapper mapper = new ObjectMapper();
 	    	
 	    	try{
 	    		System.out.println(mapper.writeValueAsString(recommenderProfile));	
